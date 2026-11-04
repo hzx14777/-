@@ -1,0 +1,53 @@
+# ===== 依赖 =====
+node_modules/
+.pnpm-store/
+
+# ===== 构建产物 =====
+dist/
+build/
+*.tgz
+
+# ===== 运行日志 =====
+*.log
+logs/
+run-logs/
+sp.log
+
+# ===== 本地临时文件 / 运行时 / 抓包产物 =====
+.tmp/
+work/
+oss-run/runtime/dl/
+oss-run/shots/
+oss-run/pw/shots/
+captcha.json
+captcha*.png
+token.txt
+*.url
+derby.log
+
+# ===== 部署打包产物（含服务器信息，不纳入版本库）=====
+oss-run/deploy/out/
+
+# ===== 第三方上游参考源码（非本项目代码）=====
+oss-run/exam-platform-master/
+oss-run/exam-platform-gitee.zip
+
+# ===== 工具内部数据 =====
+.workbuddy/
+output/*.png
+
+# ===== 敏感凭据（双保险，仓库中不应出现）=====
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+id_rsa*
+
+# ===== 系统文件 =====
+.DS_Store
+Thumbs.db
+desktop.ini

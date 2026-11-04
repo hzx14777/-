@@ -1,0 +1,51 @@
+request_id: "20261103-exam-req"
+entry_type: "full_pipeline"
+current_stage: 3
+stage_chain: [1, 2, 3]
+output_docx_path: "C:\\Users\\24243\\Desktop\\考试平台2\\output\\20261103-exam-req\\stage3\\警院智慧考试平台需求规格说明书.docx"
+output_docx_user_specified: false
+created_at: "2026-11-03T12:10:00+08:00"
+updated_at: "2026-11-03T12:36:00+08:00"
+stages:
+  stage_0:
+    status: completed
+    entry_decision: "full_pipeline（从零创作 + 需求规格说明书体裁）"
+    completed_at: "2026-11-03T12:10:00+08:00"
+  stage_1:
+    status: completed
+    executor: "doc-writer"
+    route_tag: "general_writing"
+    genre: "general"
+    expert_used: "general-writer"
+    output_path: "stage1/final_draft.md"
+    completed_at: "2026-11-03T12:26:00+08:00"
+  stage_2:
+    status: completed
+    executor: "doc-formatter"
+    route: "html"
+    html_sub: "template"
+    genre: "business-report"
+    output_path: "stage2/formatted-警院智慧考试平台需求规格说明书.html"
+    output_format: "html"
+    html_review_attempts: 1
+    html_review_score: 96
+    completed_at: "2026-11-03T12:31:00+08:00"
+  stage_3:
+    status: completed
+    executor: "doc-converter"
+    input_format: "html"
+    skill_used: ["html-to-doc"]
+    output_path: "C:////Users////24243////Desktop////考试平台2////output////20261103-exam-req////stage3////警院智慧考试平台需求规格说明书.docx"
+    present_files_opened: true
+    fallback: false
+    fallback_reason: null
+    verify_content_missing: 0
+    verify_toc_pageref: 75
+    heading_style_bound: "74/74"
+    completed_at: "2026-11-03T12:36:00+08:00"
+consistency_check:
+  content_complete: true
+  cover_no_heading_tags: true
+  toc_field_generated: true
+  page_number_restart_at_1: true
+  total_paragraphs: 766

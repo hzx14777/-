@@ -1,0 +1,405 @@
+openapi: 3.0.3
+info:
+  title: 警院智慧考试平台 API
+  version: 1.0.0
+  description: |
+    五平台体系 · 考试平台对外接口（约束规范 §10）。
+    统一响应：`{ code, message, data, requestId }`，错误码见 §10.3；分页：请求 `page/pageSize`，响应 `{ items, page, pageSize, total }`。
+    鉴权：`Authorization: Bearer <accessToken>`（由 /api/v1/sso/exchange 签发，2 小时有效）；平台间调用使用 `X-Platform-Key`。
+servers:
+  - url: http://127.0.0.1/yjapi
+    description: 本机同源部署（前端经 /yjapi 前缀访问）
+tags:
+  - name: 认证
+  - name: 考试
+  - name: 阅卷
+  - name: 统计
+  - name: 事件与联动
+  - name: 管理
+
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    PageSize:
+      name: pageSize
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+    PlatformKey:
+      name: X-Platform-Key
+      in: header
+      required: true
+      schema: { type: string }
+      description: 平台间调用密钥，错误返回 FORBIDDEN
+  schemas:
+    Envelope:
+      type: object
+      required: [code, message, data, requestId]
+      properties:
+        code: { type: string, example: OK }
+        message: { type: string, example: success }
+        data: { nullable: true }
+        requestId: { type: string, example: 8f3c1a2b }
+    PageResult:
+      type: object
+      required: [items, page, pageSize, total]
+      properties:
+        items: { type: array, items: {} }
+        page: { type: integer, example: 1 }
+        pageSize: { type: integer, example: 20 }
+        total: { type: integer, example: 37 }
+    SsoUser:
+      type: object
+      description: §7.3 统一认证字段，名称与类型不得修改
+      required: [userId, realName, roles, permissions]
+      properties:
+        userId: { type: string, example: u_stu1 }
+        studentNo: { type: string, nullable: true, example: '2023011' }
+        realName: { type: string, example: 张予安 }
+        roles:
+          type: array
+          items: { type: string, enum: [student, teacher, admin] }
+        permissions:
+          type: array
+          items: { type: string, example: 'exam:read' }
+        organizationId: { type: string, nullable: true }
+        classId: { type: string, nullable: true }
+    EventEnvelope:
+      type: object
+      description: §11.3 业务事件统一信封
+      required: [eventId, eventType, occurredAt, sourcePlatform, operatorId, data]
+      properties:
+        eventId: { type: string }
+        eventType:
+          type: string
+          enum: [exam.passed, exam.failed, exam.submitted, course.completed]
+        occurredAt: { type: string, format: date-time, example: '2026-11-04T07:39:27+08:00' }
+        sourcePlatform: { type: string, example: exam }
+        operatorId: { type: string, nullable: true }
+        data: { type: object }
+
+paths:
+  /api/v1/health:
+    get:
+      tags: [管理]
+      summary: 健康检查
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Envelope' }
+
+  /api/v1/meta:
+    get:
+      tags: [管理]
+      summary: 平台元数据与统一数据字典（状态值、权限点、事件类型）
+      security: []
+      responses:
+        '200': { description: OK }
+
+  /api/v1/sso/url:
+    get:
+      tags: [认证]
+      summary: 获取统一认证中心授权地址
+      security: []
+      parameters:
+        - { name: redirect, in: query, schema: { type: string, example: /hall }, description: 登录后回到的前端路径 }
+      responses:
+        '200':
+          description: 返回 authorizeUrl / state / redirectUri / mode
+  /api/v1/sso/exchange:
+    post:
+      tags: [认证]
+      summary: 授权码换令牌并建立本地会话
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code, state]
+              properties:
+                code: { type: string, description: 认证中心回调的授权码，单次有效 }
+                state: { type: string }
+      responses:
+        '200':
+          description: 返回 accessToken / refreshToken / expiresIn / user(§7.3) / redirect
+        '401': { description: AUTH_REQUIRED 授权码无效或 state 过期 }
+        '200x': { description: SERVICE_UNAVAILABLE 认证中心不可用 }
+  /api/v1/sso/refresh:
+    post:
+      tags: [认证]
+      summary: 刷新令牌（轮换制，旧 refreshToken 立即失效）
+      security: []
+      responses:
+        '200': { description: 新 accessToken / refreshToken }
+        '401': { description: AUTH_TOKEN_EXPIRED }
+  /api/v1/auth/logout:
+    post:
+      tags: [认证]
+      summary: 退出登录（清理本地会话，返回统一退出地址）
+      responses:
+        '200': { description: endSessionUrl }
+  /api/v1/me:
+    get:
+      tags: [认证]
+      summary: 当前用户（统一认证字段 + 权限点 + 积分）
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/SsoUser' }
+
+  /api/v1/hall:
+    get:
+      tags: [考试]
+      summary: 考试大厅（统计 + 考试卡片，含解锁状态）
+      security: [{ bearer: [] }]
+      responses:
+        '200': { description: OK }
+  /api/v1/exams/{examId}:
+    get:
+      tags: [考试]
+      summary: 考试详情（题型分布、判定规则、历史记录）
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: examId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: OK }
+        '404': { description: NOT_FOUND }
+  /api/v1/exams/{examId}/attempts:
+    post:
+      tags: [考试]
+      summary: 开始考试（已有进行中答卷则复用）
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: examId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: attemptId / deadlineAt / resumed }
+        '200b': { description: BUSINESS_ERROR 未解锁 }
+  /api/v1/attempts/{attemptId}:
+    get:
+      tags: [考试]
+      summary: 答卷内容（题目、已保存答案、剩余时间、分组）
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: attemptId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: OK }
+  /api/v1/attempts/{attemptId}/answers:
+    patch:
+      tags: [考试]
+      summary: 保存答案（自动保存）
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: attemptId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: savedAt / count }
+        '200c': { description: CONFLICT 答卷已提交 }
+  /api/v1/attempts/{attemptId}/events:
+    post:
+      tags: [考试]
+      summary: 上报防作弊行为事件（切屏/退出全屏/复制粘贴，仅留痕）
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: attemptId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: count }
+  /api/v1/attempts/{attemptId}/submit:
+    post:
+      tags: [考试]
+      summary: 交卷（客观题即时判分；简答题进入 AI 初评队列；触发 exam.passed/failed 事件）
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: attemptId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: 客观分/总分/状态/是否需要阅卷 }
+  /api/v1/attempts/{attemptId}/result:
+    get:
+      tags: [考试]
+      summary: 成绩单（双达标判定、知识点组、逐题解析）
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: attemptId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: OK }
+  /api/v1/records:
+    get:
+      tags: [考试]
+      summary: 我的作答记录（分页）
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data: { $ref: '#/components/schemas/PageResult' }
+  /api/v1/wrong-book:
+    get:
+      tags: [考试]
+      summary: 错题本（按出错次数排序 + 知识点筛选数据）
+      security: [{ bearer: [] }]
+      responses:
+        '200': { description: OK }
+  /api/v1/admissions:
+    get:
+      tags: [考试]
+      summary: 准入资格列表（分页，学生只看自己）
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200': { description: items / page / pageSize / total / points }
+
+  /api/v1/grading/queue:
+    get:
+      tags: [阅卷]
+      summary: 待确认答卷队列（按 AI 置信度升序）
+      security: [{ bearer: [] }]
+      responses:
+        '200': { description: OK }
+        '403': { description: FORBIDDEN 缺少 exam:grade }
+  /api/v1/grading/{attemptId}:
+    get:
+      tags: [阅卷]
+      summary: 阅卷详情（简答题、AI 要点命中、行为事件）
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: attemptId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: OK }
+  /api/v1/grading/{attemptId}/confirm:
+    post:
+      tags: [阅卷]
+      summary: 教师确认成绩（重算总分与双达标，触发 exam.passed/failed）
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: attemptId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: totalScore / dualPass / groups / admission }
+
+  /api/v1/stats/{examId}:
+    get:
+      tags: [统计]
+      summary: 考试分析看板（KPI、分布、知识点组、题目质量、学员成绩）
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: examId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: OK }
+
+  /api/v1/events:
+    post:
+      tags: [事件与联动]
+      summary: 事件入站（幂等消费，相同 eventId 不重复处理）
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/PlatformKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EventEnvelope' }
+      responses:
+        '200': { description: duplicate / eventId / status }
+        '403': { description: FORBIDDEN 平台密钥校验失败 }
+    get:
+      tags: [事件与联动]
+      summary: 事件列表（管理员，分页）
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200': { description: PageResult }
+  /api/v1/public/exam-pass:
+    get:
+      tags: [事件与联动]
+      summary: 考试通过状态（供实训工坊判断项目准入）
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/PlatformKey'
+        - { name: userId, in: query, required: true, schema: { type: string } }
+      responses:
+        '200': { description: passedExamIds / results / admissions }
+        '403': { description: FORBIDDEN }
+  /api/v1/admin/outbox/retry:
+    post:
+      tags: [事件与联动]
+      summary: 出站事件人工重放
+      security: [{ bearer: [] }]
+      responses:
+        '200': { description: outbox 记录（status/attempts/lastAt/lastError） }
+
+  /api/v1/papers:
+    get:
+      tags: [管理]
+      summary: 试卷库（分页）
+      security: [{ bearer: [] }]
+      responses:
+        '200': { description: PageResult }
+  /api/v1/exams:
+    get:
+      tags: [管理]
+      summary: 考试列表（分页，含 createdBy/updatedAt）
+      security: [{ bearer: [] }]
+      responses:
+        '200': { description: PageResult }
+  /api/v1/exams/{examId}/status:
+    post:
+      tags: [管理]
+      summary: 发布 / 下架考试
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: examId, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [published, archived] }
+      responses:
+        '200': { description: OK }
+        '200d': { description: VALIDATION_ERROR }
+  /api/v1/audit:
+    get:
+      tags: [管理]
+      summary: 审计日志（分页，含认证与权限变更）
+      security: [{ bearer: [] }]
+      responses:
+        '200': { description: PageResult }
+  /api/v1/questions:
+    get:
+      tags: [管理]
+      summary: 题库（分页，支持 type/kw 过滤）
+      security: [{ bearer: [] }]
+      responses:
+        '200': { description: PageResult }

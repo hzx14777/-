@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>砚考 exam-platform · 复现入口</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1a1d21; --sub:#5b6470;
+    --line:#e5e8ec; --brand:#2f6bff; --brand-soft:#eef3ff;
+    --ok:#12a150; --ok-soft:#e9f8ef; --warn:#b45309;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.6; padding:40px 24px 64px;
+  }
+  .wrap{max-width:940px;margin:0 auto}
+  header{margin-bottom:28px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:12px;font-weight:600;letter-spacing:.04em;
+    color:var(--ok);background:var(--ok-soft);
+    padding:5px 11px;border-radius:999px;margin-bottom:14px;
+  }
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+  h1{font-size:27px;font-weight:700;letter-spacing:-.02em}
+  .sub{color:var(--sub);font-size:14px;margin-top:8px}
+  h2{font-size:13px;font-weight:600;color:var(--sub);letter-spacing:.06em;
+     text-transform:uppercase;margin:34px 0 14px}
+
+  .entries{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:14px}
+  a.entry{
+    display:block;text-decoration:none;color:inherit;
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:20px 18px;transition:.18s ease;position:relative;overflow:hidden;
+  }
+  a.entry:hover{border-color:#c9d6f5;box-shadow:0 4px 18px rgba(47,107,255,.10);transform:translateY(-2px)}
+  a.entry.primary{background:linear-gradient(150deg,#2f6bff,#4b83ff);border-color:transparent;color:#fff}
+  a.entry.primary:hover{box-shadow:0 8px 24px rgba(47,107,255,.32)}
+  .entry .k{font-size:15px;font-weight:650;display:flex;align-items:center;gap:8px}
+  .entry .u{font-size:12.5px;margin-top:9px;font-family:ui-monospace,Menlo,Consolas,monospace;
+            opacity:.72;word-break:break-all}
+  a.entry.primary .u{opacity:.88}
+  .arrow{position:absolute;right:16px;top:18px;opacity:.45;font-size:15px}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+  th{font-size:11.5px;color:var(--sub);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+  tr:last-child td{border-bottom:none}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;
+       background:#f2f4f7;padding:2px 6px;border-radius:5px}
+  .ok{color:var(--ok);font-weight:600}
+  .kv{display:grid;grid-template-columns:120px 1fr;gap:8px 16px;font-size:13.5px}
+  .kv dt{color:var(--sub)}
+  .kv dd{font-weight:500}
+  .cmd{background:#1d2126;color:#e8ecf1;border-radius:10px;padding:14px 16px;
+       font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;
+       overflow-x:auto;line-height:1.75}
+  .cmd .c{color:#7f8b99}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .note{font-size:12.5px;color:var(--sub);margin-top:12px}
+  .note b{color:var(--warn);font-weight:600}
+  @media(max-width:760px){
+    .entries,.grid2{grid-template-columns:1fr}
+    body{padding:28px 16px 48px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow"><span class="dot"></span>18 / 18 服务在线</div>
+    <h1>砚考 exam-platform · 复现入口</h1>
+    <p class="sub">本地已部署运行：MySQL 8.0.39 · Redis 7.4 · Nacos 2.4.3 · Spring Cloud 微服务 ×14 · Vite</p>
+  </header>
+
+  <div class="entries">
+    <a class="entry primary" href="http://127.0.0.1/" target="_blank" rel="noopener">
+      <div class="arrow">↗</div>
+      <div class="k">进入考试系统</div>
+      <div class="u">http://127.0.0.1/</div>
+    </a>
+    <a class="entry" href="http://127.0.0.1:8848/nacos" target="_blank" rel="noopener">
+      <div class="arrow">↗</div>
+      <div class="k">Nacos 控制台</div>
+      <div class="u">127.0.0.1:8848/nacos</div>
+    </a>
+    <a class="entry" href="http://127.0.0.1:8080/auth/code" target="_blank" rel="noopener">
+      <div class="arrow">↗</div>
+      <div class="k">后端网关</div>
+      <div class="u">127.0.0.1:8080</div>
+    </a>
+  </div>
+
+  <h2>登录凭据</h2>
+  <div class="card">
+    <dl class="kv">
+      <dt>账号</dt><dd><code>admin</code></dd>
+      <dt>密码</dt><dd><code>admin123</code></dd>
+      <dt>租户</dt><dd>XXX有限公司（默认租户，无需修改）</dd>
+      <dt>Nacos</dt><dd><code>nacos</code> / <code>nacos</code></dd>
+    </dl>
+  </div>
+
+  <h2>服务端口</h2>
+  <div class="card">
+    <table>
+      <tr><th>组件</th><th>端口</th><th>组件</th><th>端口</th></tr>
+      <tr><td>前端 Vite</td><td><code>80</code></td><td>阅卷 mark</td><td><code>9215</code></td></tr>
+      <tr><td>网关 gateway</td><td><code>8080</code></td><td>统计 stat</td><td><code>9216</code></td></tr>
+      <tr><td>认证 auth</td><td><code>9300</code></td><td>练习 practice</td><td><code>9217</code></td></tr>
+      <tr><td>系统 system</td><td><code>9201</code></td><td>证书 cert</td><td><code>9218</code></td></tr>
+      <tr><td>资源 resource</td><td><code>9204</code></td><td>监考 proctor</td><td><code>9219</code></td></tr>
+      <tr><td>题库 question</td><td><code>9211</code></td><td>AI 服务</td><td><code>9220</code></td></tr>
+      <tr><td>试卷 paper</td><td><code>9212</code></td><td>MySQL / Redis / Nacos</td><td><code>3306 / 6379 / 8848</code></td></tr>
+      <tr><td>考试 manage</td><td><code>9213</code></td><td>答卷 answer</td><td><code>9214</code></td></tr>
+    </table>
+  </div>
+
+  <h2>重启后打不开的根因</h2>
+  <div class="card">
+    <table>
+      <tr><th>根因</th><th>证据</th></tr>
+      <tr>
+        <td>16 个进程从未注册为系统服务 / 启动项</td>
+        <td>服务、计划任务、启动文件夹、注册表 Run 键中均无相关项</td>
+      </tr>
+      <tr>
+        <td>进程随宿主会话退出被整体回收</td>
+        <td>启动命令返回后数分钟内进程全部消失，日志无 <code>Shutting down</code></td>
+      </tr>
+      <tr>
+        <td><code>SERVER__PORT</code> 覆盖服务端口</td>
+        <td>Nacos 实际起在 59089，因端口占用直接启动失败</td>
+      </tr>
+      <tr>
+        <td><code>JAVA_HOME</code> 未持久化</td>
+        <td>系统与用户环境变量查询均为空，全靠硬编码路径</td>
+      </tr>
+    </table>
+    <p class="note">已修复：统一控制脚本 <code>ykctl.ps1</code>（端口探针 + 幂等 + 环境净化）、启动文件夹自启（由 explorer 托管，脱离会话 Job）、持久化 <code>JAVA_HOME</code>。</p>
+  </div>
+
+  <h2>日常操作</h2>
+  <div class="grid2">
+    <div class="card">
+      <div class="cmd">start-all.bat   <span class="c"># 全量启动，约 5-7 分钟</span>
+status.bat      <span class="c"># 查看 18 个监听点</span>
+stop-all.bat    <span class="c"># 全量停止</span></div>
+      <p class="note">位于 <code>桌面\考试平台2\oss-run\</code></p>
+    </div>
+    <div class="card">
+      <div class="cmd"><span class="c"># 只起某一层</span>
+ykctl.ps1 start infra  <span class="c"># 库/缓存/注册中心</span>
+ykctl.ps1 start core   <span class="c"># 核心四服务</span>
+ykctl.ps1 start exam   <span class="c"># 考试业务十服务</span>
+ykctl.ps1 start front  <span class="c"># 前端</span></div>
+      <p class="note">位于 <code>C:\yk-runtime\ykctl.ps1</code></p>
+    </div>
+  </div>
+
+  <h2>重要约束</h2>
+  <div class="card">
+    <p style="font-size:13.5px">Nacos 必须先于微服务就绪；<b>中途重启 Nacos 会使已连接的 Dubbo 客户端失联</b>，登录将返回「RPC异常」。若单独重启过 Nacos，须连带重启全部微服务。</p>
+    <p class="note" style="margin-top:10px">日志目录：<code>oss-run\run-logs\</code>　账号：admin / admin123</p>
+  </div>
+
+</div>
+</body>
+</html>

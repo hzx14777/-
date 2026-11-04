@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>警院智慧考试平台 · 五平台联动功能 Demo（§4.6）</title>
+<style>
+  :root{
+    --primary:#1e5eff; --dark:#0e1c36; --line:#e6ebf4; --muted:#6b7a90;
+    --ok:#0f9d76; --warn:#c2761b; --danger:#d4380d; --bg:#f5f7fb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,'Segoe UI','Microsoft YaHei',sans-serif;background:var(--bg);color:#1f2733}
+  header{background:var(--dark);color:#fff;padding:14px 26px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  header h1{font-size:16px;margin:0;letter-spacing:1px}
+  header nav{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+  header nav a{color:#c9d6ee;text-decoration:none;font-size:13px;padding:6px 10px;border-radius:6px}
+  header nav a.on,header nav a:hover{background:#1e5eff;color:#fff}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 26px 60px}
+  .lead{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin-bottom:18px}
+  .lead b{color:var(--dark)}
+  .lead p{margin:6px 0;color:var(--muted);font-size:13px;line-height:1.9}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .card h3{margin:0 0 10px;font-size:15px;color:var(--dark)}
+  .card .hint{font-size:12px;color:var(--muted);line-height:1.8}
+  ol.flow{margin:0;padding-left:20px;font-size:13px;line-height:2;color:#33405a}
+  ol.flow code{background:#eef3ff;color:#1e5eff;padding:1px 6px;border-radius:4px;font-size:12px}
+  pre{background:#0f1729;color:#d7e3ff;border-radius:10px;padding:14px 16px;overflow:auto;font-size:12px;line-height:1.7;margin:10px 0 0}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;background:#fafbfe}
+  .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:10px;background:#e8efff;color:#1e5eff}
+  .tag.ok{background:#e7f7f1;color:var(--ok)} .tag.warn{background:#fdf3e4;color:var(--warn)}
+  .tag.bad{background:#fdeceb;color:var(--danger)}
+  .platforms{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+  .p-card{border:1px solid var(--line);border-radius:10px;padding:14px;background:#fff}
+  .p-card b{display:block;margin-bottom:4px;color:var(--dark)}
+  .p-card span{font-size:12px;color:var(--muted);line-height:1.7}
+  .p-card.me{border-color:#1e5eff;box-shadow:0 6px 18px rgba(30,94,255,.12)}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .btn{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:9px 14px;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block}
+  .btn.ghost{background:#fff;color:var(--primary);border:1px solid #bcd0ff}
+  .sr{font-size:12px;color:var(--muted);margin-top:8px}
+  footer{color:var(--muted);font-size:12px;text-align:center;padding:24px}
+</style>
+</head>
+<body>
+<header>
+  <h1>警院智慧考试平台 · 功能 Demo</h1>
+  <nav>
+    <a href="#role" class="on">职责边界</a>
+    <a href="#sso">统一登录</a>
+    <a href="#perm">角色权限</a>
+    <a href="#api">接口契约</a>
+    <a href="#event">业务事件</a>
+    <a href="#pages">页面入口</a>
+  </nav>
+</header>
+
+<div class="wrap">
+  <div class="lead">
+    <b>这是「考试平台」的 HTML 功能 Demo（约束规范 §4.6）。</b>
+    <p>Demo 不替代正式实现，只用于演示核心流程、页面入口与跨平台跳转关系；其中的字段命名、响应结构、错误码、事件名称与正式接口完全一致（见 <code>docs/openapi.yaml</code>）。</p>
+    <p>正式平台：<a href="/yj/login">/yj/login</a> · 服务健康检查：<a href="/api/v1/health">/api/v1/health</a></p>
+    <div class="btns">
+      <a class="btn" href="/yj/login">进入正式平台</a>
+      <a class="btn ghost" href="/api/v1/meta" target="_blank">查看平台元数据（字典）</a>
+    </div>
+  </div>
+
+  <!-- 1. 职责边界 -->
+  <section id="role">
+    <h2 style="font-size:16px;color:#0e1c36;margin:22px 0 10px">1. 五平台职责边界（规范 §3）</h2>
+    <div class="platforms">
+      <div class="p-card"><b>论坛</b><span>统一身份、技术交流、答疑、组队、公告、积分<br/><span class="tag ok">统一认证中心</span></span></div>
+      <div class="p-card"><b>自学平台</b><span>课程、图文/视频资源、学习进度、笔记、收藏<br/>产出 <code>course.completed</code></span></div>
+      <div class="p-card me"><b>考试平台（本项目）</b><span>随堂测试、专项考试、项目准入、成绩与错题<br/>产出 <code>exam.passed</code> / <code>exam.failed</code></span></div>
+      <div class="p-card"><b>实训工坊</b><span>任务发布、组队、分工、里程碑、成果提交、导师评审<br/>消费考试通过状态判断准入</span></div>
+      <div class="p-card"><b>成果展示广场</b><span>作品展示、体验入口、评论反馈、优秀成果沉淀<br/>消费 <code>project.accepted</code></span></div>
+    </div>
+  </section>
+
+  <!-- 2. SSO -->
+  <section id="sso">
+    <h2 style="font-size:16px;color:#0e1c36;margin:22px 0 10px">2. 统一登录流程（规范 §7.2）</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>授权码模式（平台不自建账号密码）</h3>
+        <ol class="flow">
+          <li>用户访问 <code>/yj/login</code>，本地无有效会话</li>
+          <li>跳转认证中心 <code>/sso/oauth/authorize?client_id=exam-platform-client&amp;redirect_uri=…/yj/sso/callback&amp;state=…</code></li>
+          <li>认证中心完成登录，302 回调 <code>/yj/sso/callback?code=…&amp;state=…</code></li>
+          <li>前端把 code 交回服务端 <code>POST /api/v1/sso/exchange</code>，<b>服务端</b>换取令牌，前端不保存长期凭证</li>
+          <li>服务端读取统一用户信息，建立 2 小时本地会话（Refresh Token 7 天，轮换）</li>
+          <li>退出时清理本地会话并按 <code>endSessionUrl</code> 退出认证中心</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>统一用户信息字段（§7.3，不得改名）</h3>
+        <pre>{
+  "userId": "u_stu1",
+  "studentNo": "2023011",
+  "realName": "张予安",
+  "roles": ["student"],
+  "permissions": ["exam:read", "exam:submit"],
+  "organizationId": "org_dp",
+  "classId": "cls_2023_dp"
+}</pre>
+        <div class="sr">来源：<code>GET /api/v1/me</code>（字段与认证中心一致）</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 权限 -->
+  <section id="perm">
+    <h2 style="font-size:16px;color:#0e1c36;margin:22px 0 10px">3. 角色与权限点（规范 §8）</h2>
+    <div class="card">
+      <table>
+        <tr><th>角色编码</th><th>展示名</th><th>本平台典型权限点</th><th>页面</th></tr>
+        <tr><td><code>student</code></td><td>学生</td><td>exam:read · exam:submit · record:read · wrongbook:manage · admission:read</td><td>大厅 / 答题 / 成绩 / 错题本 / 准入资格</td></tr>
+        <tr><td><code>teacher</code></td><td>教师</td><td>+ exam:grade · question:create · question:review · exam:manage · stats:read</td><td>+ 阅卷中心 / 命题工作台 / 考试管理 / 看板</td></tr>
+        <tr><td><code>admin</code></td><td>管理员</td><td>+ audit:read · event:read · outbox:manage</td><td>+ 审计与事件</td></tr>
+      </table>
+      <div class="sr">前端按权限点隐藏菜单与路由；接口侧同样校验，直接改地址访问受限页面会得到 403（§16.1）。</div>
+    </div>
+  </section>
+
+  <!-- 4. 接口契约 -->
+  <section id="api">
+    <h2 style="font-size:16px;color:#0e1c36;margin:22px 0 10px">4. 接口契约（规范 §10）</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>成功 / 失败响应</h3>
+        <pre>// 成功
+{
+  "code": "OK",
+  "message": "success",
+  "data": { "exams": [] },
+  "requestId": "8f3c1a2b"
+}
+
+// 失败
+{
+  "code": "AUTH_TOKEN_EXPIRED",
+  "message": "登录状态已过期",
+  "data": null,
+  "requestId": "8f3c1a2b"
+}</pre>
+        <div class="sr">错误码：VALIDATION_ERROR / AUTH_REQUIRED / AUTH_TOKEN_EXPIRED / FORBIDDEN / NOT_FOUND / CONFLICT / BUSINESS_ERROR / SERVICE_UNAVAILABLE / INTERNAL_ERROR</div>
+      </div>
+      <div class="card">
+        <h3>分页</h3>
+        <pre>// 请求
+GET /api/v1/records?page=1&amp;pageSize=20
+
+// 响应 data
+{
+  "items": [ ... ],
+  "page": 1,
+  "pageSize": 20,
+  "total": 37
+}</pre>
+        <h3 style="margin-top:14px">核心接口</h3>
+        <table>
+          <tr><th>方法</th><th>路径</th><th>权限点</th></tr>
+          <tr><td>GET</td><td>/api/v1/hall</td><td>登录即可</td></tr>
+          <tr><td>POST</td><td>/api/v1/exams/{id}/attempts</td><td>exam:submit</td></tr>
+          <tr><td>GET</td><td>/api/v1/grading/queue</td><td>exam:grade</td></tr>
+          <tr><td>GET</td><td>/api/v1/public/exam-pass?userId=</td><td>平台密钥</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 事件 -->
+  <section id="event">
+    <h2 style="font-size:16px;color:#0e1c36;margin:22px 0 10px">5. 业务事件与跨平台联动（规范 §11）</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>本平台生产的事件</h3>
+        <pre>{
+  "eventId": "evt_mw1bxvtd2352",
+  "eventType": "exam.passed",
+  "occurredAt": "2026-11-04T07:39:27+08:00",
+  "sourcePlatform": "exam",
+  "operatorId": "u_tch",
+  "data": {
+    "attemptId": "att_…", "examId": "e_dp_admission",
+    "examType": "admission_exam", "userId": "u_stu1",
+    "totalScore": 78.5, "dualPass": true,
+    "admissionId": "adm_…"
+  }
+}</pre>
+        <div class="sr">出站留痕：status / attempts / lastAt / lastError / payloadDigest，可在「审计与事件」页人工重放（§11.4）。</div>
+      </div>
+      <div class="card">
+        <h3>消费的事件</h3>
+        <pre>{
+  "eventId": "evt_course_001",
+  "eventType": "course.completed",
+  "occurredAt": "2026-11-04T07:00:00+08:00",
+  "sourcePlatform": "selfstudy",
+  "operatorId": "u_stu1",
+  "data": { "userId": "u_stu1", "chapterId": "ch_ns_2" }
+}</pre>
+        <table>
+          <tr><th>联动</th><th>方向</th></tr>
+          <tr><td>自学完成 → 解锁章节考试</td><td>入站 <code>course.completed</code></td></tr>
+          <tr><td>考试通过 → 工坊准入判断</td><td>出站 <code>exam.passed</code> + 公开查询</td></tr>
+          <tr><td>个人成长档案</td><td>按统一 userId 汇总记录</td></tr>
+        </table>
+        <div class="sr">入站接口对相同 <code>eventId</code> 返回 <code>duplicate: true</code>，不重复产生业务结果。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. 页面入口 -->
+  <section id="pages">
+    <h2 style="font-size:16px;color:#0e1c36;margin:22px 0 10px">6. 页面入口（正式实现）</h2>
+    <div class="card">
+      <table>
+        <tr><th>页面</th><th>路径</th><th>可访问角色</th></tr>
+        <tr><td>统一登录</td><td><a href="/yj/login">/yj/login</a></td><td>全部</td></tr>
+        <tr><td>考试大厅</td><td><a href="/yj/hall">/yj/hall</a></td><td>student / teacher / admin</td></tr>
+        <tr><td>错题本</td><td><a href="/yj/wrong">/yj/wrong</a></td><td>全部</td></tr>
+        <tr><td>准入资格</td><td><a href="/yj/admission">/yj/admission</a></td><td>全部</td></tr>
+        <tr><td>AI 命题工作台</td><td><a href="/yj/workbench">/yj/workbench</a></td><td>teacher / admin</td></tr>
+        <tr><td>阅卷中心</td><td><a href="/yj/grading">/yj/grading</a></td><td>teacher / admin</td></tr>
+        <tr><td>考试管理</td><td><a href="/yj/manage">/yj/manage</a></td><td>teacher / admin</td></tr>
+        <tr><td>审计与事件</td><td><a href="/yj/audit">/yj/audit</a></td><td>admin</td></tr>
+      </table>
+      <div class="sr">未登录访问任一页面会自动跳转登录页；登录后回到原页面（redirect 参数）。</div>
+    </div>
+  </section>
+</div>
+
+<footer>警院智慧考试平台 · 五平台约束规范 V1.0 合规实现 · demo/考试平台联动Demo.html</footer>
+<script>
+  // 顶部导航高亮（无框架依赖，保持 Demo 可离线打开）
+  document.querySelectorAll('header nav a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      document.querySelectorAll('header nav a').forEach(function (x) { x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  });
+</script>
+</body>
+</html>

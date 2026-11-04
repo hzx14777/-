@@ -1,0 +1,50 @@
+body {
+  margin: 0;
+  background: #f5f7fb;
+  color: #1f2733;
+}
+a { text-decoration: none; }
+
+.yj-page-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 2px 0 16px;
+  color: #0e1c36;
+}
+
+.yj-stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.yj-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+
+.yj-exam-card { background: #fff; border: 1px solid #e6ebf4; border-radius: 12px; padding: 18px 20px; transition: box-shadow 0.2s; }
+.yj-exam-card:hover { box-shadow: 0 8px 24px rgba(30, 94, 255, 0.10); }
+.yj-exam-card h3 { margin: 0 0 6px; font-size: 16px; color: #0e1c36; }
+.yj-meta { color: #6b7a90; font-size: 12.5px; line-height: 1.9; }
+.yj-lock { color: #c2761b; font-size: 12px; }
+.yj-ok { color: #0f9d76; font-size: 12px; }
+
+.yj-section { background: #fff; border: 1px solid #e6ebf4; border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; }
+.yj-section h4 { margin: 0 0 12px; font-size: 15px; color: #0e1c36; }
+
+.yj-q-item { border: 1px solid #e6ebf4; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; background: #fff; }
+.yj-q-stem { font-weight: 600; margin-bottom: 10px; line-height: 1.6; }
+.yj-q-stem .yj-tag { margin-right: 8px; }
+
+.yj-option { display: flex; gap: 8px; padding: 7px 10px; border-radius: 8px; margin-bottom: 4px; cursor: pointer; align-items: flex-start; }
+.yj-option:hover { background: #f2f6ff; }
+.yj-option.active { background: #e8efff; }
+
+.yj-answer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(34px, 1fr)); gap: 8px; }
+.yj-answer-cell { height: 34px; border: 1px solid #d6deec; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; background: #fff; }
+.yj-answer-cell.done { background: #1e5eff; color: #fff; border-color: #1e5eff; }
+.yj-answer-cell.current { outline: 2px solid #1e5eff; outline-offset: 1px; }
+
+.yj-proctor { font-size: 12px; color: #c2761b; background: #fdf6ec; border: 1px solid #f5e0bb; border-radius: 8px; padding: 8px 12px; margin-top: 10px; max-height: 110px; overflow: auto; }
+
+.yj-score-ring { display: flex; align-items: center; gap: 26px; padding: 8px 4px 20px; }
+
+.yj-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.yj-bar-track { flex: 1; height: 18px; background: #eef2f9; border-radius: 9px; overflow: hidden; }
+.yj-bar-fill { height: 100%; border-radius: 9px; }
+
+.yj-pass { color: #0f9d76; font-weight: 700; }
+.yj-fail { color: #d4380d; font-weight: 700; }
