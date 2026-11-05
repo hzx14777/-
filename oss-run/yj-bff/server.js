@@ -57,7 +57,7 @@ const ROLE_PERMISSIONS = {
     'doclib:read', 'doclib:compose'],
   admin: ['course:read', 'chapter:read', 'exam:read', 'exam:submit', 'record:read', 'wrongbook:manage', 'admission:read',
     'exam:grade', 'question:read', 'question:create', 'question:review', 'exam:manage', 'stats:read', 'job:manage',
-    'doclib:read', 'doclib:compose', 'bank:manage', 'catalog:manage',
+    'doclib:read', 'doclib:compose', 'bank:manage',
     'audit:read', 'event:read', 'outbox:manage', 'user:read']
 };
 
@@ -309,11 +309,9 @@ function issueAdmission(attempt, exam, teacher) {
         updatedAt: iso(issued),
         updatedBy: teacher ? teacher.id : attempt.userId
       });
-      u.points = (u.points || 0) + (exist.level === 'excellent' ? 10 : 0);
     }
     return { admission: exist, created: false, upgraded: upgrade };
   }
-  const POINTS = { chapter_quiz: 5, skill_exam: 20, admission_exam: 30 };
   const adm = {
     id: uid('adm'),
     userId: attempt.userId,
@@ -334,9 +332,7 @@ function issueAdmission(attempt, exam, teacher) {
     updatedBy: teacher ? teacher.id : 'system'
   };
   DB.admissions.push(adm);
-  const gain = (POINTS[exam.type] || 0) + (attempt.totalScore >= 85 ? 10 : 0);
-  u.points = (u.points || 0) + gain;
-  return { admission: adm, created: true, points: gain };
+  return { admission: adm, created: true };
 }
 
 /* ---------------- AI 命题（本地命题引擎 + 可切换模型） ---------------- */
@@ -891,7 +887,6 @@ const server = http.createServer(async (req, res) => {
         account: me.account,
         dept: me.dept,
         avatarColor: me.avatarColor,
-        points: me.points,
         admissions: DB.admissions.filter((a) => a.userId === me.id).length
       });
     }
@@ -909,8 +904,7 @@ const server = http.createServer(async (req, res) => {
         stats: {
           available: list.filter((x) => x.unlocked).length,
           done: list.filter((x) => x.bestScore !== null).length,
-          admissions: DB.admissions.filter((a) => a.userId === me.id && a.status === 'active').length,
-          points: me.points
+          admissions: DB.admissions.filter((a) => a.userId === me.id && a.status === 'active').length
         }
       });
     }
@@ -1228,7 +1222,7 @@ const server = http.createServer(async (req, res) => {
         .filter((a) => (me.role === 'student' ? a.userId === me.id : true))
         .map((a) => ({ ...a, expired: new Date(a.expireAt) < now(), examType: (examById(a.examId) || {}).type }))
         .sort((x, y) => (x.expireAt < y.expireAt ? 1 : -1));
-      return ok(res, Object.assign(paginate(rows, url), { points: me.points }));
+      return ok(res, paginate(rows, url));
     }
 
     /* ---- 课程与章节（命题原料） ---- */
@@ -1602,6 +1596,11 @@ const server = http.createServer(async (req, res) => {
         };
       });
       return ok(res, { courses: rows });
+    }
+    /* §3 职责边界：课程 / 章节 / 知识点由自学平台维护，考试平台只读引用。
+       原分类维护写接口已按规范下线，保留 GET 供组卷与命题读取（§11.1 通过公开 API 查询）。 */
+    if (/^\/api\/v1\/catalog(\/|$)/.test(p) && method !== 'GET') {
+      return fail(res, 'FORBIDDEN', '课程目录由自学平台维护，考试平台只读引用，不提供分类维护', 403);
     }
     if (p === '/api/v1/catalog/courses' && method === 'POST') {
       need(me, expired, 'catalog:manage');

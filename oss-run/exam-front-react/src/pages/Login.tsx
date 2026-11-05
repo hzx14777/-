@@ -1,11 +1,13 @@
 /**
- * 登录页（§2.2/§7：不自建账号密码体系，跳转论坛统一认证中心）
+ * 登录页（§2.2 / §7.1：不自建账号密码体系，跳转论坛统一认证中心）
+ * 页面只负责发起授权码跳转，凭据交换全部由服务端完成（§7.2）。
  */
 import { useEffect, useRef, useState } from 'react';
 import { Button, Card, Tag, Typography } from 'antd';
 import { useSearchParams } from 'react-router-dom';
 import { endpoints } from '../api';
-import { pageIn } from '../motion';
+import { pageIn } from '../utils/motion';
+import { config } from '../env';
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
@@ -58,11 +60,10 @@ export default function Login() {
               当前为联调模式（Mock 认证中心），生产环境由论坛平台提供认证服务。
             </Typography.Paragraph>
           )}
-          {meta && (
-            <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginTop: 8, marginBottom: 0 }}>
-              appCode: {meta.appCode} · sourcePlatform: {meta.sourcePlatform}
-            </Typography.Paragraph>
-          )}
+          <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginTop: 8, marginBottom: 0 }}>
+            appCode：{config.appCode} · 环境：{config.env}
+            {meta ? ` · sourcePlatform：${meta.sourcePlatform}` : ''}
+          </Typography.Paragraph>
         </Card>
       </div>
     </div>

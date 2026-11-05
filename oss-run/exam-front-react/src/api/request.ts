@@ -1,16 +1,19 @@
 /**
- * 统一请求封装（§12 公共请求/认证/错误处理）
- * - 基址来自 §14 环境变量 VITE_API_BASE_URL，业务代码不写死服务地址
- * - 解析 §10.1 统一响应 { code, message, data, requestId }
- * - §10.3 统一错误码：AUTH_TOKEN_EXPIRED 自动续期重试一次；AUTH_REQUIRED 跳转统一登录
- * - §10.3/§12 所有错误提示携带 requestId 便于跨平台联调追踪
+ * 统一请求封装（约束规范 §10.1 响应结构、§10.3 错误码、§12 公共请求与错误处理）
+ *
+ * - 基址取自 §14 环境变量（经 src/env.ts 统一读取），业务代码不写死服务地址
+ * - 解析统一信封 { code, message, data, requestId }
+ * - AUTH_TOKEN_EXPIRED → 静默续期并重试一次；AUTH_REQUIRED → 回统一登录
+ * - 其余错误统一提示并附带 requestId，便于跨平台联调追踪
  */
 import { message } from 'antd';
+import { config } from '../env';
+import type { ApiEnvelope, ApiErrorCode } from '../types/api';
 
-export const APP_CODE = import.meta.env.VITE_APP_CODE || 'exam';
-export const ENV = import.meta.env.VITE_ENV || 'development';
-const BASE: string = import.meta.env.VITE_API_BASE_URL || '';
+export const APP_CODE = config.appCode;
+export const ENV = config.env;
 
+const BASE = config.apiBaseUrl;
 const ACCESS_KEY = 'yj_access';
 const REFRESH_KEY = 'yj_refresh';
 const USER_KEY = 'yj_user';
@@ -18,23 +21,28 @@ const USER_KEY = 'yj_user';
 export function getAccess(): string {
   return localStorage.getItem(ACCESS_KEY) || '';
 }
+
 export function getRefresh(): string {
   return localStorage.getItem(REFRESH_KEY) || '';
 }
+
 export function setTokens(access: string, refresh: string) {
   localStorage.setItem(ACCESS_KEY, access);
   localStorage.setItem(REFRESH_KEY, refresh);
 }
-export function getStoredUser(): any {
+
+export function getStoredUser<T = unknown>(): T | null {
   try {
     return JSON.parse(localStorage.getItem(USER_KEY) || 'null');
   } catch {
     return null;
   }
 }
-export function setStoredUser(u: any) {
+
+export function setStoredUser(u: unknown) {
   localStorage.setItem(USER_KEY, JSON.stringify(u));
 }
+
 export function clearSession() {
   localStorage.removeItem(ACCESS_KEY);
   localStorage.removeItem(REFRESH_KEY);
@@ -44,8 +52,10 @@ export function clearSession() {
 export class ApiError extends Error {
   code: string;
   requestId: string;
+
   constructor(code: string, msg: string, requestId: string) {
     super(msg);
+    this.name = 'ApiError';
     this.code = code;
     this.requestId = requestId;
   }
@@ -53,6 +63,7 @@ export class ApiError extends Error {
 
 let refreshing: Promise<boolean> | null = null;
 
+/** 单飞续期：并发请求只触发一次 refresh（§7.4 Refresh Token） */
 async function doRefresh(): Promise<boolean> {
   if (!getRefresh()) return false;
   if (!refreshing) {
@@ -63,7 +74,7 @@ async function doRefresh(): Promise<boolean> {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ refreshToken: getRefresh() })
         });
-        const j = await res.json();
+        const j = (await res.json()) as ApiEnvelope<{ accessToken: string; refreshToken: string }>;
         if (j.code === 'OK' && j.data?.accessToken) {
           setTokens(j.data.accessToken, j.data.refreshToken);
           return true;
@@ -79,20 +90,24 @@ async function doRefresh(): Promise<boolean> {
   return refreshing;
 }
 
+/** 回统一登录页，保留当前地址便于登录后返回（§7.2） */
 function toLogin() {
   clearSession();
   const redirect = encodeURIComponent(window.location.pathname + window.location.search);
   window.location.href = `/yj/login?redirect=${redirect}`;
 }
 
-interface Opts {
-  method?: string;
-  body?: any;
-  raw?: boolean;
+interface RequestOptions {
+  method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
+  body?: unknown;
 }
 
-export async function api<T = any>(path: string, opts: Opts = {}): Promise<T> {
-  const send = async () => {
+/**
+ * 业务请求入口。默认泛型为 any 以兼容历史页面，调用方可显式指定类型（如 api<PageResult<Exam>>）。
+ * 响应信封本身的解析与错误处理在下方统一完成。
+ */
+export async function api<T = any>(path: string, opts: RequestOptions = {}): Promise<T> {
+  const send = async (): Promise<ApiEnvelope<T>> => {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (getAccess()) headers.Authorization = `Bearer ${getAccess()}`;
     const res = await fetch(BASE + path, {
@@ -100,33 +115,26 @@ export async function api<T = any>(path: string, opts: Opts = {}): Promise<T> {
       headers,
       body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined
     });
-    return res.json();
+    return (await res.json()) as ApiEnvelope<T>;
   };
 
-  let j = await send();
+  let body = await send();
 
-  // §7.4/§10.3：Token 过期 → 续期后重试一次
-  if (j.code === 'AUTH_TOKEN_EXPIRED' && getRefresh()) {
-    const okRefresh = await doRefresh();
-    if (okRefresh) j = await send();
+  // §7.4：Token 过期 → 续期后重试一次
+  if ((body.code as ApiErrorCode) === 'AUTH_TOKEN_EXPIRED' && getRefresh()) {
+    const ok = await doRefresh();
+    if (ok) body = await send();
   }
 
-  if (j.code === 'OK') return j.data as T;
+  if (body.code === 'OK') return body.data;
 
-  if (j.code === 'AUTH_TOKEN_EXPIRED' || j.code === 'AUTH_REQUIRED') {
+  if (body.code === 'AUTH_TOKEN_EXPIRED' || body.code === 'AUTH_REQUIRED') {
     clearSession();
     message.warning('登录状态已失效，请重新通过认证中心登录');
     setTimeout(toLogin, 600);
-    throw new ApiError(j.code, j.message, j.requestId);
+    throw new ApiError(body.code, body.message, body.requestId);
   }
 
-  // §10.3：其余统一错误码直接提示，并携带 requestId
-  message.error(`${j.message || '请求失败'}（requestId: ${j.requestId || '-'}）`);
-  throw new ApiError(j.code || 'INTERNAL_ERROR', j.message || '请求失败', j.requestId || '-');
-}
-
-/** 平台间服务调用（§11.2 公开 API，需 X-Platform-Key） */
-export function platformKey(): string {
-  // 前端演示环境使用演示密钥；生产由服务间调用，不经过前端
-  return 'yj-demo-platform-key';
+  message.error(`${body.message || '请求失败'}（requestId: ${body.requestId || '-'}）`);
+  throw new ApiError(body.code || 'INTERNAL_ERROR', body.message || '请求失败', body.requestId || '-');
 }

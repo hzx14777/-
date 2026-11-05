@@ -1,14 +1,8 @@
 /**
  * 试卷 / 练习导出：统一的排版与文件下载（HTML / Word / 打印）
+ * 题型/难度的中文与颜色统一取自 constants/dictionary.ts，导出与页面展示同源。
  */
-export const TYPE_LABEL: Record<string, string> = {
-  single: '单选题', multiple: '多选题', judge: '判断题', blank: '填空题', essay: '简答题'
-};
-export const TYPE_COLOR: Record<string, string> = {
-  single: 'blue', multiple: 'geekblue', judge: 'cyan', blank: 'purple', essay: 'magenta'
-};
-export const DIFF_LABEL: Record<string, string> = { easy: '简单', medium: '中等', hard: '困难' };
-export const DIFF_COLOR: Record<string, string> = { easy: 'green', medium: 'orange', hard: 'red' };
+import { formatAnswer } from './format';
 
 const SECTIONS: Record<string, string> = {
   single: '单项选择题', multiple: '多项选择题', judge: '判断题', blank: '填空题', essay: '简答题'
@@ -21,12 +15,8 @@ const esc = (s: any) =>
 
 export const fmtAnswer = (q: any) => {
   if (!q) return '';
-  if (q.type === 'judge') return q.answer === 'T' ? '正确' : '错误';
   if (q.answer === null || q.answer === undefined) return '主观题（按评分点给分）';
-  if (Array.isArray(q.answer)) {
-    return q.answer.map((x: any) => (Array.isArray(x) ? x.join(' / ') : x)).filter((x: string) => x !== '').join('；');
-  }
-  return String(q.answer);
+  return formatAnswer(q.answer, q.type);
 };
 
 export const PAPER_CSS = `

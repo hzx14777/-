@@ -3,21 +3,8 @@
  * 权限数据来自认证中心 /me（§7.3），前端权限控制仅用于体验，服务端另有鉴权（§8.2）
  */
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { api, getAccess, getStoredUser, setStoredUser, clearSession } from './api/request';
-
-interface SessionUser {
-  userId: string;
-  studentNo: string | null;
-  realName: string;
-  roles: string[];
-  permissions: string[];
-  organizationId: string | null;
-  classId: string | null;
-  dept?: string;
-  avatarColor?: string;
-  points?: number;
-  admissions?: number;
-}
+import { api, getAccess, getStoredUser, setStoredUser, clearSession } from '../api/request';
+import type { SessionUser } from '../types/api';
 
 interface SessionCtx {
   user: SessionUser | null;

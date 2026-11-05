@@ -2,10 +2,10 @@
  * 在线考试发布：文档审核（通过 / 驳回）→ 发布考试（生成试卷与考试）→ 发布管理（上下架 / 删除）
  * 权限：教师与管理员均可审核、发布；教师只能上下架自己发布的考试，管理员可管理全部并删除。
  */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  Alert, App as AntApp, Button, Card, DatePicker, Drawer, Empty, Input, InputNumber, Modal,
-  Popconfirm, Select, Space, Statistic, Switch, Table, Tabs, Tag, Tooltip, Typography
+  Alert, App as AntApp, Button, DatePicker, Drawer, Input, InputNumber, Modal,
+  Popconfirm, Select, Space, Steps, Switch, Tabs, Tag, Tooltip, Typography
 } from 'antd';
 import {
   CheckCircleOutlined, CloseCircleOutlined, EyeOutlined, RocketOutlined,
@@ -14,22 +14,11 @@ import {
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import { endpoints } from '../api';
-import { useSession } from '../session';
-import { PAPER_CSS, paperBody } from '../paper';
-
-const REVIEW_META: Record<string, { label: string; color: string }> = {
-  pending: { label: '待审核', color: 'gold' },
-  approved: { label: '审核通过', color: 'green' },
-  rejected: { label: '已驳回', color: 'red' }
-};
-
-const TYPE_OPTIONS = [
-  { value: 'skill_exam', label: '专项技能卷' },
-  { value: 'chapter_quiz', label: '章节随堂测' },
-  { value: 'admission_exam', label: '项目准入卷' }
-];
-
-const fmt = (v?: string) => (v ? String(v).replace('T', ' ').slice(0, 16) : '—');
+import { useSession } from '../contexts/session';
+import { PAPER_CSS, paperBody } from '../utils/paper';
+import { formatDateTime, formatDateTimeRange, formatDuration, formatScore } from '../utils/format';
+import { dictOptions } from '../constants/dictionary';
+import { PageContainer, Section, DataTable, StatCard, StatusTag } from '../components';
 
 export default function Publish() {
   const { hasPerm } = useSession();
@@ -178,12 +167,14 @@ export default function Publish() {
     { title: '学科', dataIndex: 'courseName', width: 110, ellipsis: true },
     { title: '题量 / 总分', width: 104, render: (_: any, d: any) => `${d.questionCount} 题 / ${d.totalScore} 分` },
     { title: '组卷人', dataIndex: 'createdByName', width: 84 },
-    { title: '组卷时间', dataIndex: 'createdAt', width: 124, render: (v: string) => <span style={{ fontSize: 12.5 }}>{fmt(v)}</span> },
+    { title: '组卷时间', dataIndex: 'createdAt', width: 150, render: (v: string) => <span style={{ fontSize: 12.5 }}>{formatDateTime(v)}</span> },
     {
       title: '审核状态', dataIndex: 'reviewStatus', width: 100,
       render: (s: string, d: any) => (
-        <Tooltip title={d.reviewNote ? `审核意见：${d.reviewNote}` : `${d.reviewedByName || ''} ${fmt(d.reviewedAt)}`}>
-          <Tag color={(REVIEW_META[s] || REVIEW_META.pending).color}>{(REVIEW_META[s] || REVIEW_META.pending).label}</Tag>
+        <Tooltip title={d.reviewNote ? `审核意见：${d.reviewNote}` : `${d.reviewedByName || ''} ${formatDateTime(d.reviewedAt)}`}>
+          <span>
+            <StatusTag kind="reviewStatus" value={s} />
+          </span>
         </Tooltip>
       )
     },
@@ -224,30 +215,30 @@ export default function Publish() {
 
   const examColumns = [
     { title: '考试名称', dataIndex: 'title', ellipsis: true },
-    { title: '类型', dataIndex: 'typeName', width: 110 },
+    { title: '类型', dataIndex: 'type', width: 110, render: (t: string) => <StatusTag kind="examType" value={t} /> },
     {
       title: '来源文档', dataIndex: 'documentTitle', width: 180, ellipsis: true,
-      render: (v: string, e: any) => (v ? <a onClick={() => { setTab('review'); setDocKw(v); setDocApplied(v); setDocPage(1); }}>{v}</a> : <Tag>平台预置</Tag>)
+      render: (v: string) => (v ? <a onClick={() => { setTab('review'); setDocKw(v); setDocApplied(v); setDocPage(1); }}>{v}</a> : <Tag>平台预置</Tag>)
     },
-    { title: '题量 / 总分', width: 110, render: (_: any, e: any) => `${e.questionCount} 题 / ${e.totalScore} 分` },
-    { title: '时长', dataIndex: 'duration', width: 80, render: (v: number) => `${v} 分钟` },
+    { title: '题量 / 总分', width: 110, render: (_: any, e: any) => `${e.questionCount} 题 / ${formatScore(e.totalScore)} 分` },
+    { title: '时长', dataIndex: 'duration', width: 90, render: (v: number) => formatDuration(v) },
     {
-      title: '开放时间', width: 200,
-      render: (_: any, e: any) => <span style={{ fontSize: 12.5 }}>{fmt(e.startAt)} ~ {fmt(e.endAt)}</span>
+      title: '开放时间', width: 220,
+      render: (_: any, e: any) => <span style={{ fontSize: 12.5 }}>{formatDateTimeRange(e.startAt, e.endAt)}</span>
     },
     {
-      title: '答卷', width: 150,
+      title: '答卷', width: 160,
       render: (_: any, e: any) => (
         <span style={{ fontSize: 12.5 }}>
           参考 {e.attemptCount} 人 · 已出分 {e.gradedCount}
-          {e.avgScore !== null && <span style={{ color: '#1e5eff' }}> · 均分 {e.avgScore}</span>}
+          {e.avgScore !== null && <span style={{ color: '#1e5eff' }}> · 均分 {formatScore(e.avgScore)}</span>}
         </span>
       )
     },
     { title: '发布人', dataIndex: 'publishedByName', width: 100, ellipsis: true },
     {
-      title: '状态', dataIndex: 'status', width: 90,
-      render: (s: string) => (s === 'published' ? <Tag color="success">已发布</Tag> : <Tag>已下架</Tag>)
+      title: '状态', dataIndex: 'status', width: 96,
+      render: (s: string) => <StatusTag kind="examStatus" value={s} />
     },
     {
       title: '操作', width: 230, fixed: 'right' as const,
@@ -270,75 +261,131 @@ export default function Publish() {
   const reviewPane = (
     <>
       <div className="yj-stat-row" style={{ gridTemplateColumns: 'repeat(4, minmax(150px, 220px))' }}>
-        <Card size="small"><Statistic title="待审核文档" value={docStats.pending || 0} suffix="份" valueStyle={{ color: '#d48806' }} /></Card>
-        <Card size="small"><Statistic title="审核通过待发布" value={docStats.approved || 0} suffix="份" valueStyle={{ color: '#1e5eff' }} /></Card>
-        <Card size="small"><Statistic title="已驳回" value={docStats.rejected || 0} suffix="份" /></Card>
-        <Card size="small"><Statistic title="已发布考试" value={docStats.published || 0} suffix="场" valueStyle={{ color: '#389e0d' }} /></Card>
+        <StatCard label="待审核文档" value={docStats.pending || 0} suffix="份" color="#c2761b" />
+        <StatCard label="审核通过待发布" value={docStats.approved || 0} suffix="份" color="#1e5eff" />
+        <StatCard label="已驳回" value={docStats.rejected || 0} suffix="份" />
+        <StatCard label="已发布考试" value={docStats.published || 0} suffix="场" color="#0f9d76" />
       </div>
-      <Alert type="info" showIcon style={{ marginBottom: 12 }}
+      <Alert
+        type="info"
+        showIcon
+        style={{ marginBottom: 12 }}
         message="审核通过后才能发布考试；发布时会按文档快照生成独立试卷，题库后续变动不影响已发布考试。"
-        description={isAdmin
-          ? '管理员：可审核、发布、上下架与删除任意考试，并可管理题库与分类。'
-          : '教师：可审核、发布文档库中的试卷，并上下架自己发布的考试；删除考试需管理员操作。'} />
-      <div className="yj-section">
+        description={
+          isAdmin
+            ? '管理员：可审核、发布、上下架与删除任意考试，并可维护题库题目。'
+            : '教师：可审核、发布文档库中的试卷，并上下架自己发布的考试；删除考试需管理员操作。'
+        }
+      />
+      <Section>
         <Space wrap style={{ marginBottom: 10 }}>
-          <Select allowClear placeholder="审核状态" style={{ width: 140 }} value={reviewFilter} onChange={(v) => { setReviewFilter(v); setDocPage(1); }}
-            options={Object.keys(REVIEW_META).map((k) => ({ value: k, label: REVIEW_META[k].label }))} />
-          <Input.Search placeholder="文档名称 / 学科" allowClear style={{ width: 220 }} value={docKw}
-            onChange={(e) => setDocKw(e.target.value)} onSearch={() => { setDocPage(1); setDocApplied(docKw); }} />
-          <Button onClick={() => { setReviewFilter(undefined); setDocKw(''); setDocApplied(''); setDocPage(1); loadDocs(); }}>重置</Button>
+          <Select
+            allowClear
+            placeholder="审核状态"
+            style={{ width: 140 }}
+            value={reviewFilter}
+            onChange={(v) => {
+              setReviewFilter(v);
+              setDocPage(1);
+            }}
+            options={dictOptions('reviewStatus')}
+          />
+          <Input.Search
+            placeholder="文档名称 / 学科"
+            allowClear
+            style={{ width: 220 }}
+            value={docKw}
+            onChange={(e) => setDocKw(e.target.value)}
+            onSearch={() => {
+              setDocPage(1);
+              setDocApplied(docKw);
+            }}
+          />
+          <Button onClick={() => { setReviewFilter(undefined); setDocKw(''); setDocApplied(''); setDocPage(1); }}>重置</Button>
         </Space>
-        <Table
-          size="small" rowKey="id" loading={docLoading} dataSource={docs} columns={docColumns}
-          locale={{ emptyText: <Empty description="文档库暂无待审核的试卷，去「文档库 → 选题组卷」生成" /> }}
-          pagination={{
-            current: docPage, pageSize: docPageSize, total: docTotal, showSizeChanger: true,
-            showTotal: (t) => `共 ${t} 份`, onChange: (p, ps) => { setDocPage(p); setDocPageSize(ps); }
-          }}
+        <DataTable
+          loading={docLoading}
+          dataSource={docs}
+          columns={docColumns}
+          page={docPage}
+          pageSize={docPageSize}
+          total={docTotal}
+          onPageChange={(p, ps) => { setDocPage(p); setDocPageSize(ps); }}
+          emptyText="文档库暂无待审核的试卷，去「文档库 → 选题组卷」生成"
         />
-      </div>
+      </Section>
     </>
   );
 
   const examPane = (
     <>
       <div className="yj-stat-row" style={{ gridTemplateColumns: 'repeat(4, minmax(150px, 220px))' }}>
-        <Card size="small"><Statistic title="已发布考试" value={examStats.published || 0} suffix="场" valueStyle={{ color: '#389e0d' }} /></Card>
-        <Card size="small"><Statistic title="已下架" value={examStats.archived || 0} suffix="场" /></Card>
-        <Card size="small"><Statistic title="文档发布" value={examStats.doclib || 0} suffix="场" /></Card>
-        <Card size="small"><Statistic title="学生答卷" value={examStats.attempts || 0} suffix="份"
-          valueStyle={{ color: (examStats.pendingGrading || 0) > 0 ? '#d48806' : undefined }} /></Card>
-      </div>
-      <div className="yj-section">
-        <Space wrap style={{ marginBottom: 10 }}>
-          <Select allowClear placeholder="发布状态" style={{ width: 140 }} value={examStatus} onChange={(v) => { setExamStatus(v); setExamPage(1); }}
-            options={[{ value: 'published', label: '已发布' }, { value: 'archived', label: '已下架' }]} />
-          <Input.Search placeholder="考试名称" allowClear style={{ width: 220 }} value={examKw}
-            onChange={(e) => setExamKw(e.target.value)} onSearch={() => { setExamPage(1); setExamApplied(examKw); }} />
-          <Button onClick={() => { setExamStatus(undefined); setExamKw(''); setExamApplied(''); setExamPage(1); loadExams(); }}>重置</Button>
-        </Space>
-        <Table
-          size="small" rowKey="id" loading={examLoading} dataSource={exams} columns={examColumns}
-          scroll={{ x: 1400 }}
-          locale={{ emptyText: <Empty description="还没有发布任何考试" /> }}
-          pagination={{
-            current: examPage, pageSize: examPageSize, total: examTotal, showSizeChanger: true,
-            showTotal: (t) => `共 ${t} 场`, onChange: (p, ps) => { setExamPage(p); setExamPageSize(ps); }
-          }}
+        <StatCard label="已发布考试" value={examStats.published || 0} suffix="场" color="#0f9d76" />
+        <StatCard label="已下架" value={examStats.archived || 0} suffix="场" />
+        <StatCard label="文档发布" value={examStats.doclib || 0} suffix="场" />
+        <StatCard
+          label="学生答卷"
+          value={examStats.attempts || 0}
+          suffix="份"
+          color={(examStats.pendingGrading || 0) > 0 ? '#c2761b' : undefined}
         />
       </div>
+      <Section>
+        <Space wrap style={{ marginBottom: 10 }}>
+          <Select
+            allowClear
+            placeholder="发布状态"
+            style={{ width: 140 }}
+            value={examStatus}
+            onChange={(v) => {
+              setExamStatus(v);
+              setExamPage(1);
+            }}
+            options={dictOptions('examStatus')}
+          />
+          <Input.Search
+            placeholder="考试名称"
+            allowClear
+            style={{ width: 220 }}
+            value={examKw}
+            onChange={(e) => setExamKw(e.target.value)}
+            onSearch={() => {
+              setExamPage(1);
+              setExamApplied(examKw);
+            }}
+          />
+          <Button onClick={() => { setExamStatus(undefined); setExamKw(''); setExamApplied(''); setExamPage(1); }}>重置</Button>
+        </Space>
+        <DataTable
+          loading={examLoading}
+          dataSource={exams}
+          columns={examColumns}
+          scroll={{ x: 1400 }}
+          page={examPage}
+          pageSize={examPageSize}
+          total={examTotal}
+          onPageChange={(p, ps) => { setExamPage(p); setExamPageSize(ps); }}
+          emptyText="还没有发布任何考试"
+        />
+      </Section>
     </>
   );
 
   return (
-    <div>
-      <div className="yj-page-title">考试发布</div>
-      <Typography.Paragraph type="secondary" style={{ marginTop: -8, fontSize: 13 }}>
-        考试从组卷到学生作答的完整链路：<b>文档库组卷 → 审核文档 → 发布考试 → 学生端接收作答</b>。
-        发布状态实时同步到学生端考试大厅，下架后学生不再看到该考试，已产生的成绩保留。
-      </Typography.Paragraph>
-
-      <Steps3 />
+    <PageContainer
+      title="考试发布"
+      description="考试从组卷到学生作答的完整链路：文档库组卷 → 审核文档 → 发布考试 → 学生端接收作答。发布状态实时同步到考试大厅，下架后学生不再看到该考试，已产生的成绩保留。"
+    >
+      <Steps
+        size="small"
+        style={{ marginBottom: 16 }}
+        items={[
+          { title: '文档库组卷', description: '选题生成试卷 / 练习' },
+          { title: '审核文档', description: '核对题量与分值' },
+          { title: '发布考试', description: '配置时间与规则' },
+          { title: '学生作答', description: '大厅接收并在线答题' }
+        ]}
+      />
 
       <Tabs activeKey={tab} onChange={setTab} items={[
         { key: 'review', label: `文档审核与发布${(docStats.pending || 0) ? `（${docStats.pending} 待审）` : ''}`, children: reviewPane },
@@ -383,7 +430,7 @@ export default function Publish() {
             <div style={{ display: 'flex', gap: 12 }}>
               <div style={{ flex: 1 }}>
                 <div style={{ marginBottom: 6, fontSize: 13 }}>考试类型</div>
-                <Select style={{ width: '100%' }} value={pubForm.type} onChange={(v) => setPubForm({ ...pubForm, type: v })} options={TYPE_OPTIONS} />
+                <Select style={{ width: '100%' }} value={pubForm.type} onChange={(v) => setPubForm({ ...pubForm, type: v })} options={dictOptions('examType')} />
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ marginBottom: 6, fontSize: 13 }}>时长（分钟）</div>
@@ -427,39 +474,10 @@ export default function Publish() {
 
       {/* 文档预览 */}
       <Drawer title={preview?.title || '文档预览'} open={previewOpen} onClose={() => setPreviewOpen(false)} width={780}
-        extra={<Tag color="blue">{preview?.questionCount} 题 / {preview?.totalScore} 分</Tag>}>
+        extra={<Tag color="blue">{preview?.questionCount} 题 / {formatScore(preview?.totalScore)} 分</Tag>}>
         <style>{PAPER_CSS}</style>
         {preview && <div className="yj-paper" dangerouslySetInnerHTML={{ __html: paperBody(preview, true) }} />}
       </Drawer>
-    </div>
-  );
-}
-
-/** 流程条：组卷 → 审核 → 发布 → 学生作答 */
-function Steps3() {
-  const steps = useMemo(() => ([
-    { t: '文档库组卷', d: '选题生成试卷 / 练习' },
-    { t: '审核文档', d: '核对题量与分值' },
-    { t: '发布考试', d: '配置时间与规则' },
-    { t: '学生作答', d: '大厅接收并在线答题' }
-  ]), []);
-  return (
-    <div style={{
-      display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 10,
-      background: '#fff', border: '1px solid #e6ebf4', borderRadius: 12, padding: '14px 18px', marginBottom: 16
-    }}>
-      {steps.map((s, i) => (
-        <div key={s.t} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <div style={{
-            width: 26, height: 26, borderRadius: 13, background: i === 3 ? '#389e0d' : '#1e5eff', color: '#fff',
-            fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: '0 0 auto'
-          }}>{i + 1}</div>
-          <div>
-            <div style={{ fontSize: 13.5, fontWeight: 600, color: '#0e1c36' }}>{s.t}</div>
-            <div style={{ fontSize: 12, color: '#6b7a90' }}>{s.d}</div>
-          </div>
-        </div>
-      ))}
-    </div>
+    </PageContainer>
   );
 }

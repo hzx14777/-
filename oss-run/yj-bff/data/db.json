@@ -4651,7 +4651,6 @@
         "doclib:read",
         "doclib:compose",
         "bank:manage",
-        "catalog:manage",
         "audit:read",
         "event:read",
         "outbox:manage",
@@ -11943,13 +11942,160 @@
   ],
   "audits": [
     {
+      "id": "au_mw2untkhbb4e",
+      "at": "2026-11-05T09:11:17+08:00",
+      "actor": "陈立群",
+      "role": "teacher",
+      "action": "统一登录",
+      "target": "u_tch",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw2tn697b3fe",
+      "at": "2026-11-05T08:42:47+08:00",
+      "actor": "陈立群",
+      "role": "teacher",
+      "action": "令牌续期",
+      "target": "u_tch",
+      "detail": "刷新令牌轮换"
+    },
+    {
+      "id": "au_mw205j2w1bf9",
+      "at": "2026-11-04T18:57:15+08:00",
+      "actor": "陈立群",
+      "role": "teacher",
+      "action": "统一登录",
+      "target": "u_tch",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw205bb8a880",
+      "at": "2026-11-04T18:57:05+08:00",
+      "actor": "陈立群",
+      "role": "teacher",
+      "action": "令牌续期",
+      "target": "u_tch",
+      "detail": "刷新令牌轮换"
+    },
+    {
+      "id": "au_mw1vtg713b06",
+      "at": "2026-11-04T16:55:53+08:00",
+      "actor": "平台管理员",
+      "role": "admin",
+      "action": "统一登录",
+      "target": "u_adm",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw1vtf6ddb13",
+      "at": "2026-11-04T16:55:51+08:00",
+      "actor": "陈立群",
+      "role": "teacher",
+      "action": "统一登录",
+      "target": "u_tch",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw1vt42e83f2",
+      "at": "2026-11-04T16:55:37+08:00",
+      "actor": "平台管理员",
+      "role": "admin",
+      "action": "统一登录",
+      "target": "u_adm",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw1vss577dc7",
+      "at": "2026-11-04T16:55:21+08:00",
+      "actor": "平台管理员",
+      "role": "admin",
+      "action": "统一登录",
+      "target": "u_adm",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw1vsh5e6ab6",
+      "at": "2026-11-04T16:55:07+08:00",
+      "actor": "平台管理员",
+      "role": "admin",
+      "action": "统一登录",
+      "target": "u_adm",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw1voqpfa4c1",
+      "at": "2026-11-04T16:52:13+08:00",
+      "actor": "平台管理员",
+      "role": "admin",
+      "action": "统一登录",
+      "target": "u_adm",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw1vofj5253f",
+      "at": "2026-11-04T16:51:59+08:00",
+      "actor": "平台管理员",
+      "role": "admin",
+      "action": "统一登录",
+      "target": "u_adm",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw1vnrdi67a7",
+      "at": "2026-11-04T16:51:27+08:00",
+      "actor": "平台管理员",
+      "role": "admin",
+      "action": "统一登录",
+      "target": "u_adm",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw1vng3rde61",
+      "at": "2026-11-04T16:51:13+08:00",
+      "actor": "平台管理员",
+      "role": "admin",
+      "action": "统一登录",
+      "target": "u_adm",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw1vlkmu8608",
+      "at": "2026-11-04T16:49:45+08:00",
+      "actor": "平台管理员",
+      "role": "admin",
+      "action": "统一登录",
+      "target": "u_adm",
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T16:49:45+08:00",
+      "updatedAt": "2026-11-04T16:49:45+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw1vlg0wf532",
+      "at": "2026-11-04T16:49:39+08:00",
+      "actor": "陈立群",
+      "role": "teacher",
+      "action": "统一登录",
+      "target": "u_tch",
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T16:49:39+08:00",
+      "updatedAt": "2026-11-04T16:49:39+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
       "id": "au_mw1oj3onbd28",
       "at": "2026-11-04T13:31:53+08:00",
       "actor": "陈立群",
       "role": "teacher",
       "action": "提交答卷",
       "target": "att_mw1ny2w05d81",
-      "detail": "「综合试卷 2026/11/4」客观题 10 分"
+      "detail": "「综合试卷 2026/11/4」客观题 10 分",
+      "createdAt": "2026-11-04T13:31:53+08:00",
+      "updatedAt": "2026-11-04T13:31:53+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
     },
     {
       "id": "au_mw1oir0u4be2",
@@ -11958,7 +12104,11 @@
       "role": "teacher",
       "action": "统一登录",
       "target": "u_tch",
-      "detail": "经认证中心（mock）建立本地会话"
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T13:31:36+08:00",
+      "updatedAt": "2026-11-04T13:31:36+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
     },
     {
       "id": "au_mw1obnbd30d7",
@@ -11967,7 +12117,11 @@
       "role": "teacher",
       "action": "统一登录",
       "target": "u_tch",
-      "detail": "经认证中心（mock）建立本地会话"
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T13:26:05+08:00",
+      "updatedAt": "2026-11-04T13:26:05+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
     },
     {
       "id": "au_mw1oao605afd",
@@ -22232,10 +22386,12 @@
       }
     },
     {
-      "id": "ev_mw1oj3om7d93",
-      "event": "exam.submitted",
-      "at": "2026-11-04T13:31:53+08:00",
-      "payload": {
+      "eventId": "ev_mw1oj3om7d93",
+      "eventType": "exam.submitted",
+      "occurredAt": "2026-11-04T13:31:53+08:00",
+      "sourcePlatform": "exam",
+      "operatorId": "",
+      "data": {
         "attemptId": "att_mw1ny2w05d81",
         "examId": "e_mw1ic1rgae9c",
         "userId": "u_tch"
@@ -22865,8 +23021,113 @@
       "token": "lj_rt_7714aea6e25fc7af4c4bf6a9d671c30e",
       "userId": "u_tch",
       "exp": 1794375096654,
-      "revoked": false,
+      "revoked": true,
       "createdAt": "2026-11-04T13:31:36+08:00"
+    },
+    {
+      "token": "lj_rt_5f5536b6e88aed7f1d690d119170d345",
+      "userId": "u_tch",
+      "exp": 1794386979680,
+      "revoked": false,
+      "createdAt": "2026-11-04T16:49:39+08:00"
+    },
+    {
+      "token": "lj_rt_bf997570e1580d3026ccfe3c038e64d0",
+      "userId": "u_adm",
+      "exp": 1794386985654,
+      "revoked": false,
+      "createdAt": "2026-11-04T16:49:45+08:00"
+    },
+    {
+      "token": "lj_rt_b20c85e8d387e1dc4901664cda917a79",
+      "userId": "u_adm",
+      "exp": 1794387073095,
+      "revoked": false,
+      "createdAt": "2026-11-04T16:51:13+08:00"
+    },
+    {
+      "token": "lj_rt_7f19cc007ff6327450687435c0289135",
+      "userId": "u_adm",
+      "exp": 1794387087702,
+      "revoked": false,
+      "createdAt": "2026-11-04T16:51:27+08:00"
+    },
+    {
+      "token": "lj_rt_477de3bad9cde94781129fbbd437e8d9",
+      "userId": "u_adm",
+      "exp": 1794387119009,
+      "revoked": false,
+      "createdAt": "2026-11-04T16:51:59+08:00"
+    },
+    {
+      "token": "lj_rt_2a07d84c623b839f0307165ca2d442a0",
+      "userId": "u_adm",
+      "exp": 1794387133491,
+      "revoked": false,
+      "createdAt": "2026-11-04T16:52:13+08:00"
+    },
+    {
+      "token": "lj_rt_08a9926682c57d692c4a1f10511db5d8",
+      "userId": "u_adm",
+      "exp": 1794387307730,
+      "revoked": false,
+      "createdAt": "2026-11-04T16:55:07+08:00"
+    },
+    {
+      "token": "lj_rt_23c7e83e2307d52373fa397b117f28f2",
+      "userId": "u_adm",
+      "exp": 1794387321979,
+      "revoked": false,
+      "createdAt": "2026-11-04T16:55:21+08:00"
+    },
+    {
+      "token": "lj_rt_d234044bb2693ae225292ca1b8447fec",
+      "userId": "u_adm",
+      "exp": 1794387337430,
+      "revoked": false,
+      "createdAt": "2026-11-04T16:55:37+08:00"
+    },
+    {
+      "token": "lj_rt_c2a3e0d04f15b981dfda09b62e7525b3",
+      "userId": "u_tch",
+      "exp": 1794387351829,
+      "revoked": false,
+      "createdAt": "2026-11-04T16:55:51+08:00"
+    },
+    {
+      "token": "lj_rt_039e35bb83008e6462a3b0534f3731ac",
+      "userId": "u_adm",
+      "exp": 1794387353149,
+      "revoked": false,
+      "createdAt": "2026-11-04T16:55:53+08:00"
+    },
+    {
+      "token": "lj_rt_dbafb5e133dc36b20052fcb202ea9996",
+      "userId": "u_tch",
+      "exp": 1794394625156,
+      "revoked": false,
+      "createdAt": "2026-11-04T18:57:05+08:00"
+    },
+    {
+      "token": "lj_rt_55ff5e4e02f4d45350fbd4f3a3a66fdd",
+      "userId": "u_tch",
+      "exp": 1794394635224,
+      "revoked": true,
+      "createdAt": "2026-11-04T18:57:15+08:00"
+    },
+    {
+      "token": "lj_rt_bbf97cb30d9dc9cc58261d0b00ce9e70",
+      "userId": "u_tch",
+      "exp": 1794444167275,
+      "revoked": false,
+      "createdAt": "2026-11-05T08:42:47+08:00"
+    },
+    {
+      "token": "lj_rt_dfd607122eb349875e31f574ae6be021",
+      "userId": "u_tch",
+      "exp": 1794445877104,
+      "revoked": false,
+      "createdAt": "2026-11-05T09:11:17+08:00"
     }
   ],
   "progress": {

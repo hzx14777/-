@@ -152,7 +152,7 @@ paths:
   /api/v1/me:
     get:
       tags: [认证]
-      summary: 当前用户（统一认证字段 + 权限点 + 积分）
+      summary: 当前用户（统一认证字段 + 权限点）
       security: [{ bearer: [] }]
       responses:
         '200':
@@ -274,7 +274,7 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
       responses:
-        '200': { description: items / page / pageSize / total / points }
+        '200': { description: items / page / pageSize / total }
 
   /api/v1/grading/queue:
     get:
@@ -403,3 +403,53 @@ paths:
       security: [{ bearer: [] }]
       responses:
         '200': { description: PageResult }
+  /api/v1/catalog:
+    get:
+      tags: [课程]
+      summary: 课程目录（学科 → 章节 → 知识点，只读引用自学平台数据）
+      description: |
+        §3 职责边界：课程内容由自学平台维护，本平台只读引用。
+        同路径下的 POST / PATCH / DELETE 已下线，统一返回 `FORBIDDEN`。
+      security: [{ bearer: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Envelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          courses:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id: { type: string }
+                                name: { type: string }
+                                code: { type: string }
+                                questionCount: { type: integer }
+                                chapterCount: { type: integer }
+                                chapters:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      id: { type: string }
+                                      name: { type: string }
+                                      order: { type: integer }
+                                      questionCount: { type: integer }
+                                      kps:
+                                        type: array
+                                        items:
+                                          type: object
+                                          properties:
+                                            id: { type: string }
+                                            name: { type: string }
+                                            questionCount: { type: integer }
+        '403': { description: 写操作已下线（FORBIDDEN） }
+

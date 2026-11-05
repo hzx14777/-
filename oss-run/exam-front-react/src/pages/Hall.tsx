@@ -1,13 +1,16 @@
 /**
  * 考试大厅：统计卡 + 考试卡片（解锁规则来自服务端 unlockState，前端只做展示）
+ * 统计维度仅保留考试平台职责内的指标（§3 职责边界，学习积分由论坛平台负责，此处不再展示）
  */
 import { useEffect, useRef, useState } from 'react';
-import { Button, Card, Empty, Spin, Tag, Typography } from 'antd';
+import { Button, Flex, Tag, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { endpoints } from '../api';
-import { listIn } from '../motion';
+import { listIn } from '../utils/motion';
+import { formatDateTime, formatScore } from '../utils/format';
+import { PageContainer, PageLoading, PageEmpty, StatCard, StatusTag } from '../components';
 
-const TYPE_COLOR: Record<string, string> = { chapter_quiz: 'blue', skill_exam: 'geekblue', admission_exam: 'purple' };
+const NEW_WINDOW_MS = 7 * 24 * 3600 * 1000;
 
 export default function Hall() {
   const [d, setD] = useState<any>(null);
@@ -22,15 +25,15 @@ export default function Hall() {
     if (d) listIn(gridRef.current, '.yj-exam-card');
   }, [d]);
 
-  if (!d) return <div style={{ padding: 120, textAlign: 'center' }}><Spin size="large" /></div>;
+  if (!d) return <PageLoading tip="正在加载考试列表…" minHeight={320} />;
 
-  const cards = [
+  const stats = [
     { label: '可进入的考试', value: d.stats.available },
     { label: '已有成绩', value: d.stats.done },
-    { label: '有效准入资格', value: d.stats.admissions },
-    { label: '学习积分', value: d.stats.points }
+    { label: '有效准入资格', value: d.stats.admissions }
   ];
 
+  /** 主操作按钮：按服务端下发的答题状态决定，避免出现「能点但进不去」 */
   const actions = (e: any) => {
     if (e.ongoingAttemptId) return <Button type="primary" onClick={() => nav(`/answer/${e.ongoingAttemptId}`)}>继续答题</Button>;
     if (e.pendingAttemptId) return <Button onClick={() => nav(`/result/${e.pendingAttemptId}`)}>查看待确认成绩</Button>;
@@ -46,45 +49,53 @@ export default function Hall() {
   };
 
   return (
-    <div>
-      <div className="yj-page-title">考试大厅</div>
+    <PageContainer title="考试大厅" description="随堂测试、专项考试与项目准入统一入口；通过双达标后自动发放项目准入资格。">
       <div className="yj-stat-row">
-        {cards.map((c) => (
-          <Card key={c.label} size="small"><Typography.Text type="secondary">{c.label}</Typography.Text><div style={{ fontSize: 26, fontWeight: 700, color: '#0e1c36' }}>{c.value ?? 0}</div></Card>
+        {stats.map((s) => (
+          <StatCard key={s.label} label={s.label} value={s.value ?? 0} />
         ))}
       </div>
-      {d.exams.length === 0 && <Empty description="暂无可参加的考试" />}
-      <div className="yj-card-grid" ref={gridRef}>
-        {d.exams.map((e: any) => (
-          <div key={e.id} className="yj-exam-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-              <h3>{e.title}</h3>
-              <div style={{ display: 'flex', gap: 4, flex: '0 0 auto' }}>
-                {e.source === 'doclib' && e.publishedAt && Date.now() - new Date(e.publishedAt).getTime() < 7 * 24 * 3600 * 1000 && (
-                  <Tag color="red">NEW</Tag>
+
+      {d.exams.length === 0 ? (
+        <PageEmpty description="暂无可参加的考试" />
+      ) : (
+        <div className="yj-card-grid" ref={gridRef}>
+          {d.exams.map((e: any) => (
+            <div key={e.id} className="yj-exam-card">
+              <Flex justify="space-between" align="flex-start" gap={8}>
+                <h3>{e.title}</h3>
+                <Flex gap={4} style={{ flex: '0 0 auto' }}>
+                  {e.source === 'doclib' && e.publishedAt && Date.now() - new Date(e.publishedAt).getTime() < NEW_WINDOW_MS && (
+                    <Tag color="red">NEW</Tag>
+                  )}
+                  <StatusTag kind="examType" value={e.type} />
+                </Flex>
+              </Flex>
+              <div className="yj-meta">
+                课程：{e.courseName} · {e.questionCount} 题 / {formatScore(e.totalScore)} 分<br />
+                时长 {e.duration} 分钟 · 及格线 {formatScore(e.passLine)} 分 · 取历次最高分<br />
+                {e.publishedAt && <>发布：{formatDateTime(e.publishedAt)}{e.publishedByName ? ` · ${e.publishedByName}` : ''}<br /></>}
+                {e.groups.length > 0 && <>知识点组：{e.groups.map((g: any) => g.name).join('、')}<br /></>}
+                {e.bestScore !== null ? (
+                  <span className={e.bestPassed ? 'yj-ok' : 'yj-lock'}>
+                    历次最高 {formatScore(e.bestScore)} 分 · {e.bestPassed ? '已达标' : '未达标'}
+                  </span>
+                ) : (
+                  <span>尚未作答</span>
                 )}
-                <Tag color={TYPE_COLOR[e.type] || 'default'}>{e.typeName}</Tag>
               </div>
+              {!e.unlocked && <div className="yj-lock" style={{ marginTop: 8 }}>🔒 {e.lockReason}</div>}
+              <Flex align="center" style={{ marginTop: 14 }}>
+                <span style={{ flex: 1 }} />
+                {actions(e)}
+              </Flex>
             </div>
-            <div className="yj-meta">
-              课程：{e.courseName} · {e.questionCount} 题 / {e.totalScore} 分<br />
-              时长 {e.duration} 分钟 · 及格线 {e.passLine} 分 · 取历次最高分<br />
-              {e.publishedAt && <>发布：{String(e.publishedAt).replace('T', ' ').slice(0, 16)}{e.publishedByName ? ` · ${e.publishedByName}` : ''}<br /></>}
-              {e.groups.length > 0 && <>知识点组：{e.groups.map((g: any) => g.name).join('、')}<br /></>}
-              {e.bestScore !== null ? (
-                <span className={e.bestPassed ? 'yj-ok' : 'yj-lock'}>历次最高 {e.bestScore} 分 · {e.bestPassed ? '已达标' : '未达标'}</span>
-              ) : (
-                <span>尚未作答</span>
-              )}
-            </div>
-            {!e.unlocked && <div className="yj-lock" style={{ marginTop: 8 }}>🔒 {e.lockReason}</div>}
-            <div style={{ marginTop: 14, display: 'flex', alignItems: 'center' }}>
-              <span style={{ flex: 1 }} />
-              {actions(e)}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+          ))}
+        </div>
+      )}
+      <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginTop: 14, marginBottom: 0 }}>
+        考试通过状态将通过统一事件 exam.passed / exam.failed 提供给实训工坊做项目准入判断。
+      </Typography.Paragraph>
+    </PageContainer>
   );
 }

@@ -1,43 +1,65 @@
-# 环境变量说明（约束规范 §4.4、§14）
+# 环境变量说明（约束规范 §4.3、§4.4、§14）
 
-## 前端（Vite，exam-front-react/）
+> 本文件与代码保持一致：前端变量以 `src/env.ts` 为唯一读取入口，后端变量以 `yj-bff/server.js` 顶部 `CONFIG` 为准。
+> 任何新增/变更变量都必须同时更新本文件（§15 项目负责人维护清单）。
 
-文件：`.env.development` / `.env.production`，命名统一 `VITE_` 前缀：
+## 1. 前端（Vite，`exam-front-react/`）
 
-| 变量 | development | production | 说明 |
-| --- | --- | --- | --- |
-| VITE_API_BASE_URL | `/api` | `/api` | API 基地址（生产同源，走 BFF） |
-| VITE_APP_CODE | `exam` | `exam` | 平台标识 |
-| VITE_SSO_AUTH_URL | `http://127.0.0.1/api/v1/sso-mock/authorize` | `/api/v1/sso-mock/authorize` | 认证中心授权页地址 |
-| VITE_SSO_CLIENT_ID | `yj-exam-platform` | `yj-exam-platform` | OAuth client_id |
-| VITE_SSO_REDIRECT_URI | `http://127.0.0.1/yj/sso/callback` | `/yj/sso/callback` | 授权回调地址 |
-| VITE_EVENT_WS_URL | （空） | （空） | 预留：事件推送通道 |
+### 1.1 四套环境文件
 
-前端代码中一律经 `import.meta.env.VITE_*` 读取，类型声明见 `src/vite-env.d.ts`，不硬编码环境相关值。
+| 环境 | 文件 | 用途 |
+| --- | --- | --- |
+| 开发 | `.env.development` | 本地 `vite dev`，走 dev server 代理 |
+| 测试 | `.env.test` | 联调测试环境（`npm run build:test`） |
+| 预发布 | `.env.staging` | 与生产同形态，指向预发布网关（`npm run build:staging`） |
+| 生产 | `.env.production` | 生产构建（`npm run build`） |
 
-## 后端（yj-bff，YJ_ 前缀）
+### 1.2 统一变量（§14 规定的六项，名称不得改写）
+
+| 变量 | 说明 | 取值示例 |
+| --- | --- | --- |
+| `VITE_API_BASE_URL` | 接口基地址，生产与适配服务同源 | `/yjapi` |
+| `VITE_SSO_BASE_URL` | 统一认证中心地址 | `/sso` |
+| `VITE_FILE_BASE_URL` | 统一文件服务地址（§13 预留） | `/files` |
+| `VITE_EVENT_BASE_URL` | 事件总线地址（§11 预留） | `/events` |
+| `VITE_APP_CODE` | 平台标识，同时作为 `X-Platform` 取值 | `exam` |
+| `VITE_ENV` | 当前环境标识，用于环境自检与生产禁调试 | `development` / `test` / `staging` / `production` |
+
+约定：
+
+1. 业务代码**只允许**通过 `src/env.ts` 读取上述变量；
+2. 页面、组件、`api/` 内不得出现写死的域名、端口或 `/yjapi` 字面量；
+3. 构建脚本 `build:test` / `build:staging` 已就绪，禁止用 production 配置冒充其他环境。
+
+### 1.3 构建期可选变量
+
+| 变量 | 说明 |
+| --- | --- |
+| `YJ_DEV_PROXY` | 仅开发态生效，覆盖 `vite.config.ts` 中默认的 `http://127.0.0.1:8090` 代理目标 |
+
+## 2. 后端（`yj-bff`，`YJ_` 前缀）
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| YJ_PORT | 80（占用降 8090） | 服务端口 |
-| YJ_DB_PATH | `data/db.json` | JSON 存储路径 |
-| YJ_DIST_PATH | `../exam-front-react/dist` | 前端静态资源目录 |
-| YJ_APP_CODE | `exam` | 平台标识（sourcePlatform） |
-| YJ_SSO_MODE | `mock` | `mock` / `real` |
-| YJ_SSO_BASE_URL | — | 认证中心基地址（real 必填） |
-| YJ_SSO_CLIENT_ID | `yj-exam-platform` | OAuth client_id |
-| YJ_SSO_CLIENT_SECRET | — | OAuth client_secret |
-| YJ_JWT_SECRET | 内置开发密钥 | 会话签名密钥（生产必改） |
-| YJ_JWT_TTL_H | `2` | access_token 有效期（小时） |
-| YJ_REFRESH_TTL_D | `7` | refresh_token 有效期（天） |
-| YJ_EVENT_BASE_URL | — | 事件总线基地址（不配则事件 skipped 留痕） |
-| YJ_EVENT_INGEST_PATH | `/ingest` | 事件总线投递路径 |
-| YJ_FILE_DIR | `data/files` | 上传文件目录（预留） |
+| `YJ_PORT` | `80`（被占用时自动降 `8090`） | 监听端口 |
+| `YJ_HOST` | `0.0.0.0` | 监听地址 |
+| `YJ_DIST` | `../exam-front-react/dist` | 前端静态产物目录 |
+| `YJ_APP_CODE` | `exam` | 平台标识，事件信封 `sourcePlatform` 取值 |
+| `YJ_PLATFORM_KEY` | `yj-demo-platform-key` | 平台间入站事件校验密钥（生产必须替换） |
+| `YJ_SSO_MODE` | `mock` | `mock`＝内置联调认证中心；`real`＝论坛统一认证 |
+| `YJ_SSO_BASE_URL` | `http://127.0.0.1:<PORT>/sso` | 认证中心基地址（`real` 模式必填） |
+| `YJ_SSO_CLIENT_ID` | `exam-platform-client` | OAuth client_id |
+| `YJ_SSO_CLIENT_SECRET` | `exam-platform-secret` | OAuth client_secret（生产必须替换） |
+| `YJ_EVENT_BASE_URL` | 空 | 事件总线基地址；为空时出站事件标记 `skipped` 并留痕 |
+| `YJ_EVENT_INGEST_PATH` | `/ingest` | 事件投递路径 |
+| `YJ_FILE_BASE_URL` | 空 | 统一文件服务地址（§13 预留） |
 
-所有变量均可在 `yj-bff/config.json` 中以同名（去前缀）键覆盖，优先级：环境变量 > config.json > 默认值。
+数据文件固定为 `yj-bff/data/db.json`（删除后重启按 `seed.js` 重建演示数据）。
 
-## 构建与运行
+## 3. 环境切换检查清单
 
-- 前端构建：`oss-run/build-front.bat`（输出 `exam-front-react/dist`，改前端后必须重建）
-- 启停：`oss-run/start-platform.bat` / `stop-platform.bat`
-- 环境自检：`oss-run/check-env.bat`
+1. `VITE_ENV` 与部署环境一致，生产不得出现 `development`；
+2. `YJ_SSO_MODE=real` 且 `YJ_SSO_BASE_URL` / `CLIENT_ID` / `CLIENT_SECRET` 指向论坛认证中心；
+3. `YJ_PLATFORM_KEY` 已替换为与平台约定一致的密钥；
+4. `VITE_*` 与后端同源路径一致（默认 `/yjapi`），否则前端跨域或 404；
+5. 改完前端必须重新 `build`（产物 `exam-front-react/dist`），改完后端需重启服务。

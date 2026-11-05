@@ -81,3 +81,12 @@
 - 角色固定为 `student / teacher / admin`（§8），来自 SSO 用户 `roles` 字段，本平台不自建角色。
 - `sourcePlatform` 固定为 `exam`（本平台 appCode）。
 - 权限点格式为 `资源:动作`，全量清单见 README「角色与权限点」一节。
+- **前端唯一字典实现**：`exam-front-react/src/constants/dictionary.ts`（中文名 + Tag 语义色）。接口只传英文编码，页面一律经该字典或 `StatusTag` 组件展示，不得在页面内新增临时映射表。
+
+## 9.5 已下线字段（2026-11-04 整改）
+
+| 字段 | 原用途 | 下线原因 |
+| --- | --- | --- |
+| `points` | 学生学习积分（考试通过后累加） | §3 积分属论坛平台职责；`/me`、`/hall.stats`、`/admissions` 已不再返回 |
+| 权限点 `catalog:manage` | 课程 / 章节 / 知识点维护 | §3 课程内容维护属自学平台；本平台仅只读引用 `GET /api/v1/catalog` |
+

@@ -5,18 +5,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Checkbox, Input, Radio, Tag, Typography, App as AntApp } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { endpoints } from '../api';
-
-const TYPE_LABEL: Record<string, string> = { single: '单选', multiple: '多选', judge: '判断', blank: '填空', essay: '简答' };
-
-/* 判断题以 answer=T/F 存储，题库不落选项行，答题时统一补齐“正确/错误”两个选项 */
-const JUDGE_OPTIONS = [{ id: 'T', content: '正确' }, { id: 'F', content: '错误' }];
-
-const optionsOf = (q: any): any[] => {
-  const list = Array.isArray(q?.options) ? q.options.filter((o: any) => o && o.id) : [];
-  if (list.length) return list;
-  if (q?.type === 'judge') return JUDGE_OPTIONS;
-  return [];
-};
+import { optionsOf } from '../utils/paper';
+import { dict } from '../constants/dictionary';
+import { PageLoading } from '../components';
 
 export default function Answer() {
   const { attemptId } = useParams();
@@ -122,7 +113,7 @@ export default function Answer() {
 
   const mm = useMemo(() => `${String(Math.floor(remain / 60)).padStart(2, '0')}:${String(remain % 60).padStart(2, '0')}`, [remain]);
 
-  if (!a) return <div style={{ padding: 120, textAlign: 'center' }}><Typography.Text type="secondary">加载答卷…</Typography.Text></div>;
+  if (!a) return <PageLoading tip="正在加载答卷…" minHeight={320} />;
   if (a.status !== 'answering') {
     return (
       <div style={{ padding: 80, textAlign: 'center' }}>
@@ -142,7 +133,7 @@ export default function Answer() {
   const renderQ = () => (
     <div className="yj-q-item" key={q.qid}>
       <div className="yj-q-stem">
-        <Tag color="blue">{TYPE_LABEL[q.type]}</Tag>
+        <Tag color="blue">{dict('questionType', q.type).label}</Tag>
         <Tag>{q.score} 分</Tag>
         {a.groups.find((g: any) => g.id === q.group) && <Tag color="purple">{a.groups.find((g: any) => g.id === q.group).name}</Tag>}
         {cur + 1}. {q.stem}
@@ -207,7 +198,7 @@ export default function Answer() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 14, gap: 12 }}>
-        <div className="yj-page-title" style={{ margin: 0, flex: 1 }}>{a.examTitle}</div>
+        <Typography.Title level={4} style={{ margin: 0, flex: 1, color: '#0e1c36' }}>{a.examTitle}</Typography.Title>
         <Tag color={remain < 300 ? 'red' : 'blue'} style={{ fontSize: 15, padding: '4px 12px' }}>⏱ {mm}</Tag>
         <Button danger type="primary" loading={submitting} onClick={doSubmit}>交卷</Button>
       </div>

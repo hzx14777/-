@@ -38,16 +38,11 @@ export const endpoints = {
   updateQuestion: (id: string, body: any) => api(`/api/v1/ai-bank/questions/${id}`, { method: 'PATCH', body }),
   deleteQuestion: (id: string) => api(`/api/v1/ai-bank/questions/${id}`, { method: 'DELETE' }),
 
+  /**
+   * 课程目录只读引用（§3 职责边界：课程与章节内容由自学平台维护，考试平台不提供增删改）
+   * 对应 §11.1「通过公开 API 查询，不直接读其他平台库」
+   */
   catalog: () => api('/api/v1/catalog'),
-  createCourse: (body: any) => api('/api/v1/catalog/courses', { method: 'POST', body }),
-  renameCourse: (id: string, body: any) => api(`/api/v1/catalog/courses/${id}`, { method: 'PATCH', body }),
-  deleteCourse: (id: string) => api(`/api/v1/catalog/courses/${id}`, { method: 'DELETE' }),
-  createChapter: (body: any) => api('/api/v1/catalog/chapters', { method: 'POST', body }),
-  renameChapter: (id: string, body: any) => api(`/api/v1/catalog/chapters/${id}`, { method: 'PATCH', body }),
-  deleteChapter: (id: string) => api(`/api/v1/catalog/chapters/${id}`, { method: 'DELETE' }),
-  createKp: (body: any) => api('/api/v1/catalog/kps', { method: 'POST', body }),
-  updateKp: (id: string, body: any) => api(`/api/v1/catalog/kps/${id}`, { method: 'PATCH', body }),
-  deleteKp: (id: string) => api(`/api/v1/catalog/kps/${id}`, { method: 'DELETE' }),
 
   documents: (query: string) => api(`/api/v1/doclib/documents?${query}`),
   document: (id: string) => api(`/api/v1/doclib/documents/${id}`),

@@ -1,37 +1,32 @@
 /**
  * 文档库：收录 AI 题库题目，按学科 / 章节 / 知识点 / 题型 / 难度分类浏览，
  * 勾选后生成试卷或练习并导出（HTML / Word / 打印）。
- * 权限：教师可选题组卷；管理员额外拥有题目增删改与分类维护权限。
+ *
+ * §3 职责边界：课程、章节、知识点由自学平台维护，本平台只读引用，不提供分类增删改；
+ * 题库题目维护（增删改）属于考试平台职责，仅管理员可用（bank:manage）。
  */
 import { useEffect, useMemo, useState } from 'react';
 import {
-  App as AntApp, Button, Card, Checkbox, Divider, Drawer, Dropdown, Empty, Input, InputNumber, Modal,
-  Radio, Select, Space, Statistic, Table, Tabs, Tag, Tree, Typography
+  App as AntApp, Button, Checkbox, Divider, Drawer, Dropdown, Input, InputNumber, Modal,
+  Radio, Select, Space, Tabs, Tag, Tree, Typography
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, FileTextOutlined, PrinterOutlined, DownloadOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useSession } from '../session';
+import { useSession } from '../contexts/session';
 import { endpoints } from '../api';
-import {
-  TYPE_LABEL, TYPE_COLOR, DIFF_LABEL, DIFF_COLOR,
-  paperBody, PAPER_CSS, fullPaperHtml, downloadFile, printPaper
-} from '../paper';
+import { paperBody, PAPER_CSS, fullPaperHtml, downloadFile, printPaper } from '../utils/paper';
+import { formatDateTime, formatDuration, formatScore } from '../utils/format';
+import { dictOptions } from '../constants/dictionary';
+import { PageContainer, DataTable, StatusTag, StatCard } from '../components';
 
 const EMPTY_OPTIONS = [
   { id: 'A', content: '' }, { id: 'B', content: '' }, { id: 'C', content: '' }, { id: 'D', content: '' }
 ];
 
-const REVIEW_META: Record<string, { label: string; color: string }> = {
-  pending: { label: '待审核', color: 'gold' },
-  approved: { label: '已通过', color: 'green' },
-  rejected: { label: '已驳回', color: 'red' }
-};
-
 export default function DocLib() {
   const { hasPerm } = useSession();
   const nav = useNavigate();
   const canBank = hasPerm('bank:manage');
-  const canCatalog = hasPerm('catalog:manage');
   const canPublish = hasPerm('exam:manage');
   const { message: msg, modal } = AntApp.useApp();
   const [tab, setTab] = useState('compose');
@@ -252,56 +247,6 @@ export default function DocLib() {
     });
   };
 
-  /* ---------- 分类维护 ---------- */
-  const [catModal, setCatModal] = useState<any>(null);
-  const [catName, setCatName] = useState('');
-  const [catBrief, setCatBrief] = useState('');
-  const [catCode, setCatCode] = useState('');
-
-  const openCat = (mode: string, payload: any = {}) => {
-    setCatModal({ mode, ...payload });
-    setCatName(payload.name || '');
-    setCatBrief(payload.brief || '');
-    setCatCode(payload.code || '');
-  };
-
-  const saveCat = async () => {
-    const name = catName.trim();
-    if (!name) return msg.warning('请填写名称');
-    try {
-      const m = catModal.mode;
-      if (m === 'addCourse') await endpoints.createCourse({ name, code: catCode.trim() });
-      if (m === 'renameCourse') await endpoints.renameCourse(catModal.id, { name, code: catCode.trim() });
-      if (m === 'addChapter') await endpoints.createChapter({ courseId: catModal.courseId, name });
-      if (m === 'renameChapter') await endpoints.renameChapter(catModal.id, { name });
-      if (m === 'addKp') await endpoints.createKp({ chapterId: catModal.chapterId, name, brief: catBrief.trim() });
-      if (m === 'renameKp') await endpoints.updateKp(catModal.id, { name, brief: catBrief.trim() });
-      msg.success('已保存');
-      setCatModal(null);
-      loadCatalog();
-      loadQuestions();
-    } catch { /* 请求层已提示 */ }
-  };
-
-  const removeCat = (mode: string, payload: any) => {
-    const label = { course: '学科', chapter: '章节', kp: '知识点' }[mode] || '分类';
-    modal.confirm({
-      title: `删除${label}`,
-      content: `确定删除「${payload.name}」？若其下仍有题目或考试，将阻止删除。`,
-      okType: 'danger',
-      onOk: async () => {
-        try {
-          if (mode === 'course') await endpoints.deleteCourse(payload.id);
-          if (mode === 'chapter') await endpoints.deleteChapter(payload.id);
-          if (mode === 'kp') await endpoints.deleteKp(payload.id);
-          msg.success('已删除');
-          loadCatalog();
-          loadQuestions();
-        } catch { /* 请求层已提示 */ }
-      }
-    });
-  };
-
   /* ---------- 题目编辑（管理员） ---------- */
   const [qModal, setQModal] = useState<any>(null);
   const qData = qModal?.data;
@@ -375,36 +320,18 @@ export default function DocLib() {
   useEffect(() => { loadCatalog(); }, []);
 
   /* ---------- 渲染 ---------- */
-  const treeNodeTitle = (n: any) => {
-    const payload = { ...(n.raw || {}), id: String(n.key).split(':')[1], name: n.title };
-    return (
-      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-        <span title={n.title} style={{ maxWidth: 128, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.title}</span>
-        <Tag style={{ marginInlineEnd: 0 }}>{n.count || 0}</Tag>
-        {canCatalog && (
-          <span onClick={(e) => e.stopPropagation()} style={{ display: 'inline-flex', gap: 2 }}>
-            {n.level === 'course' && (
-              <Button size="small" type="link" icon={<PlusOutlined />} title="新增章节" onClick={() => openCat('addChapter', { courseId: payload.id })} />
-            )}
-            {n.level === 'chapter' && (
-              <Button size="small" type="link" icon={<PlusOutlined />} title="新增知识点" onClick={() => openCat('addKp', { chapterId: payload.id })} />
-            )}
-            <Button size="small" type="link" icon={<EditOutlined />} title="重命名"
-              onClick={() => openCat(n.level === 'course' ? 'renameCourse' : n.level === 'chapter' ? 'renameChapter' : 'renameKp', payload)} />
-            <Button size="small" type="link" danger icon={<DeleteOutlined />} title="删除"
-              onClick={() => removeCat(n.level === 'course' ? 'course' : n.level === 'chapter' ? 'chapter' : 'kp', payload)} />
-          </span>
-        )}
-      </span>
-    );
-  };
+  const treeNodeTitle = (n: any) => (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+      <span title={n.title} style={{ maxWidth: 148, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.title}</span>
+      <Tag style={{ marginInlineEnd: 0 }}>{n.count || 0}</Tag>
+    </span>
+  );
 
   const composePane = (
     <div style={{ display: 'grid', gridTemplateColumns: '260px minmax(0, 1fr)', gap: 14, alignItems: 'start' }}>
       <div className="yj-section" style={{ marginBottom: 0, maxHeight: 'calc(100vh - 210px)', overflow: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
           <h4 style={{ margin: 0 }}>分类浏览</h4>
-          {canCatalog && <Button size="small" type="link" icon={<PlusOutlined />} onClick={() => openCat('addCourse')}>学科</Button>}
         </div>
         <Tree
           treeData={treeData}
@@ -425,21 +352,24 @@ export default function DocLib() {
       <div className="yj-section" style={{ marginBottom: 0 }}>
         <Space wrap style={{ marginBottom: 10 }}>
           <Select allowClear placeholder="题型" style={{ width: 110 }} value={qType} onChange={(v) => { setQType(v); setPage(1); }}
-            options={Object.keys(TYPE_LABEL).map((t) => ({ value: t, label: TYPE_LABEL[t] }))} />
+            options={dictOptions('questionType')} />
           <Select allowClear placeholder="难度" style={{ width: 100 }} value={qDiff} onChange={(v) => { setQDiff(v); setPage(1); }}
-            options={Object.keys(DIFF_LABEL).map((d) => ({ value: d, label: DIFF_LABEL[d] }))} />
+            options={dictOptions('difficulty')} />
           <Select style={{ width: 120 }} value={qStatus} onChange={(v) => { setQStatus(v); setPage(1); }}
-            options={[{ value: 'published', label: '已上架' }, { value: 'offline', label: '已下架' }, { value: 'archived', label: '已归档' }, { value: '', label: '全部状态' }]} />
+            options={[...dictOptions('questionStatus'), { value: '', label: '全部状态' }]} />
           <Input.Search placeholder="题干 / 解析关键词" allowClear style={{ width: 210 }} value={qKw}
             onChange={(e) => setQKw(e.target.value)} onSearch={() => setPage(1)} />
           <Button onClick={resetFilters}>重置</Button>
           {canBank && <Button type="dashed" icon={<PlusOutlined />} onClick={openCreateQ}>新增题目</Button>}
         </Space>
 
-        <Table
-          size="small"
-          rowKey="id"
+        <DataTable
           loading={loading}
+          page={page}
+          pageSize={pageSize}
+          total={total}
+          onPageChange={(p, ps) => { setPage(p); setPageSize(ps); }}
+          emptyText="当前分类下没有题目，去 AI 题库入库或调整筛选条件"
           dataSource={rows}
           rowSelection={{
             selectedRowKeys: selKeys,
@@ -456,24 +386,16 @@ export default function DocLib() {
             }),
             getCheckboxProps: (r) => ({ disabled: r.status !== 'published' })
           }}
-          locale={{ emptyText: <Empty description="当前分类下没有题目，去 AI 题库入库或调整筛选条件" /> }}
-          pagination={{
-            current: page, pageSize, total, showSizeChanger: true, showTotal: (t) => `共 ${t} 题`,
-            onChange: (p, ps) => { setPage(p); setPageSize(ps); }
-          }}
           columns={[
             { title: '题干', dataIndex: 'stem', ellipsis: true, render: (v: string) => <span title={v}>{v}</span> },
-            { title: '题型', dataIndex: 'type', width: 84, render: (v: string) => <Tag color={TYPE_COLOR[v]}>{TYPE_LABEL[v] || v}</Tag> },
-            { title: '难度', dataIndex: 'difficulty', width: 74, render: (v: string) => <Tag color={DIFF_COLOR[v]}>{DIFF_LABEL[v] || v}</Tag> },
+            { title: '题型', dataIndex: 'type', width: 96, render: (v: string) => <StatusTag kind="questionType" value={v} /> },
+            { title: '难度', dataIndex: 'difficulty', width: 84, render: (v: string) => <StatusTag kind="difficulty" value={v} /> },
             { title: '章节', dataIndex: 'chapterName', width: 150, ellipsis: true },
             {
               title: '知识点', width: 160, render: (_: any, r: any) => (r.kpNames || []).map((n: string) => <Tag key={n} style={{ marginBottom: 2 }}>{n}</Tag>)
             },
-            { title: '分值', dataIndex: 'score', width: 62 },
-            {
-              title: '状态', dataIndex: 'status', width: 84,
-              render: (v: string) => (v === 'published' ? <Tag color="success">已上架</Tag> : v === 'offline' ? <Tag color="warning">已下架</Tag> : <Tag>已归档</Tag>)
-            },
+            { title: '分值', dataIndex: 'score', width: 62, render: (v: number) => formatScore(v) },
+            { title: '状态', dataIndex: 'status', width: 96, render: (v: string) => <StatusTag kind="questionStatus" value={v} /> },
             ...(canBank ? [{
               title: '操作', width: 110, fixed: 'right' as const,
               render: (_: any, r: any) => (
@@ -506,9 +428,9 @@ export default function DocLib() {
   const docsPane = (
     <>
       <div className="yj-stat-row" style={{ gridTemplateColumns: 'repeat(3, minmax(160px, 220px))' }}>
-        <Card size="small"><Statistic title="文档总数" value={docStats.total || 0} suffix="份" /></Card>
-        <Card size="small"><Statistic title="试卷" value={docStats.papers || 0} suffix="份" style={{ color: '#1e5eff' }} /></Card>
-        <Card size="small"><Statistic title="练习" value={docStats.practices || 0} suffix="份" /></Card>
+        <StatCard label="文档总数" value={docStats.total || 0} suffix="份" />
+        <StatCard label="试卷" value={docStats.papers || 0} suffix="份" color="#1e5eff" />
+        <StatCard label="练习" value={docStats.practices || 0} suffix="份" />
       </div>
       <div className="yj-section">
         <Space wrap style={{ marginBottom: 10 }}>
@@ -519,32 +441,26 @@ export default function DocLib() {
           <Button onClick={() => { setDocType(undefined); setDocKw(''); setDocPage(1); }}>重置</Button>
           {canPublish && <Button type="primary" ghost onClick={() => nav('/publish')}>考试发布 →</Button>}
         </Space>
-        <Table
-          size="small"
-          rowKey="id"
+        <DataTable
           loading={docLoading}
           dataSource={docs}
           scroll={{ x: 1200 }}
-          locale={{ emptyText: <Empty description="还没有生成任何试卷或练习，去「选题组卷」试试" /> }}
-          pagination={{
-            current: docPage, pageSize: docPageSize, total: docTotal, showSizeChanger: true,
-            showTotal: (t) => `共 ${t} 份`, onChange: (p, ps) => { setDocPage(p); setDocPageSize(ps); }
-          }}
+          page={docPage}
+          pageSize={docPageSize}
+          total={docTotal}
+          onPageChange={(p, ps) => { setDocPage(p); setDocPageSize(ps); }}
+          emptyText="还没有生成任何试卷或练习，去「选题组卷」试试"
           columns={[
             { title: '名称', dataIndex: 'title', ellipsis: true, render: (v: string, d: any) => <a onClick={() => openDoc(d)}>{v}</a> },
             { title: '类型', dataIndex: 'type', width: 80, render: (v: string) => (v === 'paper' ? <Tag color="blue">试卷</Tag> : <Tag color="purple">练习</Tag>) },
             { title: '学科', dataIndex: 'courseName', width: 160, ellipsis: true },
             { title: '题量', dataIndex: 'questionCount', width: 70 },
-            { title: '总分', dataIndex: 'totalScore', width: 70 },
-            { title: '时长', dataIndex: 'duration', width: 80, render: (v: number) => (v ? `${v} 分钟` : '不限') },
+            { title: '总分', dataIndex: 'totalScore', width: 70, render: (v: number) => formatScore(v) },
+            { title: '时长', dataIndex: 'duration', width: 90, render: (v: number) => (v ? formatDuration(v) : '不限') },
             { title: '创建人', dataIndex: 'createdByName', width: 90 },
             {
               title: '审核', dataIndex: 'reviewStatus', width: 96,
-              render: (s: string, d: any) => {
-                if (d.type !== 'paper') return <Tag>无需审核</Tag>;
-                const meta = REVIEW_META[s] || REVIEW_META.pending;
-                return <Tag color={meta.color}>{meta.label}</Tag>;
-              }
+              render: (s: string, d: any) => (d.type !== 'paper' ? <Tag>无需审核</Tag> : <StatusTag kind="reviewStatus" value={s} />)
             },
             {
               title: '发布', width: 100,
@@ -555,7 +471,7 @@ export default function DocLib() {
                 return <span style={{ color: '#9aa7bb' }}>未发布</span>;
               }
             },
-            { title: '生成时间', dataIndex: 'createdAt', width: 150, render: (v: string) => <span style={{ fontSize: 12.5 }}>{String(v).replace('T', ' ').slice(0, 16)}</span> },
+            { title: '生成时间', dataIndex: 'createdAt', width: 150, render: (v: string) => <span style={{ fontSize: 12.5 }}>{formatDateTime(v)}</span> },
             {
               title: '操作', width: 278, fixed: 'right' as const,
               render: (_: any, d: any) => (
@@ -577,37 +493,18 @@ export default function DocLib() {
     </>
   );
 
-  const catalogPane = (
-    <div className="yj-section">
-      <Space style={{ marginBottom: 10 }}>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => openCat('addCourse')}>新增学科</Button>
-        <Typography.Text type="secondary" style={{ fontSize: 12.5 }}>
-          学科 → 章节 → 知识点 三级结构，删除时若仍被题目或考试引用会被阻止。
-        </Typography.Text>
-      </Space>
-      <Tree treeData={treeData} expandedKeys={expandedKeys} onExpand={(keys) => setExpandedKeys(keys as string[])} titleRender={treeNodeTitle} blockNode style={{ fontSize: 13.5 }} />
-      <Divider style={{ margin: '12px 0' }} />
-      <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginBottom: 0 }}>
-        新增章节后需补充知识点，AI 命题工作台才能据此生成候选题；已有题目的分类不可直接删除，可先下架或移出题目。
-      </Typography.Paragraph>
-    </div>
-  );
-
   const items = [
     { key: 'compose', label: '选题组卷', children: composePane },
-    { key: 'docs', label: '试卷 / 练习库', children: docsPane },
-    ...(canCatalog ? [{ key: 'catalog', label: '分类维护', children: catalogPane }] : [])
+    { key: 'docs', label: '试卷 / 练习库', children: docsPane }
   ];
 
   return (
-    <div>
-      <div className="yj-page-title">文档库</div>
-      <Typography.Paragraph type="secondary" style={{ marginTop: -8, fontSize: 13 }}>
-        收录 AI 题库中的题目，按学科、章节、知识点、题型与难度分类浏览；勾选题目即可生成试卷或练习，并导出 HTML / Word 或直接打印。
-        试卷可在「考试发布」中审核并发布为在线考试，发布后学生端考试大厅即时可见。
-        {canBank ? ' 当前为管理员：可维护题目与分类，并可管理全部考试。' : ' 当前为教师：可选题组卷、审核与发布考试；题目与分类由管理员维护。'}
-      </Typography.Paragraph>
-
+    <PageContainer
+      title="文档库"
+      description={`收录 AI 题库中的题目，按学科、章节、知识点、题型与难度分类浏览；勾选题目即可生成试卷或练习，并导出 HTML / Word 或直接打印。试卷可在「考试发布」中审核并发布为在线考试。${
+        canBank ? ' 当前为管理员：可维护题库题目。' : ' 当前为教师：可选题组卷、审核与发布考试；题库题目由管理员维护。'
+      }课程与章节由自学平台维护，本平台只读引用。`}
+    >
       <Tabs activeKey={tab} onChange={setTab} items={items} />
 
       <Modal
@@ -680,10 +577,10 @@ export default function DocLib() {
                 options={chapterOptions.map((c: any) => ({ value: c.value, label: c.label }))}
                 onChange={(v) => patchQ({ chapterId: v, kp: [] })} />
               <Select style={{ width: 120 }} value={qData.type}
-                options={['single', 'judge', 'blank', 'essay'].map((t) => ({ value: t, label: TYPE_LABEL[t] }))}
+                options={dictOptions('questionType').filter((o) => o.value !== 'multiple')}
                 onChange={(v) => patchQ({ type: v, answer: v === 'judge' ? 'T' : v === 'blank' ? '' : v === 'single' ? 'A' : null })} />
               <Select style={{ width: 100 }} value={qData.difficulty}
-                options={Object.keys(DIFF_LABEL).map((d) => ({ value: d, label: DIFF_LABEL[d] }))}
+                options={dictOptions('difficulty')}
                 onChange={(v) => patchQ({ difficulty: v })} />
               <InputNumber min={0.5} max={100} step={0.5} value={qData.score} onChange={(v) => patchQ({ score: v })} addonBefore="分值" style={{ width: 130 }} />
             </Space>
@@ -734,28 +631,6 @@ export default function DocLib() {
         )}
       </Modal>
 
-      <Modal
-        title={
-          catModal?.mode === 'addCourse' ? '新增学科' : catModal?.mode === 'addChapter' ? '新增章节'
-            : catModal?.mode === 'addKp' ? '新增知识点' : '重命名'
-        }
-        open={!!catModal}
-        onCancel={() => setCatModal(null)}
-        onOk={saveCat}
-        okText="保存"
-        width={440}
-      >
-        <div style={{ display: 'grid', gap: 12, marginTop: 8 }}>
-          <Input placeholder="名称" value={catName} onChange={(e) => setCatName(e.target.value)} maxLength={40} />
-          {catModal?.mode === 'addCourse' && (
-            <Input placeholder="学科代码（可选，如 PY101）" value={catCode} onChange={(e) => setCatCode(e.target.value)} />
-          )}
-          {(catModal?.mode === 'addKp' || catModal?.mode === 'renameKp') && (
-            <Input.TextArea rows={3} placeholder="知识点要点说明（AI 命题时作为题干依据）" value={catBrief} onChange={(e) => setCatBrief(e.target.value)} />
-          )}
-        </div>
-      </Modal>
-
       <Drawer
         width={880}
         open={!!preview}
@@ -784,6 +659,6 @@ export default function DocLib() {
           </>
         )}
       </Drawer>
-    </div>
+    </PageContainer>
   );
 }

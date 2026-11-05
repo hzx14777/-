@@ -56,7 +56,7 @@ fi
 mkdir -p "${OUT}"
 log "[4/4] 打包 -> ${PKG}"
 tar czf "${PKG}" -C "${STAGE}" yj-exam
-rm -rf "${STAGE}"
+rm -rf "${STAGE}" 2>/dev/null || true
 
 log "完成: $(ls -lh "${PKG}" | awk '{print $5}')"
 echo "${PKG}"

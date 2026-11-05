@@ -12,30 +12,46 @@
 
 ```
 oss-run/
-├─ exam-front-react/          # 前端（唯一正式前端，§4 技术基线）
+├─ exam-front-react/           # 前端（唯一正式前端，§4 技术基线 React18 + TS + Vite5 + AntD5 + GSAP3）
 │  ├─ src/
-│  │  ├─ api/request.ts       # 统一请求封装：信封解析、Token 续期、错误码、requestId（§10/§12）
-│  │  ├─ api/index.ts         # 接口清单（与 docs/openapi.yaml 对应）
-│  │  ├─ session.tsx          # 会话与权限点上下文（§7.3/§8.2）
-│  │  ├─ motion.ts            # GSAP 动效助手（§6，含 prefers-reduced-motion）
-│  │  ├─ App.tsx              # 路由与权限守卫、统一 403/404 页（§5.1/§12）
-│  │  └─ pages/               # 13 个页面（登录/回调/大厅/详情/答题/成绩/错题/资格/命题/阅卷/看板/管理/审计）
-│  ├─ .env.development        # §14 环境变量（开发）
-│  └─ .env.production         # §14 环境变量（生产）
-├─ yj-bff/                    # 后端适配服务
-│  ├─ server.js               # 路由、SSO、权限、事件、静态托管
-│  ├─ engine.js               # 判分 / 双达标 / 命题引擎
-│  ├─ seed.js                 # 演示数据
-│  └─ data/db.json            # 数据文件（删除后重启即恢复种子）
-├─ exam-front/                # 旧 Vue3 前端（仅存档，不再参与构建，勿用于新开发）
-├─ demo/                      # HTML 功能 Demo（§4.6）
-├─ docs/                      # OpenAPI、数据字典、事件清单、SSO 配置、环境变量
-├─ start-platform.bat         # 启动（优先计划任务，无 node 环境也可用）
+│  │  ├─ api/                  # request.ts 统一请求封装（信封/续期/错误码/requestId）、index.ts 接口清单
+│  │  ├─ components/           # 公共基础组件：PageContainer / Section / PageLoading / PageEmpty /
+│  │  │                        #   ErrorResult(403·404·500) / StatusTag / StatCard / DataTable
+│  │  ├─ constants/            # dictionary.ts 统一状态字典（§9.3）、theme.ts 主题令牌（§5.1）
+│  │  ├─ contexts/session.tsx  # 会话与权限点上下文（§7.3/§8.2）
+│  │  ├─ layouts/AppShell.tsx  # 统一外壳：菜单、路由守卫、403 拦截（§5.1/§8.2/§12）
+│  │  ├─ routes.tsx            # 路由 + 菜单 + 权限点单一数据源
+│  │  ├─ types/api.ts          # 统一类型：响应信封、分页、认证字段、错误码
+│  │  ├─ utils/                # format.ts 时间/分数/作答格式化、motion.ts GSAP 动效、paper.ts 试卷导出
+│  │  ├─ env.ts                # §14 环境变量唯一读取入口
+│  │  ├─ App.tsx               # 路由装配（登录/回调/外壳/404）
+│  │  └─ pages/                # 14 个业务页面
+│  └─ .env.{development,test,staging,production}   # §14 四套环境配置
+├─ yj-bff/                     # 后端适配服务
+│  ├─ server.js                # 路由、SSO、权限、事件、静态托管
+│  ├─ engine.js                # 判分 / 双达标 / 命题引擎
+│  ├─ seed.js                  # 演示数据
+│  └─ data/db.json             # 数据文件（删除后重启即恢复种子）
+├─ exam-front/                 # 旧 Vue3 前端（仅存档，不再参与构建，勿用于新开发）
+├─ demo/                       # HTML 功能 Demo（§4.6）
+├─ docs/                       # OpenAPI、数据字典、事件清单、SSO 配置、环境变量、整改记录
+├─ start-platform.bat          # 启动（优先计划任务，无 node 环境也可用）
 ├─ stop-platform.bat
-├─ build-front.bat            # 重建前端产物
-├─ check-env.bat              # 一屏自检
-└─ install-autostart.bat      # 注册/移除登录自启
+├─ build-front.bat             # 重建前端产物
+├─ check-env.bat               # 一屏自检
+└─ install-autostart.bat       # 注册/移除登录自启
 ```
+
+## 职责边界（§3）
+
+| 本平台负责 | 本平台不负责（由其他平台提供） |
+| --- | --- |
+| 随堂测试、专项考试、项目准入判定、成绩与错题本 | 课程 / 章节 / 知识点内容维护（自学平台） |
+| 题库、组卷、试卷审核、考试发布、阅卷与统计 | 学习积分、答疑与公告（论坛平台） |
+| 考试通过状态对外提供（`exam.passed` / `exam.failed`） | 项目过程与里程碑管理（实训工坊）、作品展示（成果广场） |
+
+课程目录在本平台仅作只读引用：`GET /api/v1/catalog` 可用，写接口已下线并返回 `FORBIDDEN`（2026-11-04 整改）。
+
 
 ## 快速开始
 

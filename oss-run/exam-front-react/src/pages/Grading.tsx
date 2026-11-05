@@ -1,9 +1,12 @@
 /**
  * 阅卷中心：队列（按置信度升序置顶）+ 卷面 + 教师确认
+ * 置信度、状态、分数字段统一格式化（§5.1）
  */
 import { useEffect, useState } from 'react';
-import { Button, Input, InputNumber, Spin, Table, Tag, Typography, App as AntApp } from 'antd';
+import { Button, Input, InputNumber, Tag, Typography, App as AntApp } from 'antd';
 import { endpoints } from '../api';
+import { formatPercent, formatScore } from '../utils/format';
+import { PageContainer, PageLoading, PageEmpty, Section, DataTable } from '../components';
 
 export default function Grading() {
   const [queue, setQueue] = useState<any[]>([]);
@@ -14,23 +17,35 @@ export default function Grading() {
   const [saving, setSaving] = useState(false);
   const { message: msg } = AntApp.useApp();
 
-  const loadQueue = () => endpoints.gradingQueue().then((r: any) => {
-    setQueue(r);
-    if (!cur && r.length) setCur(r[0].attemptId);
-  }).catch(() => {});
+  const loadQueue = () =>
+    endpoints
+      .gradingQueue()
+      .then((r: any) => {
+        setQueue(r);
+        if (!cur && r.length) setCur(r[0].attemptId);
+      })
+      .catch(() => {});
 
-  useEffect(() => { loadQueue(); }, []);
+  useEffect(() => {
+    loadQueue();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!cur) return;
     setD(null);
-    endpoints.gradingDetail(cur).then((r: any) => {
-      setD(r);
-      const s: Record<string, number> = {};
-      (r.items || []).forEach((it: any) => { s[it.qid] = it.awarded ?? 0; });
-      setScores(s);
-      setComments({});
-    }).catch(() => {});
+    endpoints
+      .gradingDetail(cur)
+      .then((r: any) => {
+        setD(r);
+        const s: Record<string, number> = {};
+        (r.items || []).forEach((it: any) => {
+          s[it.qid] = it.awarded ?? 0;
+        });
+        setScores(s);
+        setComments({});
+      })
+      .catch(() => {});
   }, [cur]);
 
   const confirm = async () => {
@@ -38,7 +53,7 @@ export default function Grading() {
     try {
       const items = (d.items || []).map((it: any) => ({ qid: it.qid, score: scores[it.qid] ?? 0, comment: comments[it.qid] || '' }));
       const r = await endpoints.gradingConfirm(cur!, items);
-      msg.success(`成绩已生效：${r.totalScore} 分，${r.dualPass ? '双达标通过' : '未达标'}`);
+      msg.success(`成绩已生效：${formatScore(r.totalScore)} 分，${r.dualPass ? '双达标通过' : '未达标'}`);
       setCur(undefined);
       setD(null);
       loadQueue();
@@ -48,32 +63,34 @@ export default function Grading() {
   };
 
   return (
-    <div>
-      <div className="yj-page-title">阅卷中心（AI 初评 + 教师确认）</div>
+    <PageContainer title="阅卷中心" description="AI 初评 + 教师确认：置信度低的答卷自动排在队首，教师确认后成绩立即生效。">
       <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: 16, alignItems: 'start' }}>
-        <div className="yj-section" style={{ padding: 12 }}>
-          <Table
-            size="small"
+        <Section style={{ padding: 12 }}>
+          <DataTable
             rowKey="attemptId"
             pagination={false}
+            emptyText="队列为空，全部答卷已确认"
             dataSource={queue}
-            rowClassName={(r) => (r.attemptId === cur ? 'ant-table-row-selected' : '')}
-            onRow={(r) => ({ onClick: () => setCur(r.attemptId), style: { cursor: 'pointer' } })}
+            rowClassName={(r: any) => (r.attemptId === cur ? 'ant-table-row-selected' : '')}
+            onRow={(r: any) => ({ onClick: () => setCur(r.attemptId), style: { cursor: 'pointer' } })}
             columns={[
               {
-                title: '考生 / 试卷', dataIndex: 'userName',
-                render: (_: any, r: any) => (
+                title: '考生 / 试卷',
+                dataIndex: 'userName',
+                render: (_: unknown, r: any) => (
                   <div>
-                    <div style={{ fontWeight: 600 }}>{r.userName} <span style={{ color: '#6b7a90', fontWeight: 400 }}>{r.userAccount}</span></div>
+                    <div style={{ fontWeight: 600 }}>
+                      {r.userName} <span style={{ color: '#6b7a90', fontWeight: 400 }}>{r.userAccount}</span>
+                    </div>
                     <div style={{ fontSize: 12, color: '#6b7a90' }}>{r.examTitle}</div>
                   </div>
                 )
               },
               {
-                title: 'AI 置信度', dataIndex: 'confidence', width: 100,
-                render: (v: number, r: any) => (
-                  <Tag color={r.needReview ? 'red' : 'green'}>{Math.round(v * 100)}%</Tag>
-                ),
+                title: 'AI 置信度',
+                dataIndex: 'confidence',
+                width: 100,
+                render: (v: number, r: any) => <Tag color={r.needReview ? 'red' : 'green'}>{formatPercent(v)}</Tag>,
                 sorter: (a: any, b: any) => a.confidence - b.confidence,
                 defaultSortOrder: 'ascend'
               },
@@ -81,19 +98,21 @@ export default function Grading() {
               { title: '留痕', dataIndex: 'eventCount', width: 55 }
             ]}
           />
-          {queue.length === 0 && <Typography.Text type="secondary">队列为空，全部答卷已确认。</Typography.Text>}
-        </div>
+        </Section>
 
-        <div className="yj-section">
-          {!d && (cur ? <div style={{ padding: 60, textAlign: 'center' }}><Spin /></div> : <Typography.Text type="secondary">← 从左侧选择一份待确认答卷</Typography.Text>)}
+        <Section>
+          {!d && (cur ? <PageLoading tip="正在加载答卷…" /> : <PageEmpty description="从左侧选择一份待确认答卷" />)}
           {d && (
             <>
               <Typography.Title level={5} style={{ marginTop: 0 }}>
-                {d.userName}（{d.userAccount}）· {d.examTitle} · 客观题 {d.objectiveScore} 分
+                {d.userName}（{d.userAccount}）· {d.examTitle} · 客观题 {formatScore(d.objectiveScore)} 分
               </Typography.Title>
               {(d.items || []).map((it: any) => (
                 <div key={it.qid} className="yj-q-item">
-                  <div className="yj-q-stem"><Tag color="purple">简答 · {it.score} 分</Tag>{it.stem}</div>
+                  <div className="yj-q-stem">
+                    <Tag color="purple">简答 · {formatScore(it.score)} 分</Tag>
+                    {it.stem}
+                  </div>
                   <div style={{ background: '#f7f9fd', borderRadius: 8, padding: '8px 12px', marginBottom: 10, whiteSpace: 'pre-wrap' }}>
                     {it.myAnswer || '（未作答）'}
                   </div>
@@ -102,15 +121,20 @@ export default function Grading() {
                       <b>AI 初评要点：</b>
                       {(it.ai.points || []).map((p: any, i: number) => (
                         <div key={i} style={{ paddingLeft: 10 }}>
-                          {p.hit ? '✅' : '⚠️'} {p.text}（权重 {Math.round(p.weight * 100)}%）{p.evidence ? ` · 依据：${p.evidence}` : ''}
+                          {p.hit ? '✅' : '⚠️'} {p.text}（权重 {formatPercent(p.weight)}）{p.evidence ? ` · 依据：${p.evidence}` : ''}
                         </div>
                       ))}
-                      置信度 {Math.round((it.ai.confidence || 0) * 100)}% · 建议得分 {it.ai.score}
+                      置信度 {formatPercent(it.ai.confidence)} · 建议得分 {formatScore(it.ai.score)}
                     </div>
                   )}
                   <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                     <span style={{ fontSize: 13 }}>教师确认得分：</span>
-                    <InputNumber min={0} max={it.score} value={scores[it.qid]} onChange={(v) => setScores((p) => ({ ...p, [it.qid]: Number(v) || 0 }))} />
+                    <InputNumber
+                      min={0}
+                      max={it.score}
+                      value={scores[it.qid]}
+                      onChange={(v) => setScores((p) => ({ ...p, [it.qid]: Number(v) || 0 }))}
+                    />
                     <Input
                       placeholder="评语（可选）"
                       style={{ flex: 1 }}
@@ -120,11 +144,13 @@ export default function Grading() {
                   </div>
                 </div>
               ))}
-              <Button type="primary" size="large" loading={saving} onClick={confirm}>确认成绩并生效</Button>
+              <Button type="primary" size="large" loading={saving} onClick={confirm}>
+                确认成绩并生效
+              </Button>
             </>
           )}
-        </div>
+        </Section>
       </div>
-    </div>
+    </PageContainer>
   );
 }

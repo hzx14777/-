@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>警院智慧考试平台 · 答辩 PPT 脚本（10 页 / 5 分钟）</title>
+<style>
+  @page { size: A4 landscape; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root{
+    --navy:#0F2B57; --blue:#1E5EFF; --red:#C8102E;
+    --ink:#16233A; --muted:#5C6E8A; --line:#DCE4F0; --bg:#F4F7FC;
+  }
+  html,body{ background:#E9EEF7; }
+  body{
+    font-family:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB",system-ui,sans-serif;
+    color:var(--ink); -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .page{
+    width:1122px; height:793px; background:#fff; position:relative;
+    padding:30px 38px 20px; margin:0 auto; overflow:hidden;
+    page-break-after:always; break-after:page;
+  }
+  .page:last-child{ page-break-after:auto; break-after:auto; }
+
+  /* 顶部条 */
+  .topbar{ display:flex; align-items:center; justify-content:space-between; padding-bottom:10px; border-bottom:2px solid var(--navy); }
+  .brand{ font-size:11.5px; letter-spacing:.18em; color:var(--muted); font-weight:600; }
+  .brand b{ color:var(--navy); }
+  .meta{ display:flex; align-items:center; gap:14px; font-size:11.5px; color:var(--muted); }
+  .pnum{ font-weight:700; color:var(--blue); letter-spacing:.06em; }
+  .clock{ background:var(--navy); color:#fff; border-radius:20px; padding:3px 11px; font-weight:700; font-size:11px; letter-spacing:.04em; }
+
+  /* 主体：左幻灯片 / 右讲稿 */
+  .body{ display:grid; grid-template-columns:1fr 316px; gap:16px; height:672px; padding-top:14px; }
+
+  /* 左：页面内容 */
+  .slide{ display:flex; flex-direction:column; min-width:0; }
+  .kicker{ display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.16em; color:var(--blue);
+           background:#EAF0FF; border-radius:4px; padding:4px 9px; margin-bottom:9px; align-self:flex-start; }
+  h1{ font-size:30px; line-height:1.3; color:var(--navy); letter-spacing:-.2px; font-weight:800; }
+  h1 em{ font-style:normal; color:var(--blue); }
+  .lede{ font-size:14px; color:var(--muted); line-height:1.7; margin-top:7px; }
+  .points{ list-style:none; margin-top:14px; display:flex; flex-direction:column; gap:9px; }
+  .points li{ font-size:13.6px; line-height:1.6; color:#293A55; padding-left:15px; position:relative; }
+  .points li::before{ content:""; position:absolute; left:0; top:7px; width:6px; height:6px; border-radius:2px; background:var(--blue); }
+  .points li b{ color:var(--navy); font-weight:700; }
+  .points li .hl{ background:#FFF3D6; padding:0 3px; border-radius:2px; }
+
+  .figure{ flex:1; margin-top:10px; display:flex; flex-direction:column; justify-content:center; position:relative; padding:20px 0 10px; min-height:0; }
+  .fig-cap{ position:absolute; top:0; left:0; font-size:10px; color:#93A3BC; letter-spacing:.08em; }
+  .fig-cap b{ color:var(--red); }
+
+  /* 通用卡片 */
+  .cards{ display:grid; gap:9px; }
+  .c2{ grid-template-columns:1fr 1fr; }
+  .c3{ grid-template-columns:1fr 1fr 1fr; }
+  .c4{ grid-template-columns:1fr 1fr 1fr 1fr; }
+  .card{ background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:12px 13px; display:flex; flex-direction:column; justify-content:center; }
+  .card .t{ font-size:11.5px; font-weight:700; color:var(--navy); margin-bottom:5px; display:flex; gap:6px; align-items:center; }
+  .card .t i{ font-style:normal; font-size:9.5px; color:#fff; background:var(--navy); border-radius:3px; padding:1px 5px; }
+  .card p{ font-size:11.5px; line-height:1.68; color:#4A5C78; }
+  .card .cost{ margin-top:7px; padding-top:6px; border-top:1px dashed #CBD6E8; font-size:10.4px; color:#8A6A00; line-height:1.5; }
+  .card.alert .cost{ color:#A83244; border-top-color:#F0C7CD; }
+  .card.alert{ background:#FFF6F7; border-color:#F3C9CF; }
+  .card.alert .t{ color:var(--red); }
+  .card.alert .t i{ background:var(--red); }
+  .card.blue{ background:#EDF3FF; border-color:#CBDCFF; }
+
+  /* 流程 */
+  .flow{ display:flex; align-items:stretch; gap:0; }
+  .flow .node{ flex:1; background:#fff; border:1.5px solid var(--line); border-radius:8px; padding:11px 12px; }
+  .flow .node.on{ border-color:var(--blue); background:#EDF3FF; box-shadow:0 3px 10px rgba(30,94,255,.12); }
+  .flow .node .n{ font-size:9.5px; color:#93A3BC; letter-spacing:.1em; margin-bottom:4px; }
+  .flow .node .h{ font-size:12.5px; font-weight:700; color:var(--navy); }
+  .flow .node .d{ font-size:10.6px; color:#5C6E8A; margin-top:4px; line-height:1.55; }
+  .flow .ar{ display:flex; align-items:center; padding:0 7px; color:#B9C6DA; font-size:15px; }
+  .flow.big .node{ padding:17px 15px; }
+  .flow.big .node .h{ font-size:13.5px; }
+  .flow.big .node .d{ margin-top:6px; }
+
+  /* 进度条（五阶段） */
+  .stage{ display:flex; gap:6px; margin-top:2px; }
+  .stage .s{ flex:1; text-align:center; }
+  .stage .s .bd{ height:8px; border-radius:4px; background:#E4EAF4; margin-bottom:6px; position:relative; overflow:hidden; }
+  .stage .s .bd::after{ content:""; position:absolute; inset:0; width:100%; background:linear-gradient(90deg,var(--blue),#6FA0FF); border-radius:4px; }
+  .stage .s.done .bd::after{ background:linear-gradient(90deg,#0F9D76,#4CC9A5); }
+  .stage .s .tx{ font-size:9.5px; color:#5C6E8A; line-height:1.35; }
+  .stage .s .tx b{ display:block; color:var(--navy); font-size:10.5px; }
+
+  /* 条形（知识点组得分率） */
+  .bars{ display:flex; flex-direction:column; gap:7px; }
+  .bar{ display:grid; grid-template-columns:76px 1fr 58px; align-items:center; gap:8px; }
+  .bar .lb{ font-size:11px; color:#3E5170; }
+  .bar .track{ height:13px; background:#EDF1F8; border-radius:3px; position:relative; }
+  .bar .fill{ height:100%; border-radius:3px; background:linear-gradient(90deg,#2E6BFF,#6FA0FF); }
+  .bar .fill.bad{ background:linear-gradient(90deg,#C8102E,#E8637A); }
+  .bar .vl{ font-size:11px; font-weight:700; color:var(--navy); text-align:right; }
+  .bar .vl.bad{ color:var(--red); }
+  .threshold{ position:absolute; top:-4px; bottom:-4px; width:2px; background:#C8102E; opacity:.55; }
+
+  /* 圆环分数 */
+  .ringwrap{ display:flex; align-items:center; gap:14px; }
+  .ring{ width:96px; height:96px; border-radius:50%; position:relative; flex:none;
+         background:conic-gradient(#1E5EFF 0 78.5%, #E4EAF4 78.5% 100%); }
+  .ring::after{ content:""; position:absolute; inset:9px; background:#fff; border-radius:50%; }
+  .ring .in{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:2; }
+  .ring .in b{ font-size:24px; color:var(--navy); line-height:1; }
+  .ring .in s{ text-decoration:none; font-size:9.5px; color:var(--muted); margin-top:3px; }
+
+  /* 三栏阅卷 */
+  .three{ display:grid; grid-template-columns:1fr 1.25fr 1fr; gap:8px; align-items:stretch; }
+  .three .col{ border:1px solid var(--line); border-radius:8px; overflow:hidden; background:#fff; height:100%; display:flex; flex-direction:column; }
+  .three .col .hd{ background:#F1F5FC; font-size:10px; font-weight:700; color:var(--navy); padding:6px 8px; border-bottom:1px solid var(--line); }
+  .three .col .bd{ padding:8px; display:flex; flex-direction:column; gap:5px; flex:1; }
+  .mini{ background:#F7F9FD; border-radius:4px; padding:5px 6px; font-size:9.6px; color:#4A5C78; line-height:1.4; }
+  .mini b{ color:var(--navy); }
+  .mini.bad{ background:#FFF4F5; color:#A83244; }
+  .mini.ok{ background:#F1FBF7; color:#0B7A5C; }
+
+  /* 上下横带（技术与 AI 页） */
+  .band{ border:1px solid var(--line); border-radius:9px; overflow:hidden; background:#fff; }
+  .band + .band{ margin-top:9px; }
+  .band-h{ background:#EEF3FC; padding:7px 12px; font-size:11.5px; font-weight:700; color:var(--navy);
+           display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--line); }
+  .band-h i{ font-style:normal; background:var(--navy); color:#fff; font-size:9.5px; border-radius:3px; padding:2px 8px; letter-spacing:.06em; }
+  .band-h span{ font-weight:400; color:#7E8FAA; font-size:10.5px; }
+  .band-b{ display:grid; grid-template-columns:1fr 1fr 1fr; }
+  .band-b > div{ padding:9px 12px; border-right:1px dashed var(--line); font-size:10.9px; line-height:1.62; color:#48597A; }
+  .band-b > div:last-child{ border-right:none; }
+  .band-b b{ color:var(--navy); }
+  .band-b .em{ background:#FFFBF0; }
+  .band-b .em b{ color:#8A6A00; }
+
+  /* 表格 */
+  .tbl{ width:100%; border-collapse:collapse; font-size:11px; }
+  .tbl th{ text-align:left; font-size:9.6px; letter-spacing:.08em; color:#93A3BC; font-weight:700; padding:5px 7px; border-bottom:1.5px solid var(--line); }
+  .tbl td{ padding:6px 7px; border-bottom:1px solid #EDF1F8; color:#3E5170; }
+  .tbl td b{ color:var(--navy); }
+  .tbl .mono{ font-family:Consolas,"SF Mono",monospace; font-size:10.5px; letter-spacing:-.2px; }
+
+  /* 数字卡 */
+  .kpi{ text-align:left; }
+  .kpi .num{ font-size:25px; font-weight:800; color:var(--blue); line-height:1; letter-spacing:-1px; }
+  .kpi .num small{ font-size:11px; font-weight:700; margin-left:2px; letter-spacing:0; }
+  .kpi .lb{ font-size:10.5px; color:#5C6E8A; margin-top:5px; line-height:1.45; }
+
+  /* 标签 */
+  .tags{ display:flex; flex-wrap:wrap; gap:5px; }
+  .tag{ font-size:10px; color:#3E5170; background:#F1F5FC; border:1px solid var(--line); border-radius:20px; padding:2.5px 9px; }
+
+  /* 右栏讲稿 */
+  .script{ background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:15px 15px 13px; display:flex; flex-direction:column; gap:9px; overflow:hidden; }
+  .s-hd{ display:flex; align-items:center; justify-content:space-between; }
+  .s-hd .h{ font-size:10px; font-weight:800; letter-spacing:.16em; color:var(--navy); }
+  .s-hd .c{ font-size:9.5px; color:#fff; background:var(--red); border-radius:3px; padding:2px 6px; font-weight:700; }
+  .speech{ font-size:12.2px; line-height:1.86; color:#23364F; }
+  .speech strong{ color:var(--navy); background:#FFF3D6; font-weight:700; padding:0 2px; }
+  .s-label{ font-size:9.5px; font-weight:800; letter-spacing:.12em; color:#8A9AB3; padding-top:6px; border-top:1px dashed #D3DCEA; }
+  .s-label:first-of-type{ border-top:none; padding-top:0; }
+  .note{ font-size:10.5px; line-height:1.65; color:#51648A; }
+  .note b{ color:var(--navy); }
+  .note code{ font-family:Consolas,monospace; font-size:9.8px; background:#E8EEF9; color:#2A4A7F; border-radius:3px; padding:1px 4px; }
+
+  .foot{ position:absolute; left:38px; right:38px; bottom:9px; display:flex; justify-content:space-between; font-size:9px; color:#A9B6C9; letter-spacing:.05em; }
+
+  /* 封面 */
+  .cover{ padding:0; background:linear-gradient(135deg,#0F2B57 0%,#173F7E 55%,#1E5EFF 100%); color:#fff; }
+  .cover .inner{ position:absolute; inset:0; padding:56px 62px; display:flex; flex-direction:column; }
+  .cover .glow{ position:absolute; width:620px; height:620px; border-radius:50%; right:-210px; top:-230px;
+                background:radial-gradient(circle,rgba(120,170,255,.32),transparent 62%); }
+  .cover .glow2{ position:absolute; width:460px; height:460px; border-radius:50%; left:-160px; bottom:-210px;
+                background:radial-gradient(circle,rgba(30,94,255,.30),transparent 65%); }
+  .cover .eyebrow{ font-size:11px; letter-spacing:.34em; color:#9CC0FF; font-weight:700; }
+  .cover h1{ color:#fff; font-size:62px; line-height:1.14; margin-top:18px; letter-spacing:1px; }
+  .cover h2{ font-size:21px; font-weight:400; color:#C6DAFF; margin-top:16px; letter-spacing:.02em; }
+  .cover .rule{ width:64px; height:3px; background:#7FB0FF; margin:26px 0 22px; }
+  .cover .who{ display:grid; grid-template-columns:repeat(4,auto); gap:0 46px; margin-top:auto; margin-bottom:8px; }
+  .cover .who .k{ font-size:9.5px; letter-spacing:.16em; color:#8FB4EC; margin-bottom:5px; }
+  .cover .who .v{ font-size:15px; color:#fff; font-weight:700; }
+  .cover .bottom{ margin-top:24px; display:flex; align-items:flex-end; justify-content:space-between; }
+  .cover .slogan{ font-size:12.5px; color:#B9D2FA; line-height:1.8; }
+  .cover .slogan b{ color:#fff; }
+  .cover .qr{ width:86px; height:86px; border:1px solid rgba(255,255,255,.35); border-radius:8px;
+              display:flex; align-items:center; justify-content:center; font-size:9px; color:#C6DAFF; text-align:center; line-height:1.5; }
+  .cover .tagline{ position:absolute; right:62px; top:60px; text-align:right; font-size:10px; color:#9CC0FF; letter-spacing:.14em; line-height:1.9; }
+  .cover .pillars{ display:flex; gap:10px; margin-top:34px; }
+  .cover .pillars > div{ border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.07); border-radius:9px; padding:12px 18px; }
+  .cover .pillars b{ display:block; font-size:13.5px; color:#fff; letter-spacing:.02em; }
+  .cover .pillars span{ display:block; font-size:10px; color:#9CC0FF; margin-top:4px; letter-spacing:.06em; }
+
+  /* 交付说明页 */
+  .doc{ padding:34px 44px 22px; }
+  .doc h1{ font-size:23px; }
+  .docgrid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:12px; }
+  .docbox{ border:1px solid var(--line); border-radius:9px; padding:12px 14px; background:#fff; }
+  .docbox .t{ font-size:11.5px; font-weight:800; color:var(--navy); margin-bottom:7px; display:flex; align-items:center; gap:6px; }
+  .docbox .t i{ font-style:normal; width:17px; height:17px; border-radius:4px; background:var(--navy); color:#fff;
+                font-size:9.5px; display:flex; align-items:center; justify-content:center; }
+  .docbox p, .docbox li{ font-size:10.4px; line-height:1.72; color:#3E5170; }
+  .docbox ol, .docbox ul{ padding-left:15px; }
+  .docbox li{ margin-bottom:2px; }
+  .docbox code{ font-family:Consolas,monospace; font-size:9.6px; background:#EDF2FB; border-radius:3px; padding:1px 4px; color:#2A4A7F; }
+  .timeline{ width:100%; border-collapse:collapse; font-size:10.2px; }
+  .timeline th{ font-size:9.2px; color:#93A3BC; letter-spacing:.06em; text-align:left; padding:4px 5px; border-bottom:1px solid var(--line); }
+  .timeline td{ padding:4.5px 5px; border-bottom:1px solid #EFF3F9; color:#3E5170; }
+  .timeline td b{ color:var(--navy); }
+  .timeline .tt{ font-family:Consolas,monospace; color:var(--blue); font-weight:700; }
+</style>
+</head>
+<body>
+
+<!-- ============ P1 封面 ============ -->
+<section class="page cover">
+  <div class="glow"></div><div class="glow2"></div>
+  <div class="tagline">警院 WeChat 全生态 · 五平台体系<br>之三 · 考试平台</div>
+  <div class="inner">
+    <div class="eyebrow">SMART EXAMINATION PLATFORM · 2026</div>
+    <h1>警院智慧考试平台</h1>
+    <h2>把「学完」变成「学会」的能力闸门</h2>
+    <div class="rule"></div>
+    <div class="pillars">
+      <div><b>AI 命题</b><span>教考同源 · 章节正文长题</span></div>
+      <div><b>双达标判定</b><span>总分 + 每组得分率 · 可复算</span></div>
+      <div><b>人机共判</b><span>置信度门控 · 全程留痕</span></div>
+    </div>
+    <div class="who">
+      <div><div class="k">项目名称</div><div class="v">警院智慧考试平台</div></div>
+      <div><div class="k">姓　　名</div><div class="v">【待填姓名】</div></div>
+      <div><div class="k">区　　队</div><div class="v">【待填区队】</div></div>
+      <div><div class="k">赛　　道</div><div class="v">警务校园教育实训</div></div>
+    </div>
+    <div class="bottom">
+      <div class="slogan">
+        <b>AI 命题 · 双达标判定 · 人机共判</b><br>
+        让每一张成绩单，都成为可追溯、可跨平台使用的能力证明
+      </div>
+      <div class="qr">二维码位<br>（现场扫码）</div>
+    </div>
+  </div>
+  <div class="foot" style="color:rgba(255,255,255,.45)"><span>答辩脚本 · 10 页 / 5 分钟</span><span>P01 / 10　⏱ 15s</span></div>
+</section>
+
+<!-- ============ P2 痛点 ============ -->
+<section class="page">
+  <div class="topbar">
+    <div class="brand">警院智慧考试平台 · <b>答辩脚本</b></div>
+    <div class="meta"><span class="pnum">P02 / 10</span><span class="clock">⏱ 35s</span></div>
+  </div>
+  <div class="body">
+    <div class="slide">
+      <div class="kicker">痛点 · 背景</div>
+      <h1>一周之内，四次「卡住」<br><em>都卡在同一处：没有人证明「他会不会」</em></h1>
+      <div class="figure">
+        <div class="fig-cap">页面元素：四张场景卡（建议横向 2×2，每卡一个真实角色）</div>
+        <div class="cards c2">
+          <div class="card"><div class="t"><i>周三 14:00</i>学员：学完了，但不会</div>
+            <p>张予安自学平台里 4 个章节全部标「已完成」，工坊面试被问「时空分析怎么落地」，答不上来。进度条证明他看过，证明不了他会用。</p>
+            <p class="cost">代价：面试当场卡住，只能等下一轮</p></div>
+          <div class="card"><div class="t"><i>周三 20:00</i>教师：命题比上课还累</div>
+            <p>陈立群要出一套 40 题的配套卷：逐题录入、配答案、写解析，两个晚上；课程大纲改一版，题库又得重做一遍。</p>
+            <p class="cost">代价：大纲一改，题库整体返工</p></div>
+          <div class="card"><div class="t"><i>周四 09:00</i>导师：选人只能凭印象</div>
+            <p>数据研判工坊要组队，三个人报名。谁真的会清洗、谁会做时空分析？没有统一、可复核的门槛，只能凭印象和自述挑。</p>
+            <p class="cost">代价：选错人，项目中期返工</p></div>
+          <div class="card alert"><div class="t"><i>周五 16:00</i>结果：分数停在成绩单上</div>
+            <p>卷子考完就归档。78.5 分背后薄弱在哪、该补哪一章，没人说得清；教学也没拿到可用的反馈。</p>
+            <p class="cost">代价：教学改进没有依据</p></div>
+        </div>
+      </div>
+    </div>
+    <aside class="script">
+      <div class="s-hd"><div class="h">口播 · 35 秒</div><div class="c">约 140 字</div></div>
+      <p class="speech">先说一个典型场景。周三下午，实训工坊要组数据研判队。学员张予安自学平台四个章节全部「已完成」，可导师问他时空分析怎么做，他答不上来。教师陈立群要出一套 40 题的卷子，逐题录入、写解析，花了两个晚上；大纲一改，题库又得重做。导师手里三个人报名，只能凭印象挑。分数考出来了，也只是成绩单上的一行数字。</p>
+      <div class="s-label">配图说明</div>
+      <p class="note"><b>四格拼图</b>，不要用抽象图标，用真实界面局部：①自学平台章节完成页（可 50% 透明蒙版）②Excel 题库截图 ③工坊报名表 ④成绩单。<br>若无素材，退化为四个大字「学完 ≠ 学会」+ 一句痛点，不放图。</p>
+      <div class="s-label">口播提示</div>
+      <p class="note">语速放慢，四个场景各一句，<b>不要逐条念卡片</b>。最后一句「只是成绩单上的一行数字」后停 1 秒，接下一页。</p>
+    </aside>
+  </div>
+  <div class="foot"><span>警院智慧考试平台 · 答辩脚本 V1.0</span><span>2026-11-05</span></div>
+</section>
+
+<!-- ============ P3 一句话方案 ============ -->
+<section class="page">
+  <div class="topbar">
+    <div class="brand">警院智慧考试平台 · <b>答辩脚本</b></div>
+    <div class="meta"><span class="pnum">P03 / 10</span><span class="clock">⏱ 25s</span></div>
+  </div>
+  <div class="body">
+    <div class="slide">
+      <div class="kicker">一句话解决方案</div>
+      <h1 style="font-size:26px;line-height:1.42">用 AI 把课程正文变成试题，<br>用双达标把分数变成准入资格，<br><em>让每一次考试都成为可追溯的能力证明。</em></h1>
+      <div class="figure">
+        <div class="fig-cap">页面元素：五平台闭环流程图，考试平台高亮，上下游各一句职责</div>
+        <div class="flow" style="margin-top:4px">
+          <div class="node"><div class="n">上游</div><div class="h">自学平台</div><div class="d">课程 · 章节 · 知识点<br>完成事件解锁考试</div></div>
+          <div class="ar">›</div>
+          <div class="node on"><div class="n">本平台 · 闸门</div><div class="h" style="color:var(--blue)">考试平台</div><div class="d">AI 命题 → 双达标判定 → 人机共判 → 资格发放</div></div>
+          <div class="ar">›</div>
+          <div class="node"><div class="n">下游</div><div class="h">实训工坊</div><div class="d">凭 exam.passed<br>获得项目准入</div></div>
+          <div class="ar">›</div>
+          <div class="node"><div class="n">出口</div><div class="h">成果广场</div><div class="d">能力档案<br>可展示的凭证</div></div>
+        </div>
+        <div class="cards c3" style="margin-top:10px">
+          <div class="card"><div class="t">① 教考同源</div><p>试题从章节正文与知识点长出来，课程改了题跟着改。</p></div>
+          <div class="card"><div class="t">② 判得准</div><p>总分 + 每组得分率双线判定，规则可解释、可复算。</p></div>
+          <div class="card"><div class="t">③ 用得上</div><p>通过即刻发资格、推事件，错题回流到章节。</p></div>
+        </div>
+        <div style="margin-top:11px;background:#0F2B57;border-radius:8px;padding:10px 14px;color:#C6DAFF;font-size:11px;line-height:1.6">
+          <b style="color:#fff">职责边界：</b>课程内容归自学平台，项目过程归实训工坊——本平台只做三件事：判定、发凭证、推事件。
+        </div>
+      </div>
+    </div>
+    <aside class="script">
+      <div class="s-hd"><div class="h">口播 · 25 秒</div><div class="c">约 95 字</div></div>
+      <p class="speech">所以我们的方案可以压成一句话：用 AI 把课程正文变成试题，用双达标把分数变成准入资格，让每一次考试都成为可追溯的能力证明。三个动作：教考同源、判得准、用得上。它在五平台闭环里就一个角色——闸门。</p>
+      <div class="s-label">配图说明</div>
+      <p class="note"><b>一张横向流程图</b>即可，四节点等宽。中间「考试平台」用主色描边 + 浅蓝底，其余灰阶，让评委一眼看到位置。<b>不要放架构图</b>，这一页只讲定位。</p>
+      <div class="s-label">口播提示</div>
+      <p class="note">整句一口气念完，<b>念完停 1 秒</b>再解释三个动作。这是全场唯一需要评委记住的一句话。</p>
+    </aside>
+  </div>
+  <div class="foot"><span>警院智慧考试平台 · 答辩脚本 V1.0</span><span>2026-11-05</span></div>
+</section>
+
+<!-- ============ P4 功能一：AI 命题 ============ -->
+<section class="page">
+  <div class="topbar">
+    <div class="brand">警院智慧考试平台 · <b>答辩脚本</b></div>
+    <div class="meta"><span class="pnum">P04 / 10</span><span class="clock">⏱ 45s</span></div>
+  </div>
+  <div class="body">
+    <div class="slide">
+      <div class="kicker">核心功能 ① · AI 命题</div>
+      <h1>教师从「出题人」变成「审题人」</h1>
+      <ul class="points">
+        <li><b>选点即出题：</b>课程 → 章节 → 知识点，题量与题型/难度分布可调，<span class="hl">分布合计 ≠ 100% 禁止提交</span>。</li>
+        <li><b>五阶段任务：</b>拉正文 → 切片 → 生成 → 自检 → 待审，异步执行、进度可见。</li>
+        <li><b>四道硬自检：</b>答案在选项内、选项互斥、题干不泄答案、解析与答案互证，逐条标红。</li>
+        <li><b>判重与溯源：</b>二元组 Jaccard ≥ 0.90 提示重复；每题可追到章节正文哈希、任务号、模型版本。</li>
+      </ul>
+      <div class="figure">
+        <div class="fig-cap">页面元素：五阶段进度条 + 四道自检清单（建议左侧进度、右侧红绿灯）</div>
+        <div class="stage">
+          <div class="s done"><div class="bd"></div><div class="tx"><b>拉正文</b>章节全文</div></div>
+          <div class="s done"><div class="bd"></div><div class="tx"><b>切片</b>按知识点</div></div>
+          <div class="s done"><div class="bd"></div><div class="tx"><b>生成</b>候选题</div></div>
+          <div class="s done"><div class="bd"></div><div class="tx"><b>自检</b>四道校验</div></div>
+          <div class="s"><div class="bd"></div><div class="tx"><b>待审</b>教师确认</div></div>
+        </div>
+        <div class="cards c4" style="margin-top:10px">
+          <div class="card blue"><div class="t">✓ 答案唯一</div><p>标准答案必须落在选项内，多选至少两个正确项。</p></div>
+          <div class="card blue"><div class="t">✓ 选项互斥</div><p>选项内容去重，少于 3 个选项直接判不通过。</p></div>
+          <div class="card blue"><div class="t">✓ 题干不泄题</div><p>题干若包含正确选项原文，标为泄题风险。</p></div>
+          <div class="card blue"><div class="t">✓ 解析互证</div><p>解析缺失或过短、与答案不一致，均拦截。</p></div>
+        </div>
+      </div>
+    </div>
+    <aside class="script">
+      <div class="s-hd"><div class="h">口播 · 45 秒</div><div class="c">约 180 字</div></div>
+      <p class="speech">第一个功能，AI 命题。教师选课程、章节、知识点，设好题量和题型分布——分布合计不等于 100% 是不让提交的。提交后任务分五步跑：拉正文、切片、生成、自检、待审。四道硬自检逐条标红：答案必须在选项内、选项要互斥、题干不能泄答案、解析要和答案互证。生成完还要过相似度，重合度超过 0.90 直接提示重复。最后教师批量通过，或者逐题淘汰——<strong>淘汰必须写理由</strong>。每道题都能追到章节正文、正文哈希和任务号。</p>
+      <div class="s-label">配图说明</div>
+      <p class="note"><b>两张截图拼一页</b>：左「命题工作台参数区」（题量滑块 + 题型分布环形图）；右「生成结果 + 自检标红」。<br>现有素材：<code>shots/yj/react-09-workbench.png</code>、<code>shots/yj/09-workbench-result.png</code>（旧版，需核对 UI）。<br><b>拍图要点：</b>务必拍到一条被标红的自检项，这是可信度的关键。</p>
+      <div class="s-label">口播提示</div>
+      <p class="note">「审题人」三个字加重。若时间紧，<b>四道自检只念前两个</b>，其余交给页面。不要现场跑生成（见交付说明的录屏方案）。</p>
+    </aside>
+  </div>
+  <div class="foot"><span>警院智慧考试平台 · 答辩脚本 V1.0</span><span>2026-11-05</span></div>
+</section>
+
+<!-- ============ P5 功能二：双达标 ============ -->
+<section class="page">
+  <div class="topbar">
+    <div class="brand">警院智慧考试平台 · <b>答辩脚本</b></div>
+    <div class="meta"><span class="pnum">P05 / 10</span><span class="clock">⏱ 45s</span></div>
+  </div>
+  <div class="body">
+    <div class="slide">
+      <div class="kicker">核心功能 ② · 双达标判定</div>
+      <h1>78.5 分，及格了，但<em>不能通过</em></h1>
+      <ul class="points">
+        <li><b>规则：</b>总分 ≥ 及格线 <b>且</b> 每个知识点组得分率 ≥ 组阈值，两条同时成立才算通过。</li>
+        <li><b>失败分型：</b>仅总分不足 / 仅单组偏科 / 两者都不足，三种文案不同，指向不同的补强动作。</li>
+        <li><b>通过之后：</b>发准入资格卡（能力范围、分数、等级、12 个月有效期），重考提分则延期升级。</li>
+      </ul>
+      <div class="figure">
+        <div class="fig-cap">页面元素：左成绩环 + 右侧四组得分率条形，40% 那条用红色并标出 60% 阈值线</div>
+        <div style="display:grid;grid-template-columns:118px 1fr;gap:16px;align-items:center;margin-top:2px">
+          <div class="ringwrap" style="flex-direction:column;gap:6px">
+            <div class="ring"><div class="in"><b>78.5</b><s>及格线 70</s></div></div>
+            <div style="font-size:10px;color:var(--red);font-weight:700;text-align:center">判定：不通过</div>
+          </div>
+          <div class="bars">
+            <div class="bar"><div class="lb">案件数据清洗</div><div class="track"><div class="fill" style="width:100%"></div><div class="threshold" style="left:60%"></div></div><div class="vl">100%</div></div>
+            <div class="bar"><div class="lb">时空分析</div><div class="track"><div class="fill bad" style="width:40%"></div><div class="threshold" style="left:60%"></div></div><div class="vl bad">40%</div></div>
+            <div class="bar"><div class="lb">热点研判</div><div class="track"><div class="fill" style="width:82.5%"></div><div class="threshold" style="left:60%"></div></div><div class="vl">82.5%</div></div>
+            <div class="bar"><div class="lb">数据规范</div><div class="track"><div class="fill" style="width:100%"></div><div class="threshold" style="left:60%"></div></div><div class="vl">100%</div></div>
+            <div style="font-size:10px;color:#5C6E8A;margin-top:2px">组满分 30 分，实得 12 分 → 得分率 40%，低于 60% 达标线，直送补强入口。</div>
+          </div>
+        </div>
+        <div class="cards c3" style="margin-top:10px">
+          <div class="card"><div class="t"><i>total</i>总分不足</div><p>「差 2.2 分及格」——给整卷重考建议。</p></div>
+          <div class="card alert"><div class="t"><i>group</i>单组偏科</div><p>「总分已过，时空分析 40%」——直送该章节。</p></div>
+          <div class="card"><div class="t"><i>both</i>两者不足</div><p>「总分与两组均未达标」——先补组再重考。</p></div>
+        </div>
+      </div>
+    </div>
+    <aside class="script">
+      <div class="s-hd"><div class="h">口播 · 45 秒</div><div class="c">约 175 字</div></div>
+      <p class="speech">第二个功能，双达标判定。规则是两条同时满足：总分过及格线，并且每个知识点组的得分率都过组阈值。请看这个真实案例：张予安总分 78.5，及格线 70，看起来过了；但「时空分析」满分 30 他只拿 12，得分率 40%，低于 60%，系统判定不通过，并直接告诉他该补哪一章。这就是堵住「偏科拖过」。失败还分三类：总分不够、单组偏科、两者都不够，给的文案完全不同。通过之后才发准入资格卡，写清能力范围、分数、等级，有效期 12 个月。</p>
+      <div class="s-label">配图说明</div>
+      <p class="note"><b>主图必须是成绩单截图</b>，能同时看到「总分环 78.5」和「双达标：未通过」。<br>现有素材：<code>shots/yj/react-06-result.png</code>、<code>shots/yj/04-result.png</code>；资格卡：<code>shots/yj/06-admission.png</code>。<br><b>建议在截图上手绘一个红框</b>圈住「时空分析 40%」，评委视线会被带到关键处。</p>
+      <div class="s-label">口播提示</div>
+      <p class="note">「78.5 分及格了但不能通过」是全场的记忆点，<b>说完停 2 秒</b>让评委看条。不要解释权重怎么算，评委不问就不讲。</p>
+    </aside>
+  </div>
+  <div class="foot"><span>警院智慧考试平台 · 答辩脚本 V1.0</span><span>2026-11-05</span></div>
+</section>
+
+<!-- ============ P6 功能三：人机共判 ============ -->
+<section class="page">
+  <div class="topbar">
+    <div class="brand">警院智慧考试平台 · <b>答辩脚本</b></div>
+    <div class="meta"><span class="pnum">P06 / 10</span><span class="clock">⏱ 45s</span></div>
+  </div>
+  <div class="body">
+    <div class="slide">
+      <div class="kicker">核心功能 ③ · 人机共判</div>
+      <h1>AI 只做初评，教师确认才生效</h1>
+      <ul class="points">
+        <li><b>客观题全自动：</b>单选/判断完全匹配；多选全对满分、漏选半分、错选零分；填空做归一化（空格/全半角/大小写/同义词）。</li>
+        <li><b>简答按要点给分：</b>逐点命中计分，同时输出置信度；<span class="hl">置信度 &lt; 0.75 强制人工复核</span>。</li>
+        <li><b>调分留痕：</b>原分、新分、评语、确认人、确认时间全部落库；成绩生效才重算组得分、触发双达标与资格。</li>
+        <li><b>考后回得去：</b>错题按知识点聚合，一点跳回章节，形成「考—错—学—再考」。</li>
+      </ul>
+      <div class="figure">
+        <div class="fig-cap">页面元素：三栏阅卷示意图 + 置信度阈值标尺（0.75 为红线，名单为示意）</div>
+        <div class="three" style="margin-top:2px">
+          <div class="col"><div class="hd">待阅队列（按置信度升序）</div><div class="bd">
+            <div class="mini bad"><b>王思远</b> · 67.8 分<br>简答含低置信项 · 待复核</div>
+            <div class="mini"><b>张予安</b> · 78.5 分<br>1 处待复核</div>
+            <div class="mini"><b>李明轩</b> · 96.5 分<br>已确认</div>
+          </div></div>
+          <div class="col"><div class="hd">卷面 · 评分要点</div><div class="bd">
+            <div class="mini"><b>简答 3</b>（8 分）请说明时空热点的判定步骤…<br><span style="color:#8A9AB3">作答：先做核密度估计…</span></div>
+            <div class="mini ok">命中 2 / 缺失 1 · 建议 5.5 分</div>
+          </div></div>
+          <div class="col"><div class="hd">AI 命中 / 缺失</div><div class="bd">
+            <div class="mini ok">✓ 核密度估计</div>
+            <div class="mini ok">✓ 带宽选择</div>
+            <div class="mini bad">✗ 置信度检验（缺失）</div>
+          </div></div>
+        </div>
+        <div style="margin-top:10px;border:1px solid var(--line);border-radius:8px;padding:9px 12px;background:var(--bg)">
+          <div style="font-size:10px;color:#8A9AB3;margin-bottom:7px">置信度门控（演示数据：15 份答卷中 7 处触发复核）</div>
+          <div style="position:relative;height:16px;background:#E4EAF4;border-radius:4px">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:52%;background:linear-gradient(90deg,#C8102E,#E8637A);border-radius:4px 0 0 4px"></div>
+            <div style="position:absolute;left:52%;top:0;bottom:0;width:44%;background:linear-gradient(90deg,#0F9D76,#4CC9A5)"></div>
+            <div style="position:absolute;left:52%;top:-5px;bottom:-5px;width:2px;background:#16233A"></div>
+            <div style="position:absolute;left:52%;top:-20px;transform:translateX(-50%);font-size:9.5px;color:#16233A;font-weight:700;white-space:nowrap">0.75 强制复核线</div>
+            <div style="position:absolute;left:3px;top:19px;font-size:9px;color:#C8102E">必须人工</div>
+            <div style="position:absolute;right:3px;top:19px;font-size:9px;color:#0B7A5C">可自动通过</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="script">
+      <div class="s-hd"><div class="h">口播 · 45 秒</div><div class="c">约 175 字</div></div>
+      <p class="speech">第三个功能，人机共判。客观题全自动：多选全对满分、漏选半分、错选零分；填空做归一化，忽略空格、全半角和大小写。简答题按评分要点逐点命中计分，同时给置信度——低于 0.75 强制人工复核，演示数据里 15 份答卷有 7 处触发。阅卷是三栏：待阅队列按最低置信度排序，中间是卷面，右边是 AI 的命中与缺失要点。教师调分要留痕：原分、新分、评语、确认人、时间。确认后成绩才生效，重算组得分，触发双达标和资格。</p>
+      <div class="s-label">配图说明</div>
+      <p class="note"><b>必须有的截图</b>：阅卷三栏页（含右下角「确认并生效」按钮），<code>shots/yj/react-08-grading.png</code>。<br>可再加一张错题本 <code>shots/yj/05-wrong.png</code> 做右下角小图，证明「考后回得去」。<br>三栏示意可保留作底，截图叠在上层更好看——<b>但别把字压到看不清</b>。</p>
+      <div class="s-label">口播提示</div>
+      <p class="note">重点在「<b>教师确认才生效</b>」这句，这是合规底线。评委常追问「AI 判错了怎么办」，答案就是置信度门控 + 留痕 + 人工复核。</p>
+    </aside>
+  </div>
+  <div class="foot"><span>警院智慧考试平台 · 答辩脚本 V1.0</span><span>2026-11-05</span></div>
+</section>
+
+<!-- ============ P7 技术与 AI ============ -->
+<section class="page">
+  <div class="topbar">
+    <div class="brand">警院智慧考试平台 · <b>答辩脚本</b></div>
+    <div class="meta"><span class="pnum">P07 / 10</span><span class="clock">⏱ 30s</span></div>
+  </div>
+  <div class="body">
+    <div class="slide">
+      <div class="kicker">技术与 AI 使用</div>
+      <h1>AI 用在两处：<em>功能里</em>，和<em>开发里</em></h1>
+      <div class="figure" style="margin-top:8px">
+        <div class="fig-cap">页面元素：上下两条横带（功能中 / 开发中）+ 底部技术栈标签带</div>
+        <div class="band">
+          <div class="band-h"><i>功能中</i>产品内运行的 AI <span>命题 · 判分 · 判重</span></div>
+          <div class="band-b">
+            <div><b>命题</b><br>正文切片 → 候选生成 → <b>四道硬自检</b> → Jaccard 0.90 判重 → 章节溯源</div>
+            <div><b>判分</b><br>评分要点命中匹配 → 置信度 0.52~0.96 → <b>&lt;0.75 强制转人工</b></div>
+            <div class="em"><b>如实说明</b><br>本地规则引擎（模板 + 正文抽取），<b>未调用真实大模型</b>；生成层已隔离，替换即成。</div>
+          </div>
+        </div>
+        <div class="band">
+          <div class="band-h"><i>开发中</i>研发过程用到的 AI <span>需求 · 代码 · 测试 · 运维</span></div>
+          <div class="band-b">
+            <div><b>需求与选型</b><br>SRS V1.0（13 章）· 5 个开源项目对标（88 分选中砚考）</div>
+            <div><b>代码</b><br>前端 16 页 / 约 4200 行 TS·TSX；后端约 3300 行 Node / 36 接口</div>
+            <div><b>测试与运维</b><br>Playwright 全链路脚本 · 打包上线 · 故障定位（重启后 502）<br><span style="color:#8A6A00"><b>人负责：</b>规则设计 / 口径 / 验收</span></div>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <div style="font-size:9.5px;color:#93A3BC;letter-spacing:.08em;margin-bottom:5px">技术栈</div>
+          <div class="tags">
+            <span class="tag">React 18</span><span class="tag">TypeScript</span><span class="tag">Vite 5</span><span class="tag">Ant Design 5</span><span class="tag">GSAP 3</span>
+            <span class="tag">Node 22（零依赖）</span><span class="tag">REST / 统一响应信封</span><span class="tag">OAuth 2.1 授权码 SSO</span>
+            <span class="tag">RBAC 权限点 · 前后端双校验</span><span class="tag">nginx + systemd</span><span class="tag">JSON 存储（可平移 MySQL）</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="script">
+      <div class="s-hd"><div class="h">口播 · 30 秒</div><div class="c">约 120 字</div></div>
+      <p class="speech">技术上有两处用了 AI。功能里：命题的候选生成、四道自检、相似度判重，还有判分的要点匹配和置信度门控。这里我如实说明，当前是本地规则引擎，没有接真实大模型；生成函数已经隔离，换成模型调用就行，后面的自检、判重、审核、溯源都不用动。开发中也用了 AI：需求文档、开源选型、四千多行前端、三千多行后端、全链路测试和上线脚本，都是 AI 出初稿，我负责规则、口径和验收。</p>
+      <div class="s-label">配图说明</div>
+      <p class="note">这一页<b>不放产品截图</b>，用上下两条横带 + 技术栈标签带。<br>可加一张小图：命题任务溯源信息（正文哈希 / 任务号 / 模型版本），<code>shots/yj/09-workbench-result.png</code> 局部裁切。<br>技术栈标签不超过 12 个，多了评委不看。</p>
+      <div class="s-label">口播提示</div>
+      <p class="note">「<b>如实说明</b>」四个字一定要念出来——主动交代边界，比被问出来强。评委追问「没用大模型叫什么 AI」时，答：AI 在这条链路里承担的是生成与初评，规则引擎是当前无 Key 环境下的可运行实现，接口已留好。</p>
+    </aside>
+  </div>
+  <div class="foot"><span>警院智慧考试平台 · 答辩脚本 V1.0</span><span>2026-11-05</span></div>
+</section>
+
+<!-- ============ P8 部署与访问 ============ -->
+<section class="page">
+  <div class="topbar">
+    <div class="brand">警院智慧考试平台 · <b>答辩脚本</b></div>
+    <div class="meta"><span class="pnum">P08 / 10</span><span class="clock">⏱ 20s</span></div>
+  </div>
+  <div class="body">
+    <div class="slide">
+      <div class="kicker">部署与访问</div>
+      <h1>公网可访问，双链接兜底</h1>
+      <div class="figure" style="margin-top:8px">
+        <div class="fig-cap">页面元素：上三条链接卡 + 中架构三层 + 下账号表</div>
+        <div class="cards c3">
+          <div class="card blue"><div class="t">主链接 · 公网</div><p class="mono" style="font-family:Consolas,monospace;font-size:11.4px;color:#1E5EFF;font-weight:700">8.134.60.240/yj/login</p><p style="margin-top:4px">阿里云 2C1.8G · 实测 HTTP 200 / 响应 83ms</p></div>
+          <div class="card"><div class="t">备用 ① 局域网</div><p class="mono" style="font-family:Consolas,monospace;font-size:11.4px;color:#0F2B57;font-weight:700">192.168.5.8/yj/login</p><p style="margin-top:4px">本机实例 · 同一 Wi-Fi 可访问</p></div>
+          <div class="card"><div class="t">备用 ② 直连端口</div><p class="mono" style="font-family:Consolas,monospace;font-size:11.4px;color:#0F2B57;font-weight:700">127.0.0.1:8090/yj/login</p><p style="margin-top:4px">绕过 nginx，仅演示机本机</p></div>
+        </div>
+        <div class="flow" style="margin-top:10px">
+          <div class="node"><div class="n">接入</div><div class="h">nginx : 80</div><div class="d">gzip、静态缓存、反代</div></div>
+          <div class="ar">›</div>
+          <div class="node on"><div class="n">应用</div><div class="h">Node : 8090</div><div class="d">静态页 + /yjapi 同源托管</div></div>
+          <div class="ar">›</div>
+          <div class="node"><div class="n">数据</div><div class="h">db.json</div><div class="d">每日 02:10 备份</div></div>
+          <div class="ar">›</div>
+          <div class="node"><div class="n">守护</div><div class="h">systemd</div><div class="d">Restart=always · 开机自启</div></div>
+        </div>
+        <div style="margin-top:10px">
+          <div style="font-size:9.5px;color:#93A3BC;letter-spacing:.08em;margin-bottom:4px">测试身份（统一认证演示模式 · 点选即登录，不设本地密码）</div>
+          <table class="tbl">
+            <tr><th style="width:26%">身份</th><th style="width:22%">账号 / 学工号</th><th style="width:22%">口令</th><th>可演示内容</th></tr>
+            <tr><td><b>学员 · 张予安</b></td><td class="mono">2023011</td><td>免密（SSO 点选）</td><td>大厅 / 答题 / 78.5 分成绩 / 错题本 / 资格</td></tr>
+            <tr><td><b>教师 · 陈立群</b></td><td class="mono">T1001</td><td>免密（SSO 点选）</td><td>AI 命题 / 阅卷 / 发布 / 看板</td></tr>
+            <tr><td><b>管理员</b></td><td class="mono">admin</td><td>免密（SSO 点选）</td><td>审计与事件 / 全量留痕</td></tr>
+          </table>
+          <p style="font-size:10.2px;color:#7E8FAA;margin-top:6px;line-height:1.6">
+            身份与口令统一由论坛认证中心托管，本平台不存储密码；接入 API 网关后，业务侧只读网关注入的身份头（X-User-* + 内部签名校验）。
+          </p>
+        </div>
+      </div>
+    </div>
+    <aside class="script">
+      <div class="s-hd"><div class="h">口播 · 20 秒</div><div class="c">约 78 字</div></div>
+      <p class="speech">部署在阿里云 2 核 1.8G，nginx 转到 Node，systemd 托管、开机自启。公网入口是 8.134.60.240 斜杠 yj 斜杠 login，实测响应 83 毫秒。备用两个：本机局域网 192.168.5.8，和直连 8090。统一认证演示模式，点选身份就登录，平台不存密码。</p>
+      <div class="s-label">配图说明</div>
+      <p class="note">右侧可贴<b>登录页截图</b>（<code>shots/deploy/01-login.png</code>）+ <b>认证中心选身份页</b>（<code>shots/deploy/02-sso.png</code>），让评委看见「点一下就能进」。<br>链接务必做成<b>可点文字 + 二维码</b>双份，不要只写小字。</p>
+      <div class="s-label">备用提示</div>
+      <p class="note">若公网打不开：①切局域网链接 ②本机 <code>start-platform.bat</code> 起服务 ③直接放 30 秒录屏。<b>三个链接都印在纸质卡片上</b>，随讲稿一起递。</p>
+    </aside>
+  </div>
+  <div class="foot"><span>警院智慧考试平台 · 答辩脚本 V1.0</span><span>2026-11-05</span></div>
+</section>
+
+<!-- ============ P9 价值与未来 ============ -->
+<section class="page">
+  <div class="topbar">
+    <div class="brand">警院智慧考试平台 · <b>答辩脚本</b></div>
+    <div class="meta"><span class="pnum">P09 / 10</span><span class="clock">⏱ 25s</span></div>
+  </div>
+  <div class="body">
+    <div class="slide">
+      <div class="kicker">价值与未来</div>
+      <h1>把「周」压成「分钟」，把「印象」换成「凭证」</h1>
+      <div class="figure" style="margin-top:8px">
+        <div class="fig-cap">页面元素：四张量化卡（大数字）+ 下方两条规划</div>
+        <div class="cards c4">
+          <div class="card kpi"><div class="num">96<small>→8s</small></div><div class="lb">12 题命题耗时<br>（按每题 8 分钟人工录入估算）</div></div>
+          <div class="card kpi"><div class="num">100<small>%</small></div><div class="lb">客观题自动判分<br>主观题仅复核低置信 7 处</div></div>
+          <div class="card kpi"><div class="num">1<small>例</small></div><div class="lb">78.5 分偏科被真实拦下<br>（时空分析 40%）</div></div>
+          <div class="card kpi"><div class="num">2C<small>1.8G</small></div><div class="lb">单机常驻 56MB<br>响应 83ms / gzip 470KB</div></div>
+        </div>
+        <div class="cards c2" style="margin-top:10px">
+          <div class="card"><div class="t"><i>规划 1</i>接进五平台主干</div><p>切换 SSO real 模式对接论坛认证中心；前置 APISIX 网关做集中鉴权；<b>exam.passed</b> 事件真实投递实训工坊；JSON 按数据字典平移 MySQL。</p></div>
+          <div class="card"><div class="t"><i>规划 2</i>把 AI 做深</div><p>命题引擎替换为真实大模型 + 向量语义去重；补齐随机组卷、Excel 批量导入、题目版本管理（P1 项）。</p></div>
+        </div>
+        <div style="margin-top:9px;background:#0F2B57;border-radius:8px;padding:9px 13px;color:#C6DAFF;font-size:11.2px;line-height:1.6">
+          <b style="color:#fff">一句话价值：</b>不是多了一个考试工具，而是给「学习行为」装了一个可信的出口——学员拿到能力证明，导师拿到选人依据，教学拿到改进依据。
+        </div>
+      </div>
+    </div>
+    <aside class="script">
+      <div class="s-hd"><div class="h">口播 · 25 秒</div><div class="c">约 100 字</div></div>
+      <p class="speech">价值可以算：12 道题人工录入约 96 分钟，现在生成 8 秒，教师只做审核；客观题零人工，主观题只复核低置信的 7 处；一例 78.5 分的偏科被真实拦下；整套系统跑在 2 核 1.8G 上，常驻 56MB。下一步两件事：接网关和统一认证，把通过事件真投给工坊；把命题引擎换成真实大模型。</p>
+      <div class="s-label">配图说明</div>
+      <p class="note">可贴分析看板截图 <code>shots/yj/react-12-stats.png</code>（成绩分布 + 知识点雷达）作底，四张数字卡叠在上面。<br><b>数字必须标口径</b>（如「按每题 8 分钟估算」），否则被追问会扣分。</p>
+      <div class="s-label">口播提示</div>
+      <p class="note">四个数字<b>只念前两个和后一个</b>，第三个「78.5 分被拦下」在第 5 页已讲过，这里一句带过即可。</p>
+    </aside>
+  </div>
+  <div class="foot"><span>警院智慧考试平台 · 答辩脚本 V1.0</span><span>2026-11-05</span></div>
+</section>
+
+<!-- ============ P10 结尾 ============ -->
+<section class="page">
+  <div class="topbar">
+    <div class="brand">警院智慧考试平台 · <b>答辩脚本</b></div>
+    <div class="meta"><span class="pnum">P10 / 10</span><span class="clock">⏱ 10s</span></div>
+  </div>
+  <div class="body">
+    <div class="slide">
+      <div class="kicker">结尾 · 现场演示</div>
+      <h1>30 秒，走完一条完整链路</h1>
+      <div class="figure" style="margin-top:10px">
+        <div class="fig-cap">页面元素：四步演示动线 + 右下角致谢与二维码</div>
+        <div class="flow big" style="margin-top:6px">
+          <div class="node"><div class="n">00:00</div><div class="h">考试大厅</div><div class="d">未解锁卡片显性展示前置章节</div></div>
+          <div class="ar">›</div>
+          <div class="node"><div class="n">00:08</div><div class="h">AI 命题</div><div class="d">选题 → 12 题 → 看自检标红</div></div>
+          <div class="ar">›</div>
+          <div class="node"><div class="n">00:16</div><div class="h">阅卷确认</div><div class="d">低置信卷 → 要点命中 → 生效</div></div>
+          <div class="ar">›</div>
+          <div class="node on"><div class="n">00:24</div><div class="h">双达标结论</div><div class="d">78.5 分 / 时空分析 40% → 不通过</div></div>
+        </div>
+        <div style="margin-top:34px;display:flex;align-items:flex-end;justify-content:space-between;padding-top:22px;border-top:1px solid var(--line)">
+          <div>
+            <div style="font-size:32px;font-weight:800;color:var(--navy);letter-spacing:2px">谢谢各位评委</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.8">
+              现场演示从「考试大厅」开始，若网络异常，直接播放 30 秒录屏。<br>
+              项目入口：<b style="color:var(--blue)">8.134.60.240/yj/login</b>　备用：<b>192.168.5.8/yj/login</b>
+            </div>
+          </div>
+          <div style="width:80px;height:80px;border:1px dashed #B9C6DA;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#93A3BC;text-align:center;line-height:1.5">二维码位<br>主链接</div>
+        </div>
+      </div>
+    </div>
+    <aside class="script">
+      <div class="s-hd"><div class="h">口播 · 10 秒</div><div class="c">约 40 字</div></div>
+      <p class="speech">下面用 30 秒走一遍：大厅、命题、阅卷，到双达标结论。谢谢各位评委。</p>
+      <div class="s-label">演示动线</div>
+      <p class="note">提前把三个页面开在<b>三个标签页</b>并登录好，演示只做切换，不现场登录、不现场等生成。<br>01 大厅 → 02 命题工作台（结果页）→ 03 阅卷（低置信那份）→ 切回成绩单指着「不通过」。</p>
+      <div class="s-label">兜底</div>
+      <p class="note">投屏前先播一遍确认音量；录屏文件放桌面，命名 <code>demo-30s.mp4</code>，双击即播，<b>不依赖网络</b>。</p>
+      <div class="s-label">若超时</div>
+      <p class="note">已到 04:45 还没讲完 → <b>跳过现场演示</b>，直接念结尾致谢；演示改为赛后补看录屏，不要让评委等。</p>
+    </aside>
+  </div>
+  <div class="foot"><span>警院智慧考试平台 · 答辩脚本 V1.0</span><span>2026-11-05</span></div>
+</section>
+
+<!-- ============ P11 交付说明 ============ -->
+<section class="page doc">
+  <div class="topbar">
+    <div class="brand">警院智慧考试平台 · <b>交付说明（附页，不计入 10 页正文）</b></div>
+    <div class="meta"><span class="pnum">附页</span></div>
+  </div>
+  <h1 style="margin-top:14px">交付说明：导出、计时、兜底</h1>
+  <div class="docgrid">
+    <div class="docbox">
+      <div class="t"><i>1</i>导出 PDF（两种方式）</div>
+      <p><b>A. 浏览器打印（推荐，无需装软件）</b></p>
+      <ol>
+        <li>用 Chrome / Edge 打开 <code>exam-ppt-script.html</code></li>
+        <li><code>Ctrl + P</code> → 目标打印机选「<b>另存为 PDF</b>」</li>
+        <li>纸张 <b>A4</b>、布局 <b>横向</b>、边距 <b>无</b>、缩放 <b>默认</b></li>
+        <li>勾选「<b>背景图形</b>」（不勾会掉色块）→ 保存</li>
+      </ol>
+      <p style="margin-top:6px"><b>B. 命令行（已生成同名 PDF）</b></p>
+      <p><code>node print-pdf.js</code> —— 用项目内 Playwright 直接输出 11 页 PDF。</p>
+      <p style="margin-top:6px"><b>转成可编辑 PPT：</b>把 PDF 每页截图作背景，或在 PowerPoint 里「插入 → 图片」，再补动画。<b>本脚本是讲稿，不建议直接当放映页</b>。</p>
+    </div>
+    <div class="docbox">
+      <div class="t"><i>2</i>5 分钟计时口播（合计 295s，留 5s 余量）</div>
+      <table class="timeline">
+        <tr><th style="width:16%">时间</th><th style="width:14%">页</th><th>内容</th></tr>
+        <tr><td class="tt">00:00–00:15</td><td>P1</td><td><b>封面</b>·自我介绍 + 一句话立题</td></tr>
+        <tr><td class="tt">00:15–00:50</td><td>P2</td><td><b>痛点</b>·四个真实场景</td></tr>
+        <tr><td class="tt">00:50–01:15</td><td>P3</td><td><b>方案</b>·一句话 + 三动作</td></tr>
+        <tr><td class="tt">01:15–02:00</td><td>P4</td><td><b>功能①</b>·AI 命题</td></tr>
+        <tr><td class="tt">02:00–02:45</td><td>P5</td><td><b>功能②</b>·双达标（停 2 秒）</td></tr>
+        <tr><td class="tt">02:45–03:30</td><td>P6</td><td><b>功能③</b>·人机共判</td></tr>
+        <tr><td class="tt">03:30–04:00</td><td>P7</td><td><b>技术</b>·功能中 / 开发中</td></tr>
+        <tr><td class="tt">04:00–04:20</td><td>P8</td><td><b>部署</b>·链接与账号</td></tr>
+        <tr><td class="tt">04:20–04:45</td><td>P9</td><td><b>价值</b>·数字与规划</td></tr>
+        <tr><td class="tt">04:45–04:55</td><td>P10</td><td><b>结尾</b>·演示预告 + 致谢</td></tr>
+      </table>
+      <p style="margin-top:6px"><b>语速校准：</b>全文约 1180 字 / 295 秒 ≈ <b>4 字/秒</b>，正常答辩语速。提前彩排 2 遍，超时就砍 P2 的第 4 个场景和 P7 的「运维」一条。</p>
+    </div>
+    <div class="docbox">
+      <div class="t"><i>3</i>备用演示方案（按优先级）</div>
+      <ul>
+        <li><b>① 内嵌 30 秒录屏：</b>PowerPoint 最后加一页「插入 → 视频 → 此设备」，勾选「自动播放」；或直接在 P10 放一个超链接按钮。文件 <code>demo-30s.mp4</code> 放桌面，<b>不依赖网络</b>。录制内容：大厅 → 命题结果 → 阅卷确认 → 成绩单「不通过」。</li>
+        <li><b>② 国内备用链接：</b>主 <code>http://8.134.60.240/yj/login</code>；备 <code>http://192.168.5.8/yj/login</code>（同一 Wi-Fi）；再备 <code>http://127.0.0.1:8090/yj/login</code>（演示机本机）。</li>
+        <li><b>③ 双链接备注：</b>纸质卡片印「主 / 备」两行 + 两个二维码；讲稿 P8 页脚也印，评委低头就能扫。</li>
+        <li><b>④ 离线截图包：</b><code>oss-run/shots/yj/react-*.png</code> 共 12 张，按页命名，断网时逐页讲图。</li>
+        <li><b>⑤ 数据被改乱：</b>删掉 <code>yj-bff/data/db.json</code> 重启即恢复演示种子（3 课程 / 79 题 / 7 场考试）。<b>演示前不要做这一步</b>，会清掉现场操作痕迹。</li>
+      </ul>
+    </div>
+    <div class="docbox">
+      <div class="t"><i>4</i>上台前检查（照着打勾）</div>
+      <ul>
+        <li>替换封面 3 处占位：<b>姓名 / 区队 / 日期</b>（正文 P1）</li>
+        <li>二维码换成主链接实码，扫一次确认能打开</li>
+        <li>三个标签页提前登录：大厅 / 命题工作台 / 阅卷</li>
+        <li>手机热点备用，确认 4G 下首屏能开（约 1.5MB JS）</li>
+        <li>录屏文件在桌面，音量 60%，播 3 秒确认有声</li>
+        <li>计时器放评委看不到的位置，02:45 时应念到 P6</li>
+        <li><b>口播红线：</b>不念页面上的长句，不解释算法细节，被追问再展开</li>
+      </ul>
+      <p style="margin-top:6px;color:#8A6A00;background:#FFFBF0;border-radius:4px;padding:6px">
+        <b>常见追问备答：</b>「AI 判错怎么办」→ 置信度 &lt;0.75 强制人工 + 调分留痕；「为什么不用大模型」→ 无 Key 环境，生成层已隔离可替换；「五平台怎么联动」→ 事件为界，<code>exam.passed</code> 出站留痕、幂等重放。
+      </p>
+    </div>
+  </div>
+  <div class="foot"><span>脚本数据来源：db.json 实测（79 题 / 7 场考试 / 15 份答卷）· 线上实测 2026-11-05 09:04</span><span>附页 / 共 11 页</span></div>
+</section>
+
+</body>
+</html>
