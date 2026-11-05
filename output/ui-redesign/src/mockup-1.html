@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>改造方案 · 登录 / 考试大厅 / 答题</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+/* ---------- 考试大厅 ---------- */
+.hall-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+.hall-head .acts{display:flex;gap:8px;align-items:center}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi{padding:13px 15px 12px;display:flex;flex-direction:column;gap:8px;position:relative;min-height:88px}
+.kpi .row1{display:flex;align-items:center;gap:9px}
+.kpi .ico{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--pri-weak);color:var(--pri)}
+.kpi .ico.gold{background:#FBF3E2;color:#A5771A}
+.kpi .ico.ok{background:#E8F6F0;color:#0B7A5C}
+.kpi .ico.navy{background:#EDF0F6;color:#33455C}
+.kpi .lbl{font-size:12px;color:var(--muted)}
+.kpi .row2{display:flex;align-items:flex-end;gap:7px;margin-top:2px}
+.kpi .v{font-size:25px;font-weight:700;line-height:1;letter-spacing:-1.2px}
+.kpi .vu{font-size:11px;color:var(--sub);margin-bottom:2px}
+.kpi .foot{font-size:10.8px;color:var(--sub);display:flex;align-items:center;gap:5px}
+.kpi .ring{position:absolute;right:14px;bottom:13px;width:42px;height:42px}
+.kpi .ring:after{inset:5px}
+.kpi .ring .rv{font-size:11px}
+.hero{margin-top:14px;border-radius:12px;padding:15px 20px;display:flex;gap:22px;align-items:center;position:relative;overflow:hidden;
+  background:linear-gradient(102deg,#0E2038 0%,#12325C 58%,#1557B8 128%);border:1px solid #13345F;color:#fff;min-height:92px}
+.hero .deco{position:absolute;right:-40px;top:-70px;width:340px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(94,150,255,.35),transparent 70%)}
+.hero .dl{position:absolute;inset:0;opacity:.35;
+  background-image:repeating-linear-gradient(115deg,rgba(255,255,255,.08) 0 1px,transparent 1px 22px)}
+.hero .l{flex:1;position:relative;z-index:1;min-width:0}
+.hero .hrow{display:flex;align-items:center;gap:9px}
+.hero h3{font-size:15.5px;font-weight:600;letter-spacing:.1px}
+.hero .hm{display:flex;gap:18px;margin-top:9px;font-size:11.5px;color:#A9C2E0}
+.hero .hm span{display:flex;align-items:center;gap:6px}
+.hero .cond{margin-top:10px;display:inline-flex;align-items:center;gap:7px;font-size:11px;color:#C7D9F0;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:4px 9px}
+.hero .cond b{color:#fff;font-weight:600}
+.hero .r{position:relative;z-index:1;text-align:right;display:flex;align-items:center;gap:18px}
+.hero .cd{font-size:11px;color:#9FB8D6;text-align:right}
+.hero .cd b{display:block;font-size:19px;font-weight:700;color:#fff;letter-spacing:.5px;margin-top:3px}
+.hero .vline{width:1px;height:42px;background:rgba(255,255,255,.16)}
+.hero .btn.pri{background:#fff;color:#12325C;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.hero .btn.line{background:transparent;border-color:rgba(255,255,255,.32);color:#DCE8F7}
+
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.exam{position:relative;overflow:hidden;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);
+  border-radius:12px;box-shadow:0 1px 2px rgba(16,32,64,.04)}
+.exam .strip{height:3px;background:var(--pri);flex:none}
+.exam.done .strip{background:var(--ok)}
+.exam.lock .strip{background:#CBD5E4}
+.exam .in{padding:13px 14px 0;flex:1;display:flex;flex-direction:column}
+.exam .trow{display:flex;align-items:flex-start;gap:10px;justify-content:space-between}
+.exam h4{font-size:13.3px;font-weight:600;line-height:1.5;letter-spacing:-.1px}
+.exam .meta{display:flex;flex-direction:column;gap:3px;margin-top:8px;font-size:11.3px;color:var(--muted)}
+.exam .meta span{display:flex;align-items:center;gap:6px;line-height:1.5}
+.exam .meta .ic{color:#9FAEC2}
+.exam .scoreline{display:flex;align-items:center;gap:10px;margin-top:9px;padding-top:8px;border-top:1px dashed #EDF1F7}
+.exam .scoreline .sl{font-size:11px;color:var(--sub);line-height:1.4}
+.exam .scoreline .sl b{color:var(--text);font-size:12.5px;font-weight:600}
+.exam .foot{display:flex;gap:8px;padding:10px 14px;align-items:center;border-top:1px solid #F2F5FA;margin-top:9px}
+.exam .foot .btn:first-child{margin-left:auto}
+.exam .progress{margin-top:9px}
+.mini{height:4px;border-radius:3px;background:#EEF2F8;overflow:hidden}
+.mini i{display:block;height:100%;border-radius:3px;background:var(--pri)}
+.mini i.ok{background:var(--ok)}
+.mini i.warn{background:var(--warn)}
+.mini i.gray{background:#CBD5E4}
+.chips{display:flex;gap:6px}
+.chip{font-size:11.5px;color:var(--muted);border:1px solid var(--line);background:#fff;border-radius:16px;padding:4px 11px}
+.chip.on{background:var(--pri-weak);border-color:#CFDFFB;color:var(--pri);font-weight:600}
+
+/* ---------- 答题页 ---------- */
+.exam-shell{width:1440px;height:900px;display:flex;flex-direction:column;background:var(--bg)}
+.etop{height:56px;flex:none;background:#0C1D33;color:#fff;display:flex;align-items:center;gap:18px;padding:0 20px;position:relative}
+.etop:after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:rgba(255,255,255,.07)}
+.etop .ttl{font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:9px}
+.etop .ttl .tag{background:rgba(200,155,60,.2);color:#EBC77C}
+.eprog{flex:1;max-width:420px;margin:0 auto;display:flex;align-items:center;gap:11px}
+.eprog .bar{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.16);overflow:hidden}
+.eprog .bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#4C8DFF,#79AEFF)}
+.eprog .t{font-size:11px;color:#A9BDD8;white-space:nowrap}
+.timer{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);
+  border-radius:8px;padding:6px 11px;font-size:16px;font-weight:600;letter-spacing:.6px}
+.timer.warn{background:rgba(212,56,13,.18);border-color:rgba(255,140,110,.45);color:#FFC9B8}
+.timer em{font-style:normal;font-size:10px;color:#93A8C4;letter-spacing:0;font-weight:400;margin-left:2px}
+.etop .btn.exit{background:rgba(255,255,255,.1);color:#DCE8F7;border-color:rgba(255,255,255,.18);height:32px}
+
+.ebody{flex:1;display:flex;gap:14px;padding:14px 18px;min-height:0}
+.qnav{width:196px;flex:none;display:flex;flex-direction:column;min-height:0}
+.qnav .card{flex:1;display:flex;flex-direction:column;padding:14px 12px 12px;min-height:0}
+.qnav .qt{font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:space-between;padding:0 2px}
+.qnav .qt span{font-size:11px;color:var(--sub);font-weight:400}
+.qgroup{font-size:10.5px;color:var(--sub);margin:13px 2px 7px;letter-spacing:.3px}
+.qgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.qn{height:32px;border-radius:7px;display:grid;place-items:center;font-size:12px;font-weight:600;background:#F3F6FB;
+  color:#66768D;border:1px solid transparent;position:relative;font-variant-numeric:tabular-nums}
+.qn.done{background:#E7EFFE;color:#1657D6;border-color:#D6E4FC}
+.qn.cur{background:var(--pri);color:#fff;box-shadow:0 0 0 3px #DCE8FD;border-color:var(--pri)}
+.qn.flag:after{content:"";position:absolute;top:3px;right:3px;width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.qn.miss{border-color:#E7C9BE;color:#B04A26;background:#FDF3EF}
+.qlegend{margin-top:auto;padding-top:12px;border-top:1px solid #F1F4F9;display:grid;gap:6px;font-size:10.5px;color:var(--muted)}
+.qlegend div{display:flex;align-items:center;gap:7px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+.qmain{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
+.qcard{flex:none;padding:20px 24px 16px;display:flex;flex-direction:column;min-height:0}
+.qmeta{display:flex;align-items:center;gap:14px;margin-top:16px;padding-top:13px;border-top:1px dashed #EDF1F7;font-size:11.5px;color:var(--muted)}
+.qmeta .it{display:flex;align-items:center;gap:6px}
+.qmeta .it b{color:var(--text-2);font-weight:600}
+.draft{flex:1;min-height:0;padding:13px 24px 15px;display:flex;flex-direction:column;
+  background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(16,32,64,.04);overflow:hidden}
+.draft .dh{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;color:#42536B}
+.draft .dh .tag{margin-left:auto;font-weight:500}
+.draft .paper{flex:1;margin-top:9px;border-radius:8px;background:
+  repeating-linear-gradient(#fff 0 27px,#F1F4F9 27px 28px);border:1px solid #F0F3F8;position:relative;overflow:hidden}
+.draft .paper span{position:absolute;left:12px;top:8px;font-size:12px;color:#B4C0D0}
+.qhead{display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--sub)}
+.qhead .no{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.2px}
+.qstem{font-size:15px;line-height:1.95;margin:14px 0 4px;color:#1B2736;letter-spacing:.1px}
+.qstem b{font-weight:600;border-bottom:1.5px solid #C9D8F2;padding-bottom:1px}
+.opts{display:flex;flex-direction:column;gap:9px;margin-top:16px}
+.opt{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:9px;
+  background:#fff;font-size:13.5px;color:#2A3A4F;position:relative;min-height:46px}
+.opt .key{width:23px;height:23px;border-radius:6px;border:1px solid #D9E1EE;display:grid;place-items:center;
+  font-size:11.5px;font-weight:600;color:#6B7A90;background:#FBFCFE;flex:none}
+.opt .tick{margin-left:auto;color:var(--pri);opacity:0}
+.opt:hover{border-color:#C4D6F5;background:#FCFDFF}
+.opt.sel{border-color:var(--pri);background:#F5F8FF;box-shadow:0 1px 2px rgba(22,87,214,.08)}
+.opt.sel:before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:3px;border-radius:0 3px 3px 0;background:var(--pri)}
+.opt.sel .key{background:var(--pri);border-color:var(--pri);color:#fff}
+.opt.sel .tick{opacity:1}
+.qfoot{display:flex;align-items:center;gap:9px;padding:0 2px}
+.qfoot .spacer{flex:1}
+.qhint{font-size:11px;color:var(--sub);display:flex;align-items:center;gap:6px}
+
+.qside{width:258px;flex:none;display:flex;flex-direction:column;gap:12px}
+.sheet{padding:14px 15px}
+.sheet .sh{font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:space-between}
+.sheet .ringwrap{display:flex;align-items:center;gap:14px;margin-top:13px}
+.sheet .ring{width:62px;height:62px}
+.sheet .ring:after{inset:6px}
+.sheet .ring .rv{font-size:15px}
+.sheet .ring .rv i{font-size:9px}
+.sheet .stat{font-size:11px;color:var(--muted);line-height:1.85}
+.sheet .stat b{color:var(--text);font-weight:600}
+.kv{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:var(--muted);padding:7px 0;border-bottom:1px dashed #F0F3F8}
+.kv:last-child{border-bottom:none}
+.kv b{color:var(--text);font-weight:600;font-size:12px}
+.savebar{display:flex;align-items:center;gap:6px;font-size:11px;color:#0B7A5C;background:#F1FAF6;border:1px solid #DBF0E7;border-radius:7px;padding:6px 9px;margin-top:10px}
+.tips{font-size:10.8px;color:var(--muted);line-height:1.9;padding-left:14px}
+.tips li{list-style:disc}
+.tips li::marker{color:#B7C3D3}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="1.8"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.8"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.8"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.8"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5A2.5 2.5 0 0 1 4 20.5z"/></symbol>
+    <symbol id="i-id" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8.5" cy="11" r="2"/><path d="M5.5 16c.6-1.5 1.7-2.2 3-2.2s2.4.7 3 2.2"/><path d="M14.5 10h4M14.5 13.5h4"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4z"/><path d="M18.5 16.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14.5 5.5l4 4"/></symbol>
+    <symbol id="i-clip" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2.5"/><path d="M9 3h6v3H9z"/><path d="M9 11h6M9 15h4"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4"/><path d="M4 20h16"/><rect x="7.5" y="12" width="3" height="5" rx="1"/><rect x="13" y="8" width="3" height="9" rx="1"/><rect x="18" y="5" width="2.5" height="12" rx="1"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7.5 3v6.2c0 4.1-3.1 7.3-7.5 8.8-4.4-1.5-7.5-4.7-7.5-8.8V6z"/><path d="M9 12l2.2 2.2L15.5 10"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6.5 9.5a5.5 5.5 0 0 1 11 0c0 4 1.5 5 1.5 6H5c0-1 1.5-2 1.5-6z"/><path d="M10 19a2 2 0 0 0 4 0"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+    <symbol id="i-chevd" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6.5L9.5 17 4 11.5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15"/><path d="M13.5 6.5L20 12l-6.5 5.5"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20c.9-3.6 3.6-5.4 7.2-5.4s6.3 1.8 7.2 5.4"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 21V4"/><path d="M6 4.5h10.5l-1.6 3.7 1.6 3.8H6"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.3c-.8.5-1.2 1-1.2 2"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24"><path d="M3.5 16.5L9 11l4 4 7.5-7.5"/><path d="M15.5 7.5H21V13"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 5h16l-6.2 7.4V19l-3.6-2v-4.6z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v10"/><path d="M8 10.5l4 4 4-4"/><path d="M5 19h14"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4.5l8.5 15h-17z"/><path d="M12 10v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5l11 6.5-11 6.5z"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 16h4"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.2"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.2"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.2"/><path d="M14 14h3v3h-3zM20.5 14v.01M14 20.5v.01M17.5 20.5h3"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v4h-4"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18.5" cy="12" r="1.2"/></symbol>
+    <symbol id="i-shield2" viewBox="0 0 24 24"><path d="M12 3l7.5 3v6.2c0 4.1-3.1 7.3-7.5 8.8-4.4-1.5-7.5-4.7-7.5-8.8V6z"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.4 2.6 2.4 14.4 0 17"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H14a4 4 0 0 0 0-8H9a4 4 0 0 1 0-8h6.5"/></symbol>
+  </defs>
+</svg>
+
+<!-- ===================== 1. 登录页 ===================== -->
+<section class="screen" id="s1">
+  <div class="login">
+    <div class="login-l">
+      <div class="grid"></div>
+      <div class="halo"></div>
+      <div class="goldline"></div>
+      <svg class="arcs" width="620" height="620" viewBox="0 0 620 620" fill="none">
+        <circle cx="310" cy="310" r="180" stroke="rgba(120,165,245,.14)"/>
+        <circle cx="310" cy="310" r="240" stroke="rgba(120,165,245,.10)"/>
+        <circle cx="310" cy="310" r="300" stroke="rgba(120,165,245,.06)"/>
+        <path d="M310 40v70M310 510v70M40 310h70M510 310h70" stroke="rgba(200,155,60,.35)" stroke-width="1"/>
+      </svg>
+
+      <div class="lg-top">
+        <div class="mark"><svg class="ic s18" style="color:#fff"><use href="#i-shield"/></svg></div>
+        <div>
+          <div class="t">警院智慧考试平台</div>
+          <div class="s">POLICE ACADEMY EXAM</div>
+        </div>
+        <div class="sys"><svg class="ic s12"><use href="#i-shield2"/></svg>警院五平台 · 统一身份体系</div>
+      </div>
+
+      <div class="lg-mid">
+        <div class="lg-badge"><svg class="ic s12"><use href="#i-spark"/></svg>题库 · 组卷 · 考试 · 阅卷 · 分析 全链路</div>
+        <h1 class="lg-h1">考试不是终点，<br>而是<span>准入的凭据</span>。</h1>
+        <p class="lg-p">
+          本平台承接《警院智慧考试平台需求规格说明书》全部考核场景：随堂测、专项技能、项目准入三类考试，
+          与统一身份、课程学习、实训工坊实时联动。
+        </p>
+        <div class="lg-feats">
+          <div class="feat">
+            <div class="fi"><svg class="ic s18"><use href="#i-target"/></svg></div>
+            <div><b>双达标判定</b><p>总分过线 且 每个知识点组均达标，才发放项目准入资格</p></div>
+          </div>
+          <div class="feat">
+            <div class="fi"><svg class="ic s18"><use href="#i-spark"/></svg></div>
+            <div><b>人机共判</b><p>AI 初评 + 教师确认，低置信度答卷自动进入优先复核队列</p></div>
+          </div>
+          <div class="feat">
+            <div class="fi"><svg class="ic s18"><use href="#i-route"/></svg></div>
+            <div><b>状态外放</b><p>向实训工坊推送 exam.passed / exam.failed，驱动任务准入</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg-bot">
+        <div class="lg-plat">
+          <span class="pl"><svg class="ic s12"><use href="#i-user"/></svg>统一认证 · 论坛</span>
+          <span class="pl"><svg class="ic s12"><use href="#i-book"/></svg>课程学习</span>
+          <span class="pl cur"><svg class="ic s12"><use href="#i-clip"/></svg>智慧考试</span>
+          <span class="pl"><svg class="ic s12"><use href="#i-target"/></svg>实训工坊</span>
+          <span class="pl"><svg class="ic s12"><use href="#i-doc"/></svg>资源中心</span>
+        </div>
+        <div class="lg-copy">© 2026 警院信息化中心 · 本平台不存储账号密码，身份凭据由统一认证中心签发</div>
+      </div>
+    </div>
+
+    <div class="login-r">
+      <div class="lr-top">
+        <span style="display:flex;align-items:center;gap:6px"><svg class="ic s14"><use href="#i-help"/></svg>帮助中心</span>
+        <span style="color:#D5DDE9">|</span>
+        <span>服务热线 8501</span>
+      </div>
+
+      <div class="lr-body">
+        <div class="lr-card">
+          <div class="lr-eyebrow">SINGLE SIGN-ON</div>
+          <h2 class="lr-h">统一身份登录</h2>
+          <p class="lr-p">使用警院统一认证中心（论坛账号体系）的账号登录，认证完成后自动返回考试大厅。</p>
+
+          <div class="lr-form">
+            <button class="btn pri lg"><svg class="ic"><use href="#i-arrow"/></svg>前往统一认证中心登录</button>
+            <button class="btn ghost lg" style="color:#33455C"><svg class="ic"><use href="#i-qr"/></svg>企业微信扫码登录</button>
+            <div class="lr-note"><svg class="ic s12"><use href="#i-lock"/></svg>登录过程不经过本平台，密码不会留存</div>
+          </div>
+
+          <div class="lr-or">登录后自动返回</div>
+
+          <div style="display:flex;gap:8px;font-size:11.5px;color:var(--muted);align-items:center">
+            <svg class="ic s14" style="color:#9FAEC2"><use href="#i-cal"/></svg>
+            <span>2026 年秋季学期 · 第 10 教学周</span>
+          </div>
+
+          <div class="lr-box">
+            <div class="bt"><svg class="ic s12" style="color:#C2761B"><use href="#i-warn"/></svg>当前为联调模式（Mock 认证中心）</div>
+            <div class="bp">生产环境由论坛平台提供认证服务，跳转后将回写统一会话，不会在前端暴露任何密钥。</div>
+            <div class="code">
+              <span>appCode <b class="mono">exam</b></span>
+              <span>sourcePlatform <b class="mono">exam</b></span>
+            </div>
+          </div>
+
+          <div class="lr-foot">
+            <span>首次登录？账号由教务统一发放</span>
+            <span style="color:var(--pri);font-weight:500">查看登录指引</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mk" style="left:40px;top:233px">1</div>
+  <div class="mk" style="left:934px;top:375px">2</div>
+  <div class="mk" style="left:934px;top:581px">3</div>
+</section>
+
+<!-- ===================== 2. 考试大厅 ===================== -->
+<section class="screen" id="s2">
+  <div class="app">
+    <aside class="side">
+      <div class="brand">
+        <div class="mark"><svg class="ic s18" style="color:#fff"><use href="#i-shield"/></svg></div>
+        <div><div class="name">警院智慧考试</div><div class="sub">EXAM PLATFORM</div></div>
+      </div>
+      <div class="gtitle">学习与考试</div>
+      <div class="nitem on"><svg class="ic"><use href="#i-grid"/></svg>考试大厅<span class="pill">2</span></div>
+      <div class="nitem"><svg class="ic"><use href="#i-chart"/></svg>我的成绩</div>
+      <div class="nitem"><svg class="ic"><use href="#i-book"/></svg>错题本</div>
+      <div class="nitem"><svg class="ic"><use href="#i-id"/></svg>准入资格</div>
+      <div class="gtitle">智能工具</div>
+      <div class="nitem"><svg class="ic"><use href="#i-spark"/></svg>AI 命题工作台</div>
+      <div class="gtitle">教学管理</div>
+      <div class="nitem"><svg class="ic"><use href="#i-doc"/></svg>题库与组卷</div>
+      <div class="nitem"><svg class="ic"><use href="#i-clip"/></svg>阅卷中心<span class="pill gold">12</span></div>
+      <div class="nitem"><svg class="ic"><use href="#i-chart"/></svg>分析看板</div>
+      <div class="nitem"><svg class="ic"><use href="#i-shield2"/></svg>审计与事件</div>
+      <div class="foot"><svg class="ic s14"><use href="#i-help"/></svg>帮助与反馈</div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="crumb">考试中心<svg class="ic s12" style="color:#BCC7D6"><use href="#i-chev"/></svg><b>考试大厅</b></div>
+        <div class="searchbox"><svg class="ic s14"><use href="#i-search"/></svg>搜索考试 / 知识点<kbd>⌘K</kbd></div>
+        <div class="iconbtn"><svg class="ic"><use href="#i-bell"/></svg><span class="dot"></span></div>
+        <div class="iconbtn"><svg class="ic"><use href="#i-help"/></svg></div>
+        <div class="me">
+          <div class="avatar">张</div>
+          <div class="who">张子安<em>2023 级 · 网络安全与执法</em></div>
+          <svg class="ic s14" style="color:#93A0B2"><use href="#i-chevd"/></svg>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="hall-head">
+          <div>
+            <div class="h">考试大厅</div>
+            <div class="h-sub">本学期共 5 场考试，2 场待完成 · 双达标通过 <b style="color:var(--ok)">3</b> 场</div>
+          </div>
+          <div class="acts">
+            <div class="chips">
+              <span class="chip on">全部 5</span><span class="chip">待完成 2</span><span class="chip">已完成 3</span><span class="chip">未解锁 1</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpis">
+          <div class="card kpi">
+            <div class="row1"><div class="ico"><svg class="ic s14"><use href="#i-clip"/></svg></div><div class="lbl">待完成考试</div></div>
+            <div class="row2"><div class="v num">2</div><div class="vu">场</div></div>
+            <div class="foot"><svg class="ic s12" style="color:var(--warn)"><use href="#i-clock"/></svg>最近截止 11-08 18:00</div>
+            <div class="ring" style="--p:40;--ring:#C2761B"><div class="rv">40<i>%</i></div></div>
+          </div>
+          <div class="card kpi">
+            <div class="row1"><div class="ico ok"><svg class="ic s14"><use href="#i-chart"/></svg></div><div class="lbl">已获成绩</div></div>
+            <div class="row2"><div class="v num">3</div><div class="vu">场 · 平均 82.1</div></div>
+            <div class="foot"><svg class="ic s12" style="color:var(--ok)"><use href="#i-trend"/></svg><span style="color:var(--ok)">+6.4</span> 较上学期</div>
+            <div class="ring" style="--p:82;--ring:#0F9D76"><div class="rv">82<i>分</i></div></div>
+          </div>
+          <div class="card kpi">
+            <div class="row1"><div class="ico gold"><svg class="ic s14"><use href="#i-id"/></svg></div><div class="lbl">有效准入资格</div></div>
+            <div class="row2"><div class="v num">1</div><div class="vu">项</div></div>
+            <div class="foot"><span class="tag gold">项目准入</span>智慧警务数据研判</div>
+          </div>
+          <div class="card kpi">
+            <div class="row1"><div class="ico navy"><svg class="ic s14"><use href="#i-spark"/></svg></div><div class="lbl">学习积分</div></div>
+            <div class="row2"><div class="v num">35</div><div class="vu">分</div></div>
+            <div class="foot"><span style="color:var(--ok)">本周 +8</span> · 全年级前 18%</div>
+          </div>
+        </div>
+
+        <div class="hero">
+          <div class="deco"></div><div class="dl"></div>
+          <div class="l">
+            <div class="hrow">
+              <span class="tag gold" style="background:rgba(200,155,60,.18);color:#EBC77C">项目准入</span>
+              <h3>智慧警务数据研判工坊 · 项目准入卷</h3>
+            </div>
+            <div class="hm">
+              <span><svg class="ic s12"><use href="#i-doc"/></svg>14 题 / 100 分</span>
+              <span><svg class="ic s12"><use href="#i-clock"/></svg>60 分钟</span>
+              <span><svg class="ic s12"><use href="#i-target"/></svg>及格 70 · 取历次最高</span>
+              <span><svg class="ic s12"><use href="#i-refresh"/></svg>已考 1 次 78.5</span>
+            </div>
+            <div class="cond"><svg class="ic s12" style="color:#EBC77C"><use href="#i-warn"/></svg>
+              未达标：总分 <b>78.5 ≥ 70</b> 已过，知识点达标 <b>2 / 4</b> 未达标
+            </div>
+          </div>
+          <div class="r">
+            <div class="cd">距截止还有<b class="num">2 天 07:41</b></div>
+            <div class="vline"></div>
+            <button class="btn line">查看上次答卷</button>
+            <button class="btn pri"><svg class="ic s14"><use href="#i-play"/></svg>再考一次</button>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px">
+          <div class="sec-title">全部考试<span class="count">按截止时间排序</span></div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:11.5px;color:var(--sub)">
+            <svg class="ic s14"><use href="#i-filter"/></svg>筛选
+          </div>
+        </div>
+
+        <div class="grid3">
+          <div class="exam">
+            <div class="strip"></div>
+            <div class="in">
+              <div class="trow"><h4>Python 数据分析专项技能卷</h4><span class="tag pri">专项技能</span></div>
+              <div class="meta">
+                <span><svg class="ic s12"><use href="#i-book"/></svg>Python 数据分析基础 · 10 题 / 100 分</span>
+                <span><svg class="ic s12"><use href="#i-clock"/></svg>45 分钟 · 及格 70 · 取历次最高分</span>
+                <span><svg class="ic s12"><use href="#i-target"/></svg>知识点：语法与容器、数据处理</span>
+              </div>
+              <div class="scoreline">
+                <div class="ring" style="width:38px;height:38px;--p:88;--ring:#0F9D76"><div class="rv" style="font-size:11px">88</div></div>
+                <div class="sl">历次最高 <b class="num">88.5</b> · 已达标</div>
+                <span class="tag ok" style="margin-left:auto">已完成</span>
+              </div>
+            </div>
+            <div class="foot"><button class="btn ghost sm">查看成绩</button><button class="btn pri sm">再考提分</button></div>
+          </div>
+
+          <div class="exam done">
+            <div class="strip"></div>
+            <div class="in">
+              <div class="trow"><h4>Python 第一章随堂测</h4><span class="tag gray">随堂测</span></div>
+              <div class="meta">
+                <span><svg class="ic s12"><use href="#i-book"/></svg>Python 数据分析基础 · 4 题 / 100 分</span>
+                <span><svg class="ic s12"><use href="#i-clock"/></svg>15 分钟 · 及格 60 · 取历次最高分</span>
+                <span><svg class="ic s12"><use href="#i-target"/></svg>知识点：基础语法</span>
+              </div>
+              <div class="scoreline">
+                <div class="ring" style="width:38px;height:38px;--p:100;--ring:#0F9D76"><div class="rv" style="font-size:10px">100</div></div>
+                <div class="sl">历次最高 <b class="num">100</b> · 已达标</div>
+                <span class="tag ok" style="margin-left:auto">已完成</span>
+              </div>
+            </div>
+            <div class="foot"><button class="btn ghost sm">查看成绩</button></div>
+          </div>
+
+          <div class="exam">
+            <div class="strip"></div>
+            <div class="in">
+              <div class="trow"><h4>Web 安全专项技能卷</h4><span class="tag pri">专项技能</span></div>
+              <div class="meta">
+                <span><svg class="ic s12"><use href="#i-book"/></svg>网络安全基础 · 3 题 / 100 分</span>
+                <span><svg class="ic s12"><use href="#i-clock"/></svg>40 分钟 · 及格 70 · 取历次最高分</span>
+                <span><svg class="ic s12"><use href="#i-target"/></svg>知识点：注入与 XSS、越权与绕过</span>
+              </div>
+              <div class="scoreline">
+                <div class="ring" style="width:38px;height:38px;--p:0;--ring:#CBD5E4"><div class="rv" style="font-size:10px;color:#8A97A8">0</div></div>
+                <div class="sl">尚未作答 · 剩余 <b class="num">2</b> 次机会</div>
+                <span class="tag warn" style="margin-left:auto">待完成</span>
+              </div>
+            </div>
+            <div class="foot"><button class="btn pri sm">进入考试<svg class="ic s12"><use href="#i-arrow"/></svg></button></div>
+          </div>
+
+          <div class="exam lock">
+            <div class="strip"></div>
+            <div class="in">
+              <div class="trow"><h4>网络安全第一章随堂测</h4><span class="tag gray">随堂测</span></div>
+              <div class="meta">
+                <span><svg class="ic s12"><use href="#i-book"/></svg>网络安全基础 · 4 题 / 100 分</span>
+                <span><svg class="ic s12"><use href="#i-clock"/></svg>15 分钟 · 及格 60</span>
+                <span><svg class="ic s12" style="color:#A8B5C6"><use href="#i-lock"/></svg>需先完成《密码学基础》章节学习</span>
+              </div>
+              <div class="scoreline">
+                <div class="ring" style="width:38px;height:38px;--p:35;--ring:#CBD5E4"><div class="rv" style="font-size:10px;color:#8A97A8">35</div></div>
+                <div class="sl">前置章节进度 35% · 未解锁</div>
+                <span class="tag gray" style="margin-left:auto">未解锁</span>
+              </div>
+            </div>
+            <div class="foot"><button class="btn sm" disabled><svg class="ic s12"><use href="#i-lock"/></svg>未解锁</button></div>
+          </div>
+
+          <div class="exam">
+            <div class="strip"></div>
+            <div class="in">
+              <div class="trow"><h4>数据清洗与规范化 · 单元测</h4><span class="tag gray">章节测验</span></div>
+              <div class="meta">
+                <span><svg class="ic s12"><use href="#i-book"/></svg>智慧警务数据研判 · 8 题 / 100 分</span>
+                <span><svg class="ic s12"><use href="#i-clock"/></svg>30 分钟 · 及格 70 · 取历次最高分</span>
+                <span><svg class="ic s12"><use href="#i-target"/></svg>知识点：数据清洗、数据规范</span>
+              </div>
+              <div class="scoreline">
+                <div class="ring" style="width:38px;height:38px;--p:79;--ring:#1657D6"><div class="rv" style="font-size:10px">79</div></div>
+                <div class="sl">历次最高 <b class="num">79</b> · 已达标</div>
+                <span class="tag ok" style="margin-left:auto">已完成</span>
+              </div>
+            </div>
+            <div class="foot"><button class="btn ghost sm">查看成绩</button><button class="btn soft sm">再考提分</button></div>
+          </div>
+
+          <div class="exam" style="border-style:dashed;background:#FAFBFD;align-items:center;justify-content:center">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--sub);padding:24px">
+              <div style="width:36px;height:36px;border-radius:10px;background:#EEF2F8;display:grid;place-items:center"><svg class="ic s18"><use href="#i-plus"/></svg></div>
+              <div style="font-size:12px">暂无更多考试</div>
+              <div style="font-size:11px;color:#A6B2C2">进入「准入资格」查看可解锁的考核路径</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mk" style="left:222px;top:99px">4</div>
+  <div class="mk" style="left:232px;top:78px">5</div>
+  <div class="mk" style="left:234px;top:262px">6</div>
+  <div class="mk" style="left:234px;top:426px">7</div>
+</section>
+
+<!-- ===================== 3. 答题页 ===================== -->
+<section class="screen" id="s3">
+  <div class="exam-shell">
+    <div class="etop">
+      <div class="ttl"><span class="tag">专项技能</span>Web 安全专项技能卷</div>
+      <div class="eprog">
+        <div class="bar"><i style="width:15%"></i></div>
+        <div class="t">第 3 / 20 题 · 已答 3</div>
+      </div>
+      <div class="timer num"><svg class="ic s14" style="color:#8FB6FF"><use href="#i-clock"/></svg>39:59<em>剩余</em></div>
+      <button class="btn exit">暂离</button>
+      <button class="btn pri" style="height:32px">交卷</button>
+    </div>
+
+    <div class="ebody">
+      <div class="qnav">
+        <div class="card">
+          <div class="qt">题目导航<span>共 20 题</span></div>
+          <div class="qgroup">一、单选题 · 1–12</div>
+          <div class="qgrid">
+            <div class="qn done">1</div>
+            <div class="qn done">2</div>
+            <div class="qn cur">3</div>
+            <div class="qn">4</div>
+            <div class="qn done flag">5</div>
+            <div class="qn">6</div>
+            <div class="qn">7</div>
+            <div class="qn">8</div>
+            <div class="qn">9</div>
+            <div class="qn">10</div>
+            <div class="qn">11</div>
+            <div class="qn">12</div>
+          </div>
+          <div class="qgroup">二、多选题 · 13–18</div>
+          <div class="qgrid">
+            <div class="qn">13</div><div class="qn">14</div><div class="qn">15</div><div class="qn">16</div>
+            <div class="qn">17</div><div class="qn">18</div>
+          </div>
+          <div class="qgroup">三、简答题 · 19–20</div>
+          <div class="qgrid">
+            <div class="qn">19</div><div class="qn">20</div>
+          </div>
+          <div class="qlegend">
+            <div><span class="sw" style="background:#1657D6"></span>当前题</div>
+            <div><span class="sw" style="background:#E7EFFE;border:1px solid #D6E4FC"></span>已作答</div>
+            <div><span class="sw" style="background:#F3F6FB"></span>未作答</div>
+            <div><span class="sw" style="background:#fff;border:1px solid #E7C9BE"></span>标记待复查</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qmain">
+        <div class="card qcard">
+          <div class="qhead">
+            <span class="no num">03</span>
+            <span class="tag pri">单选题</span>
+            <span>5 分</span>
+            <span style="margin-left:auto;display:flex;align-items:center;gap:5px"><svg class="ic s12"><use href="#i-flag"/></svg>标记此题</span>
+          </div>
+          <div class="qstem">下列哪种方式可以最有效地防止 SQL 注入攻击？</div>
+          <div class="opts">
+            <div class="opt"><span class="key">A</span>对用户输入进行前端长度限制<span class="tick"><svg class="ic s14"><use href="#i-check"/></svg></span></div>
+            <div class="opt"><span class="key">B</span>统一转义单引号<span class="tick"><svg class="ic s14"><use href="#i-check"/></svg></span></div>
+            <div class="opt sel"><span class="key">C</span>使用参数化查询（预编译语句）<span class="tick"><svg class="ic s14"><use href="#i-check"/></svg></span></div>
+            <div class="opt"><span class="key">D</span>隐藏数据库报错信息<span class="tick"><svg class="ic s14"><use href="#i-check"/></svg></span></div>
+          </div>
+          <div class="qmeta">
+            <span class="it"><svg class="ic s12"><use href="#i-target"/></svg>知识点 <b>SQL 注入防护</b></span>
+            <span class="it"><svg class="ic s12"><use href="#i-chart"/></svg>难度 <b>中</b></span>
+            <span class="it"><svg class="ic s12"><use href="#i-trend"/></svg>全站正确率 <b>63%</b></span>
+            <span style="margin-left:auto" class="it"><svg class="ic s12"><use href="#i-shield2"/></svg>本题已启用选项乱序</span>
+          </div>
+        </div>
+
+        <div class="draft">
+          <div class="dh"><svg class="ic s12"><use href="#i-edit"/></svg>草稿纸<span class="tag gray">仅本地暂存 · 交卷后清空</span></div>
+          <div class="paper"><span>可在此推演命令、记录思路，内容不会作为答案提交</span></div>
+        </div>
+
+        <div class="qfoot">
+          <button class="btn ghost sm"><svg class="ic s12" style="transform:rotate(180deg)"><use href="#i-chev"/></svg>上一题</button>
+          <button class="btn ghost sm"><svg class="ic s12"><use href="#i-flag"/></svg>标记</button>
+          <div class="spacer"></div>
+          <div class="qhint"><svg class="ic s12" style="color:var(--ok)"><use href="#i-check"/></svg>已自动保存 · 10:24:31</div>
+          <button class="btn pri sm">下一题<svg class="ic s12"><use href="#i-chev"/></svg></button>
+        </div>
+      </div>
+
+      <div class="qside">
+        <div class="card sheet">
+          <div class="sh">答题卡<span class="tag warn" style="font-weight:500">3 / 20</span></div>
+          <div class="ringwrap">
+            <div class="ring" style="--p:15;--ring:#1657D6"><div class="rv">15<i>%</i></div></div>
+            <div class="stat">
+              已作答 <b class="num">3</b> 题<br>
+              未作答 <b class="num" style="color:#A25C0D">17</b> 题 · 已标记 <b class="num">1</b>
+            </div>
+          </div>
+          <div style="margin-top:10px">
+            <div class="kv"><span>已用时间</span><b class="num">00:20:01</b></div>
+            <div class="kv"><span>单题平均</span><b class="num">6 分 40 秒</b></div>
+            <div class="kv"><span>当前题型</span><b>单选 · 5 分</b></div>
+          </div>
+          <div class="savebar"><svg class="ic s12"><use href="#i-check"/></svg>答案已保存至服务端</div>
+          <button class="btn pri" style="width:100%;margin-top:10px">交卷并查看成绩</button>
+        </div>
+
+        <div class="card sheet" style="padding:13px 15px 12px">
+          <div class="sh" style="margin-bottom:8px">考试须知</div>
+          <ul class="tips">
+            <li>每 20 秒自动保存，切屏、退出全屏会被记录</li>
+            <li>剩余 5 分钟时倒计时转红并提示</li>
+            <li>交卷后不可修改，未答题将按 0 分计</li>
+          </ul>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--pri);margin-top:9px">
+            <svg class="ic s12"><use href="#i-help"/></svg>遇到异常，呼叫监考
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mk" style="left:452px;top:12px">8</div>
+  <div class="mk" style="left:1112px;top:170px">9</div>
+  <div class="mk" style="left:234px;top:852px">10</div>
+  <div class="mk" style="left:1408px;top:64px">11</div>
+</section>
+
+</body>
+</html>

@@ -3,7 +3,7 @@
  * 所有业务页面统一使用本组件承载标题与说明，禁止各页再写 `<div className="yj-page-title">`。
  */
 import React from 'react';
-import { Flex, Typography } from 'antd';
+import { Typography } from 'antd';
 
 export interface PageContainerProps {
   /** 页面标题 */
@@ -18,17 +18,15 @@ export interface PageContainerProps {
 export default function PageContainer({ title, description, extra, children }: PageContainerProps) {
   return (
     <div>
-      <Flex align="center" gap={12} style={{ marginBottom: description ? 6 : 16 }}>
-        <Typography.Title level={4} style={{ margin: 0, flex: 1, color: '#0e1c36' }}>
-          {title}
-        </Typography.Title>
+      <div className="yj-hall-head">
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <Typography.Title level={4} className="yj-hall-title" style={{ margin: 0 }}>
+            {title}
+          </Typography.Title>
+          {description && <div className="yj-hall-desc">{description}</div>}
+        </div>
         {extra}
-      </Flex>
-      {description && (
-        <Typography.Paragraph type="secondary" style={{ fontSize: 13, marginBottom: 16 }}>
-          {description}
-        </Typography.Paragraph>
-      )}
+      </div>
       {children}
     </div>
   );

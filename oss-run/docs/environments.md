@@ -50,8 +50,12 @@
 | `YJ_SSO_BASE_URL` | `http://127.0.0.1:<PORT>/sso` | 认证中心基地址（`real` 模式必填） |
 | `YJ_SSO_CLIENT_ID` | `exam-platform-client` | OAuth client_id |
 | `YJ_SSO_CLIENT_SECRET` | `exam-platform-secret` | OAuth client_secret（生产必须替换） |
+| `YJ_SSO_REDIRECT_PATH` | `/yj/sso/callback` | 回调地址白名单路径（§7.4），不在此路径的回调一律拒绝下发授权码 |
+| `YJ_SSO_REDIRECT_HOSTS` | 空 | 额外允许的回调主机（逗号分隔）；同源部署留空 |
+| `YJ_SESSION_SECRET` | 自动生成并落盘 `data/.session-secret` | 会话签名密钥（§14 不硬编码）；多实例部署必须显式配置同一个值 |
+| `YJ_CORS_ORIGINS` | 空 | 允许跨域访问的前端源（逗号分隔）；同源部署留空，跨域时不能用 `*`（Cookie 凭证要求精确 Origin） |
 | `YJ_EVENT_BASE_URL` | 空 | 事件总线基地址；为空时出站事件标记 `skipped` 并留痕 |
-| `YJ_EVENT_INGEST_PATH` | `/ingest` | 事件投递路径 |
+| `YJ_EVENT_INGEST_PATH` | `/api/v1/events` | 事件投递路径 |
 | `YJ_FILE_BASE_URL` | 空 | 统一文件服务地址（§13 预留） |
 
 数据文件固定为 `yj-bff/data/db.json`（删除后重启按 `seed.js` 重建演示数据）。

@@ -15,7 +15,27 @@ const DATA_DIR = path.join(__dirname, 'data');
 /* 前端生产产物（vite build 输出），由本服务同源托管，避免依赖 vite dev server */
 const DIST = process.env.YJ_DIST || path.join(__dirname, '..', 'exam-front-react', 'dist');
 const DB_FILE = path.join(DATA_DIR, 'db.json');
-const SECRET = 'yj-exam-platform-2026';
+
+/*
+ * §14：密钥不得硬编码在代码里。取值顺序：环境变量 YJ_SESSION_SECRET → data/.session-secret
+ * （首次启动随机生成并落盘，重启后会话仍有效；该文件已加入 .gitignore）。
+ */
+const SECRET = (() => {
+  if (process.env.YJ_SESSION_SECRET) return process.env.YJ_SESSION_SECRET;
+  const f = path.join(DATA_DIR, '.session-secret');
+  try {
+    if (fs.existsSync(f)) {
+      const s = fs.readFileSync(f, 'utf8').trim();
+      if (s) return s;
+    }
+  } catch (e) { /* 读取失败则重新生成 */ }
+  const s = crypto.randomBytes(32).toString('hex');
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    fs.writeFileSync(f, s, { mode: 0o600 });
+  } catch (e) { /* 落盘失败时仅本次进程有效 */ }
+  return s;
+})();
 
 /* ---------------- 五平台约束：运行配置（§14，禁止在业务代码写死服务地址） ---------------- */
 const CONFIG = (() => {
@@ -27,7 +47,10 @@ const CONFIG = (() => {
       mode: process.env.YJ_SSO_MODE || 'mock', // mock = 本服务内置联调认证中心；real = 论坛统一认证
       baseUrl: process.env.YJ_SSO_BASE_URL || `http://127.0.0.1:${process.env.YJ_PORT || 80}/sso`,
       clientId: process.env.YJ_SSO_CLIENT_ID || 'exam-platform-client',
-      clientSecret: process.env.YJ_SSO_CLIENT_SECRET || 'exam-platform-secret'
+      clientSecret: process.env.YJ_SSO_CLIENT_SECRET || 'exam-platform-secret',
+      /* §7.4 回调地址白名单：默认只允许本平台回调路径，跨域部署时用 YJ_SSO_REDIRECT_HOSTS 追加主机 */
+      redirectPath: process.env.YJ_SSO_REDIRECT_PATH || '/yj/sso/callback',
+      redirectHosts: (process.env.YJ_SSO_REDIRECT_HOSTS || '').split(',').map((x) => x.trim()).filter(Boolean)
     },
     event: {
       baseUrl: process.env.YJ_EVENT_BASE_URL || '',
@@ -61,10 +84,19 @@ const ROLE_PERMISSIONS = {
     'audit:read', 'event:read', 'outbox:manage', 'user:read']
 };
 
+/* §11.3 统一事件名称白名单：本平台只生产/消费清单内的事件，新增事件须先过架构评审 */
+const REGISTERED_EVENTS = ['exam.passed', 'exam.failed', 'course.completed'];
+
 /* ---------------- 存储 ---------------- */
+/**
+ * §7.1 权限以认证中心为准：认证中心下发的 permissions 原样保留，
+ * 只有缺失时才按 §8.2 的统一角色表兜底（Mock 认证中心返回的正是同一份映射）。
+ */
 function setUserPerms(u) {
-  u.permissions = ROLE_PERMISSIONS[u.role] || ROLE_PERMISSIONS.student;
   u.roles = [u.role];
+  if (!Array.isArray(u.permissions) || !u.permissions.length) {
+    u.permissions = ROLE_PERMISSIONS[u.role] || ROLE_PERMISSIONS.student;
+  }
   return u;
 }
 
@@ -79,14 +111,23 @@ function normalize(db) {
     return o;
   };
   ['courses', 'chapters', 'questions', 'papers', 'exams', 'users', 'attempts', 'admissions', 'jobs', 'audits'].forEach((k) => (db[k] || []).forEach(touch));
-  db.events = (db.events || []).map((e) => e.eventType ? e : {
-    eventId: e.id || uid('evt'),
-    eventType: e.event || 'exam.submitted',
-    occurredAt: e.at || t,
-    sourcePlatform: CONFIG.sourcePlatform,
-    operatorId: e.operatorId || '',
-    data: e.payload || {}
+  /* 审计主体归一：历史数据的 role='system' 迁到 actorType，role 只保留三个可登录角色 */
+  (db.audits || []).forEach((a) => {
+    if (!a.actorType) a.actorType = !a.role || a.role === 'system' ? 'system' : 'user';
+    if (a.role === 'system') a.role = '';
   });
+  /* §11.3：events 表只保留统一事件清单内的名称（exam.passed / exam.failed / course.completed），
+     历史遗留的 exam.submitted 等非清单事件在此过滤掉，避免出现在跨平台事件页面 */
+  db.events = (db.events || [])
+    .map((e) => e.eventType ? e : {
+      eventId: e.id || uid('evt'),
+      eventType: e.event || '',
+      occurredAt: e.at || t,
+      sourcePlatform: CONFIG.sourcePlatform,
+      operatorId: e.operatorId || '',
+      data: e.payload || {}
+    })
+    .filter((e) => REGISTERED_EVENTS.includes(e.eventType));
   db.inbox = db.inbox || [];
   db.outbox = db.outbox || [];
   db.sessions = db.sessions || [];
@@ -150,10 +191,15 @@ function verify(token) {
 
 /* ---------------- 领域工具 ---------------- */
 const now = () => new Date();
+/**
+ * §9.2 统一 ISO 8601 + 时区：对外固定东八区。
+ * 不能直接用 getHours() 拼 +08:00 —— 服务器时区非东八区时（如云上 UTC）会把 UTC 时钟标成 +08:00，
+ * 因此先按 +8 小时偏移再取 UTC 字段，保证任何部署环境输出的都是同一时刻。
+ */
 const iso = (d) => {
-  const dt = new Date(d);
+  const dt = new Date(new Date(d).getTime() + 8 * 3600 * 1000);
   const pad = (x) => String(x).padStart(2, '0');
-  return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}:${pad(dt.getSeconds())}+08:00`;
+  return `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth() + 1)}-${pad(dt.getUTCDate())}T${pad(dt.getUTCHours())}:${pad(dt.getUTCMinutes())}:${pad(dt.getUTCSeconds())}+08:00`;
 };
 const userById = (id) => DB.users.find((u) => u.id === id);
 DB = load();
@@ -285,8 +331,20 @@ function snapshotOf(paper, seedNum) {
   });
 }
 
+/**
+ * 审计留痕（§7.4 / §8.1）
+ * role 只允许 student / teacher / admin 三个可登录角色；系统自动动作不是「角色」，
+ * 单独用 actorType='system' 标记，避免在数据字典里出现第四种角色编码。
+ */
 function audit(actor, role, action, target, detail) {
-  DB.audits.unshift({ id: uid('au'), at: iso(now()), actor: actor || '系统', role: role || 'system', action, target, detail });
+  const isSystem = !role || role === 'system';
+  DB.audits.unshift({
+    id: uid('au'), at: iso(now()),
+    actor: actor || '系统',
+    role: isSystem ? '' : role,
+    actorType: isSystem ? 'system' : 'user',
+    action, target, detail
+  });
   save();
 }
 
@@ -577,6 +635,8 @@ function ssoMock(req, res, url, method, p) {
   if (p === '/sso/oauth/authorize' && method === 'GET') {
     const redirectUri = url.searchParams.get('redirect_uri') || '';
     const state = url.searchParams.get('state') || '';
+    /* §7.4 白名单外一律拒绝，避免授权码被引导到第三方地址 */
+    if (!isAllowedRedirect(redirectUri, req)) return fail(res, 'VALIDATION_ERROR', '回调地址未登记，拒绝授权', 400);
     const rows = DB.users.map((u) =>
       `<a class="b" href="/sso/oauth/consent?uid=${u.id}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}"><span class="dot" style="background:${u.avatarColor}"></span><b>${u.name}</b><i>${u.role} · ${u.account}</i></a>`).join('');
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -596,6 +656,7 @@ h1{font-size:19px;margin:0 0 4px}.tip{color:#8fa1c0;font-size:12px;margin:4px 0 
     const state = url.searchParams.get('state') || '';
     const u = userById(uidv);
     if (!u || !redirectUri) return fail(res, 'VALIDATION_ERROR', '授权参数无效', 400);
+    if (!isAllowedRedirect(redirectUri, req)) return fail(res, 'VALIDATION_ERROR', '回调地址未登记，拒绝下发授权码', 400);
     const code = crypto.randomBytes(12).toString('hex');
     ssoCodes.set(code, { userId: u.id, redirectUri, exp: Date.now() + 5 * 60000 });
     const joiner = redirectUri.includes('?') ? '&' : '?';
@@ -611,6 +672,8 @@ h1{font-size:19px;margin:0 0 4px}.tip{color:#8fa1c0;font-size:12px;margin:4px 0 
       if ((b.clientId || b.client_id) !== CONFIG.sso.clientId || (b.clientSecret || b.client_secret) !== CONFIG.sso.clientSecret) {
         return fail(res, 'AUTH_REQUIRED', '客户端凭证无效', 401);
       }
+      /* RFC 6749 §4.1.3：换票时的 redirect_uri 必须与授权时一致 */
+      if (b.redirect_uri && b.redirect_uri !== rec.redirectUri) return fail(res, 'VALIDATION_ERROR', '回调地址与授权时不一致', 400);
       const at = 'at_' + crypto.randomBytes(16).toString('hex');
       const rt = 'rt_' + crypto.randomBytes(16).toString('hex');
       ssoTokens.set(at, { userId: rec.userId, exp: Date.now() + 7200 * 1000 });
@@ -630,18 +693,30 @@ h1{font-size:19px;margin:0 0 4px}.tip{color:#8fa1c0;font-size:12px;margin:4px 0 
 }
 
 /* ---------------- 路由 ---------------- */
+/* §14：跨域由部署方确认。默认同源部署不带 CORS 头；需要跨域时用 YJ_CORS_ORIGINS 显式列白名单
+   （新增 httpOnly Cookie 后不能再回 `*`，否则浏览器会拒绝携带凭证） */
+const CORS_ORIGINS = (process.env.YJ_CORS_ORIGINS || '').split(',').map((s) => s.trim()).filter(Boolean);
+function corsHeaders(res) {
+  const origin = (res.req && res.req.headers.origin) || '';
+  if (!origin || !CORS_ORIGINS.includes(origin)) return {};
+  return {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Platform-Key',
+    'Access-Control-Allow-Methods': 'GET,POST,PATCH,PUT,DELETE,OPTIONS',
+    'Vary': 'Origin'
+  };
+}
+
 function json(res, httpCode, body) {
   const rid = res.rid || crypto.randomUUID().slice(0, 8);
   const data = JSON.stringify(Object.assign({ requestId: rid }, body));
-  res.writeHead(httpCode, {
+  res.writeHead(httpCode, Object.assign({
     'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': '*',
-    'Access-Control-Allow-Methods': 'GET,POST,PATCH,PUT,DELETE,OPTIONS',
     'Access-Control-Expose-Headers': 'X-Request-Id',
     'X-Request-Id': rid,
     'Cache-Control': 'no-store'
-  });
+  }, corsHeaders(res)));
   res.end(data);
 }
 /* §10.1 统一响应：code/message/data/requestId */
@@ -666,6 +741,37 @@ function body(req) {
       }
     });
   });
+}
+
+/* ---------- §7.2.4 刷新令牌承载：httpOnly Cookie，前端不持有长期凭证 ---------- */
+const RT_COOKIE = 'yj_rt';
+const RT_MAX_AGE = 7 * 24 * 3600;
+function readCookie(req, name) {
+  const parts = String(req.headers.cookie || '').split(';');
+  for (const part of parts) {
+    const i = part.indexOf('=');
+    if (i > 0 && part.slice(0, i).trim() === name) return decodeURIComponent(part.slice(i + 1).trim());
+  }
+  return '';
+}
+function setRefreshCookie(req, res, token, maxAge = RT_MAX_AGE) {
+  const secure = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim() === 'https' || !!req.socket.encrypted;
+  const cookie = `${RT_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure ? '; Secure' : ''}`;
+  const prev = res.getHeader('Set-Cookie');
+  res.setHeader('Set-Cookie', prev ? [].concat(prev, cookie) : cookie);
+}
+
+/* §7.4 回调地址白名单：只允许本平台回调路径 + 当前主机（或 YJ_SSO_REDIRECT_HOSTS 追加的主机） */
+function isAllowedRedirect(uri, req) {
+  if (!uri) return false;
+  let u;
+  try {
+    u = new URL(uri, `http://${req.headers.host || '127.0.0.1'}`);
+  } catch {
+    return false;
+  }
+  const sameOrigin = u.host === (req.headers.host || '');
+  return u.pathname === CONFIG.sso.redirectPath && (sameOrigin || CONFIG.sso.redirectHosts.includes(u.host));
 }
 
 /* ---------------- 静态资源 ---------------- */
@@ -780,9 +886,16 @@ const server = http.createServer(async (req, res) => {
         appCode: CONFIG.appCode,
         sourcePlatform: CONFIG.sourcePlatform,
         ssoMode: CONFIG.sso.mode,
-        statusDict: { draft: '草稿', pending: '待审核', published: '已发布', offline: '已下架', in_progress: '进行中', completed: '已完成', rejected: '已驳回', archived: '已归档', answering: '答题中', submitted: '待阅卷', graded: '成绩已生效', active: '资格有效', revoked: '资格已撤销' },
+        statusDict: {
+          draft: '草稿', pending: '待审核', approved: '已通过', rejected: '已驳回',
+          published: '已发布', offline: '已下架', archived: '已归档',
+          in_progress: '进行中', completed: '已完成', failed: '已失败',
+          answering: '答题中', submitted: '待阅卷', graded: '成绩已生效',
+          active: '有效', used: '已使用', revoked: '已撤销', expired: '已过期',
+          delivering: '投递中', delivered: '已投递', skipped: '已跳过', processed: '已处理'
+        },
         permissions: ROLE_PERMISSIONS,
-        eventTypes: ['exam.passed', 'exam.failed', 'exam.submitted', 'course.completed'],
+        eventTypes: REGISTERED_EVENTS,
         courses: DB.courses,
         chapters: DB.chapters.map((c) => ({ id: c.id, name: c.name, courseId: c.courseId, order: c.order, kps: c.kps })),
         examTypes: [
@@ -804,7 +917,9 @@ const server = http.createServer(async (req, res) => {
 
     /* ---- 统一登录（§7：OAuth 2.1 授权码模式；平台不自建账号密码体系、不保存密码） ---- */
     if (p === '/api/v1/sso/url' && method === 'GET') {
-      const back = url.searchParams.get('redirect') || '/yj/hall';
+      const rawBack = url.searchParams.get('redirect') || '/yj/hall';
+      /* 登录后跳转只允许站内相对路径，避免被拼成外部地址 */
+      const back = rawBack.startsWith('/') && !rawBack.startsWith('//') ? rawBack : '/yj/hall';
       const state = crypto.randomBytes(8).toString('hex');
       ssoStates.set(state, { redirect: back, exp: Date.now() + 10 * 60000 });
       const host = `http://${req.headers.host || '127.0.0.1'}`;
@@ -843,6 +958,9 @@ const server = http.createServer(async (req, res) => {
         };
         DB.users.push(u);
       }
+      /* §7.3：角色与权限点以认证中心返回为准，本平台只在缺失时按角色表兜底 */
+      u.role = (Array.isArray(info.roles) && info.roles[0]) || u.role;
+      if (Array.isArray(info.permissions) && info.permissions.length) u.permissions = info.permissions.slice();
       setUserPerms(u);
       const accessToken = sign({ u: u.id, exp: Date.now() + 7200 * 1000 });
       const refreshToken = 'lj_rt_' + crypto.randomBytes(16).toString('hex');
@@ -850,11 +968,14 @@ const server = http.createServer(async (req, res) => {
       if (DB.sessions.length > 200) DB.sessions = DB.sessions.slice(-100);
       audit(u.name, u.role, '统一登录', u.id, `经认证中心（${CONFIG.sso.mode}）建立本地会话`);
       save();
-      return ok(res, { accessToken, refreshToken, expiresIn: 7200, user: ssoUserInfo(u), redirect: st.redirect });
+      /* §7.2.4 长期凭证只经 httpOnly Cookie 下发给浏览器，响应体不放 refreshToken */
+      setRefreshCookie(req, res, refreshToken);
+      return ok(res, { accessToken, expiresIn: 7200, user: ssoUserInfo(u), redirect: st.redirect });
     }
     if (p === '/api/v1/sso/refresh' && method === 'POST') {
       const b = await body(req);
-      const rec = DB.sessions.find((x) => x.token === b.refreshToken && !x.revoked && x.exp > Date.now());
+      const presented = b.refreshToken || readCookie(req, RT_COOKIE);
+      const rec = DB.sessions.find((x) => x.token === presented && !x.revoked && x.exp > Date.now());
       if (!rec) return fail(res, 'AUTH_TOKEN_EXPIRED', '续期凭证无效或已过期', 401);
       rec.revoked = true;
       const u = userById(rec.userId);
@@ -864,13 +985,17 @@ const server = http.createServer(async (req, res) => {
       DB.sessions.push({ token: refreshToken, userId: u.id, exp: Date.now() + 7 * 24 * 3600 * 1000, revoked: false, createdAt: iso(now()) });
       audit(u.name, u.role, '令牌续期', u.id, '刷新令牌轮换');
       save();
-      return ok(res, { accessToken, refreshToken, expiresIn: 7200 });
+      setRefreshCookie(req, res, refreshToken);
+      return ok(res, { accessToken, expiresIn: 7200 });
     }
     if (p === '/api/v1/auth/logout' && method === 'POST') {
       const b = await body(req);
-      DB.sessions.forEach((x) => { if (!b.refreshToken || x.token === b.refreshToken) x.revoked = true; });
+      const presented = b.refreshToken || readCookie(req, RT_COOKIE);
+      /* 只注销本次会话对应的令牌；不能因为没传 token 就把所有人的会话全清掉 */
+      if (presented) DB.sessions.forEach((x) => { if (x.token === presented) x.revoked = true; });
       if (me) audit(me.name, me.role, '退出登录', me.id, '本地会话已清理，统一退出见 endSessionUrl');
       save();
+      setRefreshCookie(req, res, '', 0);
       const endSessionUrl = CONFIG.sso.mode === 'mock' ? '/yj/login' : `${CONFIG.sso.baseUrl}/protocol/logout`;
       return ok(res, { endSessionUrl });
     }
@@ -1030,6 +1155,8 @@ const server = http.createServer(async (req, res) => {
       need(me, expired);
       const a = DB.attempts.find((x) => x.id === m[1]);
       if (!a) return fail(res, 'NOT_FOUND', '答卷不存在');
+      /* §8.2 数据范围：只能写自己的答卷 */
+      if (a.userId !== me.id && me.role === 'student') return fail(res, 'FORBIDDEN', '不可写入他人答卷', 403);
       const b = await body(req);
       const list = Array.isArray(b.events) ? b.events : [b];
       list.forEach((e) => a.events.push({ type: e.type, at: iso(now()), detail: e.detail || '' }));
@@ -1042,6 +1169,8 @@ const server = http.createServer(async (req, res) => {
       need(me, expired);
       const a = DB.attempts.find((x) => x.id === m[1]);
       if (!a) return fail(res, 'NOT_FOUND', '答卷不存在');
+      /* §8.2 数据范围：只能交自己的答卷 */
+      if (a.userId !== me.id && me.role === 'student') return fail(res, 'FORBIDDEN', '不可提交他人答卷', 403);
       if (a.status !== 'answering') return ok(res, { alreadySubmitted: true, attemptId: a.id });
       const b = await body(req);
       if (b && b.answers) Object.assign(a.answers, b.answers);
@@ -1062,7 +1191,8 @@ const server = http.createServer(async (req, res) => {
         level: result.level,
         details: result.details
       });
-      DB.events.push({ id: uid('ev'), event: 'exam.submitted', at: iso(now()), payload: { attemptId: a.id, examId: exam.id, userId: a.userId } });
+      /* 交卷只记审计留痕，不产生跨平台事件：§11.3 清单里没有 exam.submitted，
+         对外联动只发 exam.passed / exam.failed（成绩生效时由下方 emitBusiness 统一发出） */
       audit(me.name, me.role, '提交答卷', a.id, `「${exam.title}」客观题 ${result.objective} 分`);
       // 无简答题则直接生效
       const hasEssay = a.snapshot.some((q) => q.type === 'essay');
@@ -1093,6 +1223,8 @@ const server = http.createServer(async (req, res) => {
       need(me, expired);
       const a = DB.attempts.find((x) => x.id === m[1]);
       if (!a) return fail(res, 'NOT_FOUND', '答卷不存在');
+      /* §8.2 数据范围：成绩单只对本人开放，教师/管理员可查（阅卷与统计需要） */
+      if (a.userId !== me.id && me.role === 'student') return fail(res, 'FORBIDDEN', '不可查看他人成绩单', 403);
       const exam = examById(a.examId);
       const paper = paperById(a.paperId);
       const graded = a.status === 'graded';
@@ -1601,168 +1733,6 @@ const server = http.createServer(async (req, res) => {
        原分类维护写接口已按规范下线，保留 GET 供组卷与命题读取（§11.1 通过公开 API 查询）。 */
     if (/^\/api\/v1\/catalog(\/|$)/.test(p) && method !== 'GET') {
       return fail(res, 'FORBIDDEN', '课程目录由自学平台维护，考试平台只读引用，不提供分类维护', 403);
-    }
-    if (p === '/api/v1/catalog/courses' && method === 'POST') {
-      need(me, expired, 'catalog:manage');
-      const b = await body(req);
-      const name = String(b.name || '').trim();
-      if (!name) return fail(res, 'VALIDATION_ERROR', '学科名称不能为空');
-      if (DB.courses.some((c) => c.name === name)) return fail(res, 'VALIDATION_ERROR', '同名学科已存在');
-      const c = {
-        id: uid('c'),
-        name,
-        code: String(b.code || '').trim() || `C${DB.courses.length + 1}`,
-        teacher: me.id,
-        term: b.term || '2026 秋',
-        catalog: b.catalog || '数据警务学院',
-        createdAt: iso(now()),
-        updatedAt: iso(now()),
-        createdBy: me.id,
-        updatedBy: me.id
-      };
-      DB.courses.push(c);
-      audit(me.name, me.role, '分类维护', c.id, `新增学科「${name}」`);
-      save();
-      return ok(res, c);
-    }
-    m = p.match(/^\/api\/v1\/catalog\/courses\/([\w-]+)$/);
-    if (m && method === 'PATCH') {
-      need(me, expired, 'catalog:manage');
-      const c = DB.courses.find((x) => x.id === m[1]);
-      if (!c) return fail(res, 'NOT_FOUND', '学科不存在');
-      const b = await body(req);
-      if (b.name !== undefined) {
-        const name = String(b.name).trim();
-        if (!name) return fail(res, 'VALIDATION_ERROR', '学科名称不能为空');
-        c.name = name;
-      }
-      if (b.code !== undefined) c.code = String(b.code);
-      c.updatedAt = iso(now());
-      c.updatedBy = me.id;
-      audit(me.name, me.role, '分类维护', c.id, `修改学科「${c.name}」`);
-      save();
-      return ok(res, c);
-    }
-    if (m && method === 'DELETE') {
-      need(me, expired, 'catalog:manage');
-      const c = DB.courses.find((x) => x.id === m[1]);
-      if (!c) return fail(res, 'NOT_FOUND', '学科不存在');
-      const chapters = DB.chapters.filter((x) => x.courseId === c.id);
-      const qCount = DB.questions.filter((q) => q.courseId === c.id).length;
-      const examCount = DB.exams.filter((e) => (e.courseId || '') === c.id).length;
-      if (chapters.length || qCount || examCount) {
-        return fail(res, 'VALIDATION_ERROR', `该学科下仍有 ${chapters.length} 个章节、${qCount} 道题目、${examCount} 场考试，无法删除`);
-      }
-      DB.courses = DB.courses.filter((x) => x.id !== c.id);
-      audit(me.name, me.role, '分类维护', c.id, `删除学科「${c.name}」`);
-      save();
-      return ok(res, { id: c.id, deleted: true });
-    }
-    if (p === '/api/v1/catalog/chapters' && method === 'POST') {
-      need(me, expired, 'catalog:manage');
-      const b = await body(req);
-      const c = DB.courses.find((x) => x.id === b.courseId);
-      if (!c) return fail(res, 'VALIDATION_ERROR', '请选择有效的学科');
-      const name = String(b.name || '').trim();
-      if (!name) return fail(res, 'VALIDATION_ERROR', '章节名称不能为空');
-      const ch = {
-        id: uid('ch'),
-        courseId: c.id,
-        order: DB.chapters.filter((x) => x.courseId === c.id).length + 1,
-        name,
-        kps: [],
-        body: [],
-        createdAt: iso(now()),
-        updatedAt: iso(now()),
-        createdBy: me.id,
-        updatedBy: me.id
-      };
-      DB.chapters.push(ch);
-      audit(me.name, me.role, '分类维护', ch.id, `新增章节「${c.name} / ${name}」`);
-      save();
-      return ok(res, ch);
-    }
-    m = p.match(/^\/api\/v1\/catalog\/chapters\/([\w-]+)$/);
-    if (m && method === 'PATCH') {
-      need(me, expired, 'catalog:manage');
-      const ch = DB.chapters.find((x) => x.id === m[1]);
-      if (!ch) return fail(res, 'NOT_FOUND', '章节不存在');
-      const b = await body(req);
-      if (b.name !== undefined) {
-        const name = String(b.name).trim();
-        if (!name) return fail(res, 'VALIDATION_ERROR', '章节名称不能为空');
-        ch.name = name;
-      }
-      if (b.courseId !== undefined) {
-        const c = DB.courses.find((x) => x.id === b.courseId);
-        if (!c) return fail(res, 'VALIDATION_ERROR', '学科不存在');
-        ch.courseId = c.id;
-      }
-      ch.updatedAt = iso(now());
-      ch.updatedBy = me.id;
-      audit(me.name, me.role, '分类维护', ch.id, `修改章节「${ch.name}」`);
-      save();
-      return ok(res, ch);
-    }
-    if (m && method === 'DELETE') {
-      need(me, expired, 'catalog:manage');
-      const ch = DB.chapters.find((x) => x.id === m[1]);
-      if (!ch) return fail(res, 'NOT_FOUND', '章节不存在');
-      const qCount = DB.questions.filter((q) => q.chapterId === ch.id).length;
-      if (qCount) return fail(res, 'VALIDATION_ERROR', `该章节下仍有 ${qCount} 道题目，无法删除`);
-      DB.chapters = DB.chapters.filter((x) => x.id !== ch.id);
-      audit(me.name, me.role, '分类维护', ch.id, `删除章节「${ch.name}」`);
-      save();
-      return ok(res, { id: ch.id, deleted: true });
-    }
-    if (p === '/api/v1/catalog/kps' && method === 'POST') {
-      need(me, expired, 'catalog:manage');
-      const b = await body(req);
-      const ch = DB.chapters.find((x) => x.id === b.chapterId);
-      if (!ch) return fail(res, 'VALIDATION_ERROR', '请选择有效的章节');
-      const name = String(b.name || '').trim();
-      if (!name) return fail(res, 'VALIDATION_ERROR', '知识点名称不能为空');
-      const kp = { id: uid('kp'), name, brief: String(b.brief || '').trim() || name };
-      ch.kps = ch.kps || [];
-      ch.kps.push(kp);
-      ch.updatedAt = iso(now());
-      ch.updatedBy = me.id;
-      audit(me.name, me.role, '分类维护', kp.id, `新增知识点「${ch.name} / ${name}」`);
-      save();
-      return ok(res, kp);
-    }
-    m = p.match(/^\/api\/v1\/catalog\/kps\/([\w-]+)$/);
-    if (m && method === 'PATCH') {
-      need(me, expired, 'catalog:manage');
-      const ch = DB.chapters.find((x) => (x.kps || []).some((k) => k.id === m[1]));
-      if (!ch) return fail(res, 'NOT_FOUND', '知识点不存在');
-      const kp = ch.kps.find((k) => k.id === m[1]);
-      const b = await body(req);
-      if (b.name !== undefined) {
-        const name = String(b.name).trim();
-        if (!name) return fail(res, 'VALIDATION_ERROR', '知识点名称不能为空');
-        kp.name = name;
-      }
-      if (b.brief !== undefined) kp.brief = String(b.brief || '');
-      ch.updatedAt = iso(now());
-      ch.updatedBy = me.id;
-      audit(me.name, me.role, '分类维护', kp.id, `修改知识点「${kp.name}」`);
-      save();
-      return ok(res, kp);
-    }
-    if (m && method === 'DELETE') {
-      need(me, expired, 'catalog:manage');
-      const ch = DB.chapters.find((x) => (x.kps || []).some((k) => k.id === m[1]));
-      if (!ch) return fail(res, 'NOT_FOUND', '知识点不存在');
-      const kp = ch.kps.find((k) => k.id === m[1]);
-      const qCount = DB.questions.filter((q) => (q.kp || []).includes(kp.id)).length;
-      if (qCount) return fail(res, 'VALIDATION_ERROR', `该知识点已被 ${qCount} 道题目引用，无法删除`);
-      ch.kps = ch.kps.filter((k) => k.id !== kp.id);
-      ch.updatedAt = iso(now());
-      ch.updatedBy = me.id;
-      audit(me.name, me.role, '分类维护', kp.id, `删除知识点「${kp.name}」`);
-      save();
-      return ok(res, { id: kp.id, deleted: true });
     }
 
     /* ---- 文档库：试卷 / 练习 ---- */
@@ -2443,6 +2413,10 @@ const server = http.createServer(async (req, res) => {
     }
 
     /* ---- 事件出站人工重放（§11.4，预留日志与重试字段） ---- */
+    if (p === '/api/v1/admin/outbox' && method === 'GET') {
+      need(me, expired, 'outbox:manage');
+      return ok(res, paginate(DB.outbox, url));
+    }
     if (p === '/api/v1/admin/outbox/retry' && method === 'POST') {
       need(me, expired, 'outbox:manage');
       const b = await body(req);
@@ -2458,7 +2432,15 @@ const server = http.createServer(async (req, res) => {
 
     if (p === '/api/v1/events' && method === 'GET') {
       need(me, expired, 'event:read');
-      return ok(res, paginate(DB.events, url));
+      /* operatorId 是系统内部账号标识，界面不应直接展示；补一份姓名字段供前端渲染（§9.3）
+         历史结构的事件把操作者放在 data.userId 上，这里一并兜底解析 */
+      const pageData = paginate(DB.events, url);
+      pageData.items = (pageData.items || []).map((ev) => {
+        const uidKey = ev.operatorId || (ev.data && ev.data.userId) || '';
+        const u = (DB.users || []).find((x) => x.id === uidKey);
+        return { ...ev, operatorName: (u && u.name) || '' };
+      });
+      return ok(res, pageData);
     }
 
     return fail(res, 'NOT_FOUND', `未知接口 ${method} ${p}`, 404);

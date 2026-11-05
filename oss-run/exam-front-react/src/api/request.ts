@@ -5,6 +5,10 @@
  * - 解析统一信封 { code, message, data, requestId }
  * - AUTH_TOKEN_EXPIRED → 静默续期并重试一次；AUTH_REQUIRED → 回统一登录
  * - 其余错误统一提示并附带 requestId，便于跨平台联调追踪
+ *
+ * 凭证承载（§7.2.4 前端不直接保存长期凭证）：
+ * - 访问令牌短期有效（2h），只放 sessionStorage，关标签页即失效；
+ * - 刷新令牌由服务端以 httpOnly Cookie 下发，前端读不到也存不了，续期时浏览器自动带上。
  */
 import { message } from 'antd';
 import { config } from '../env';
@@ -15,38 +19,31 @@ export const ENV = config.env;
 
 const BASE = config.apiBaseUrl;
 const ACCESS_KEY = 'yj_access';
-const REFRESH_KEY = 'yj_refresh';
 const USER_KEY = 'yj_user';
 
 export function getAccess(): string {
-  return localStorage.getItem(ACCESS_KEY) || '';
+  return sessionStorage.getItem(ACCESS_KEY) || '';
 }
 
-export function getRefresh(): string {
-  return localStorage.getItem(REFRESH_KEY) || '';
-}
-
-export function setTokens(access: string, refresh: string) {
-  localStorage.setItem(ACCESS_KEY, access);
-  localStorage.setItem(REFRESH_KEY, refresh);
+export function setAccess(access: string) {
+  sessionStorage.setItem(ACCESS_KEY, access);
 }
 
 export function getStoredUser<T = unknown>(): T | null {
   try {
-    return JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+    return JSON.parse(sessionStorage.getItem(USER_KEY) || 'null');
   } catch {
     return null;
   }
 }
 
 export function setStoredUser(u: unknown) {
-  localStorage.setItem(USER_KEY, JSON.stringify(u));
+  sessionStorage.setItem(USER_KEY, JSON.stringify(u));
 }
 
 export function clearSession() {
-  localStorage.removeItem(ACCESS_KEY);
-  localStorage.removeItem(REFRESH_KEY);
-  localStorage.removeItem(USER_KEY);
+  sessionStorage.removeItem(ACCESS_KEY);
+  sessionStorage.removeItem(USER_KEY);
 }
 
 export class ApiError extends Error {
@@ -63,20 +60,23 @@ export class ApiError extends Error {
 
 let refreshing: Promise<boolean> | null = null;
 
-/** 单飞续期：并发请求只触发一次 refresh（§7.4 Refresh Token） */
-async function doRefresh(): Promise<boolean> {
-  if (!getRefresh()) return false;
+/**
+ * 续期：凭 httpOnly Cookie 换新的访问令牌（§7.4 Refresh Token）。
+ * 单飞执行，并发请求只触发一次轮换；Cookie 由浏览器自动携带，前端不参与传递。
+ */
+export async function refreshSession(): Promise<boolean> {
   if (!refreshing) {
     refreshing = (async () => {
       try {
         const res = await fetch(`${BASE}/api/v1/sso/refresh`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ refreshToken: getRefresh() })
+          credentials: 'same-origin',
+          body: '{}'
         });
-        const j = (await res.json()) as ApiEnvelope<{ accessToken: string; refreshToken: string }>;
+        const j = (await res.json()) as ApiEnvelope<{ accessToken: string }>;
         if (j.code === 'OK' && j.data?.accessToken) {
-          setTokens(j.data.accessToken, j.data.refreshToken);
+          setAccess(j.data.accessToken);
           return true;
         }
         return false;
@@ -113,6 +113,7 @@ export async function api<T = any>(path: string, opts: RequestOptions = {}): Pro
     const res = await fetch(BASE + path, {
       method: opts.method || 'GET',
       headers,
+      credentials: 'same-origin',
       body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined
     });
     return (await res.json()) as ApiEnvelope<T>;
@@ -121,9 +122,9 @@ export async function api<T = any>(path: string, opts: RequestOptions = {}): Pro
   let body = await send();
 
   // §7.4：Token 过期 → 续期后重试一次
-  if ((body.code as ApiErrorCode) === 'AUTH_TOKEN_EXPIRED' && getRefresh()) {
-    const ok = await doRefresh();
-    if (ok) body = await send();
+  if ((body.code as ApiErrorCode) === 'AUTH_TOKEN_EXPIRED') {
+    const done = await refreshSession();
+    if (done) body = await send();
   }
 
   if (body.code === 'OK') return body.data;

@@ -14,6 +14,9 @@ tags:
   - name: 考试
   - name: 阅卷
   - name: 统计
+  - name: 课程
+  - name: 命题与题库
+  - name: 文档库
   - name: 事件与联动
   - name: 管理
 
@@ -72,13 +75,13 @@ components:
         classId: { type: string, nullable: true }
     EventEnvelope:
       type: object
-      description: §11.3 业务事件统一信封
+      description: §11.3 业务事件统一信封（eventType 只允许清单内的名称）
       required: [eventId, eventType, occurredAt, sourcePlatform, operatorId, data]
       properties:
         eventId: { type: string }
         eventType:
           type: string
-          enum: [exam.passed, exam.failed, exam.submitted, course.completed]
+          enum: [exam.passed, exam.failed, course.completed]
         occurredAt: { type: string, format: date-time, example: '2026-11-04T07:39:27+08:00' }
         sourcePlatform: { type: string, example: exam }
         operatorId: { type: string, nullable: true }
@@ -132,21 +135,25 @@ paths:
                 state: { type: string }
       responses:
         '200':
-          description: 返回 accessToken / refreshToken / expiresIn / user(§7.3) / redirect
+          description: |
+            返回 accessToken / expiresIn / user(§7.3) / redirect。
+            刷新令牌不下发到响应体，而是经 `Set-Cookie: yj_rt=...; HttpOnly; SameSite=Lax; Max-Age=604800` 写入（§7.2.4 前端不保存长期凭证）。
         '401': { description: AUTH_REQUIRED 授权码无效或 state 过期 }
         '200x': { description: SERVICE_UNAVAILABLE 认证中心不可用 }
   /api/v1/sso/refresh:
     post:
       tags: [认证]
       summary: 刷新令牌（轮换制，旧 refreshToken 立即失效）
+      description: |
+        刷新令牌取自 httpOnly Cookie `yj_rt`，前端不传参；轮换后服务端重新下发 Cookie，响应体只返回新的 accessToken。
       security: []
       responses:
-        '200': { description: 新 accessToken / refreshToken }
-        '401': { description: AUTH_TOKEN_EXPIRED }
+        '200': { description: accessToken（新 refreshToken 经 Set-Cookie 下发） }
+        '401': { description: AUTH_TOKEN_EXPIRED 续期凭证无效或已过期 }
   /api/v1/auth/logout:
     post:
       tags: [认证]
-      summary: 退出登录（清理本地会话，返回统一退出地址）
+      summary: 退出登录（注销当前会话令牌、清除 Cookie，返回统一退出地址）
       responses:
         '200': { description: endSessionUrl }
   /api/v1/me:
@@ -452,4 +459,366 @@ paths:
                                             name: { type: string }
                                             questionCount: { type: integer }
         '403': { description: 写操作已下线（FORBIDDEN） }
+
+  # ---------------- 错题本 ----------------
+  /api/v1/wrong-book/master:
+    post:
+      tags: [考试]
+      summary: 标记 / 取消「已掌握」
+      description: 权限点 `wrongbook:manage`（学生自带）。标记后该题不再进入待攻克，但仍保留在错题本供复习。
+      security: [{ bearer: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [qid, mastered]
+              properties:
+                qid: { type: string, description: 题目 ID }
+                mastered: { type: boolean }
+      responses:
+        '200': { description: 返回 qid / mastered }
+        '404': { description: NOT_FOUND 该题不在我的错题本内 }
+
+  # ---------------- 课程 / 章节（只读） ----------------
+  /api/v1/courses:
+    get:
+      tags: [课程]
+      summary: 课程列表（分页，命题工作台选科用）
+      description: 权限点 `course:read`。课程内容由自学平台维护，本平台只读。
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200': { description: PageResult }
+
+  # ---------------- AI 命题任务 ----------------
+  /api/v1/ai/jobs:
+    post:
+      tags: [命题与题库]
+      summary: 创建命题任务（按章节 + 知识点 + 题型/难度配比）
+      description: 权限点 `question:create`。任务异步推进，用 `GET /api/v1/ai/jobs/{jobId}` 轮询进度。
+      security: [{ bearer: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [chapterId]
+              properties:
+                chapterId: { type: string }
+                count: { type: integer, minimum: 3, maximum: 20, default: 12 }
+                kpIds:
+                  type: array
+                  description: 缺省取该章节全部知识点
+                  items: { type: string }
+                typeRatio:
+                  type: object
+                  description: 题型配比（百分比，缺省 single50/multiple20/judge15/blank10/essay5）
+                  example: { single: 50, multiple: 20, judge: 15, blank: 10, essay: 5 }
+                difficultyRatio:
+                  type: object
+                  description: 难度配比（缺省 easy40/medium40/hard20）
+                  example: { easy: 40, medium: 40, hard: 20 }
+      responses:
+        '200': { description: 返回 job（id / status=in_progress / params） }
+        '404': { description: NOT_FOUND 章节不存在 }
+    get:
+      tags: [命题与题库]
+      summary: 命题任务列表（分页）
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200': { description: PageResult（status 对外统一 in_progress / completed） }
+  /api/v1/ai/jobs/{jobId}:
+    get:
+      tags: [命题与题库]
+      summary: 命题任务详情（进度 + 候选题目 + 自检结果）
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: jobId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: 'id / status / progress / candidates 列表' }
+        '404': { description: NOT_FOUND 任务不存在 }
+  /api/v1/ai/jobs/{jobId}/review:
+    post:
+      tags: [命题与题库]
+      summary: 候选题目逐条通过 / 淘汰（通过的入库到 AI 题库）
+      description: 权限点 `question:review`。
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: jobId, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                approve: { type: array, items: { type: string }, description: 通过并入库的候选 ID }
+                reject: { type: array, items: { type: string }, description: 淘汰的候选 ID }
+      responses:
+        '200': { description: created（入库题数）/ job }
+        '404': { description: NOT_FOUND 任务不存在 }
+
+  # ---------------- AI 题库 ----------------
+  /api/v1/ai-bank/summary:
+    get:
+      tags: [命题与题库]
+      summary: AI 题库概览（题量、题型/难度/状态分布、待审数）
+      description: 权限点 `question:read`。
+      security: [{ bearer: [] }]
+      responses:
+        '200': { description: total / byType / byDifficulty / byStatus / byCourse }
+  /api/v1/ai-bank/questions:
+    get:
+      tags: [命题与题库]
+      summary: AI 题库检索（分页）
+      description: 权限点 `question:read`。
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - { name: courseId, in: query, schema: { type: string } }
+        - { name: chapterId, in: query, schema: { type: string } }
+        - { name: kpId, in: query, schema: { type: string } }
+        - { name: type, in: query, schema: { type: string, enum: [single, multiple, judge, blank, essay] } }
+        - { name: difficulty, in: query, schema: { type: string, enum: [easy, medium, hard] } }
+        - { name: status, in: query, schema: { type: string, enum: [published, offline, archived] } }
+        - { name: kw, in: query, schema: { type: string }, description: 题干关键字 }
+      responses:
+        '200': { description: PageResult }
+    post:
+      tags: [命题与题库]
+      summary: 新增题目（管理员）
+      description: 权限点 `bank:manage`（仅 admin）。教师通过命题工作台产出候选，不经此接口。
+      security: [{ bearer: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [stem, type, answer]
+              properties:
+                stem: { type: string }
+                type: { type: string, enum: [single, multiple, judge, blank, essay] }
+                options: { type: array, items: { type: object } }
+                answer: { description: 单选/判断为字符串，多选为数组，填空为数组 }
+                analysis: { type: string }
+                courseId: { type: string }
+                chapterId: { type: string }
+                kp: { type: array, items: { type: string } }
+                difficulty: { type: string, enum: [easy, medium, hard] }
+                score: { type: number }
+      responses:
+        '200': { description: 返回新建题目 }
+        '200e': { description: VALIDATION_ERROR 题干/答案缺失 }
+  /api/v1/ai-bank/questions/{questionId}:
+    patch:
+      tags: [命题与题库]
+      summary: 修改题目（管理员）
+      description: 权限点 `bank:manage`。
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: questionId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: 返回修改后的题目 }
+        '404': { description: NOT_FOUND }
+    delete:
+      tags: [命题与题库]
+      summary: 删除题目（管理员）
+      description: 权限点 `bank:manage`。已被试卷引用的题目删除后，相关文档发布会提示需重新组卷。
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: questionId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: id / deleted }
+        '404': { description: NOT_FOUND }
+  /api/v1/ai-bank/questions/{questionId}/status:
+    post:
+      tags: [命题与题库]
+      summary: 题目上下架 / 归档
+      description: 权限点 `question:review`。
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: questionId, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [published, offline, archived] }
+      responses:
+        '200': { description: id / status }
+        '200f': { description: VALIDATION_ERROR status 取值越界 }
+
+  # ---------------- 文档库（组卷） ----------------
+  /api/v1/doclib/documents:
+    get:
+      tags: [文档库]
+      summary: 文档列表（试卷 / 练习，分页）
+      description: 权限点 `doclib:read`。
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - { name: type, in: query, schema: { type: string, enum: [paper, practice] } }
+        - { name: kw, in: query, schema: { type: string } }
+      responses:
+        '200': { description: PageResult（含 reviewStatus / examStatus） }
+    post:
+      tags: [文档库]
+      summary: 组卷（由勾选的题目生成试卷 / 练习）
+      description: 权限点 `doclib:compose`。生成后 `reviewStatus=pending`，需教师或管理员审核后才能发布为考试。
+      security: [{ bearer: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, questionIds]
+              properties:
+                title: { type: string, description: 试卷 / 练习名称 }
+                type: { type: string, enum: [paper, practice], default: paper }
+                questionIds:
+                  type: array
+                  minItems: 1
+                  items: { type: string }
+                duration: { type: integer, description: 建议时长（分钟），练习可为空 }
+                includeAnswer: { type: boolean, default: true }
+      responses:
+        '200': { description: 返回新文档 }
+        '200g': { description: VALIDATION_ERROR 名称或题目为空、题目已被删除 }
+  /api/v1/doclib/documents/{documentId}:
+    get:
+      tags: [文档库]
+      summary: 文档详情
+      description: 权限点 `doclib:read`。
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: documentId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: 文档对象 }
+        '404': { description: NOT_FOUND }
+    patch:
+      tags: [文档库]
+      summary: 重命名 / 调整文档（仅本人创建，管理员不限）
+      description: 权限点 `doclib:compose`；`createdBy` 非本人且无 `bank:manage` 时返回 FORBIDDEN。
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: documentId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: 返回修改后的文档 }
+        '403': { description: FORBIDDEN 只能修改自己创建的文档 }
+    delete:
+      tags: [文档库]
+      summary: 删除文档
+      description: 权限点 `doclib:compose`，仅本人创建或管理员。
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: documentId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: id / deleted }
+        '403': { description: FORBIDDEN }
+
+  # ---------------- 发布管理 ----------------
+  /api/v1/publish/documents:
+    get:
+      tags: [文档库]
+      summary: 待审核 / 已发布文档列表 + 审核统计
+      description: 权限点 `exam:manage`。
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - { name: reviewStatus, in: query, schema: { type: string, enum: [pending, approved, rejected] } }
+        - { name: kw, in: query, schema: { type: string } }
+        - { name: mine, in: query, schema: { type: string, enum: ['1'] }, description: 只看我创建的 }
+      responses:
+        '200': { description: 'PageResult + stats：pending / approved / rejected / published 计数' }
+  /api/v1/publish/documents/{documentId}/review:
+    post:
+      tags: [文档库]
+      summary: 审核试卷文档（通过 / 驳回）
+      description: 权限点 `exam:manage`。已发布为考试的文档需先下架才能重新审核。
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: documentId, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action]
+              properties:
+                action: { type: string, enum: [approve, reject] }
+                note: { type: string, description: 驳回时必填 }
+      responses:
+        '200': { description: 返回文档（reviewStatus / reviewNote / reviewedByName） }
+        '200h': { description: BUSINESS_ERROR 已发布考试需先下架 }
+  /api/v1/publish/documents/{documentId}/publish:
+    post:
+      tags: [文档库]
+      summary: 由已审核的试卷文档发布为考试（同时生成试卷快照）
+      description: 权限点 `exam:manage`。仅 `type=paper` 且 `reviewStatus=approved` 的文档可发布。
+      security: [{ bearer: [] }]
+      parameters:
+        - { name: documentId, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type]
+              properties:
+                title: { type: string, description: 缺省沿用文档名 }
+                type: { type: string, enum: [chapter_quiz, skill_exam, admission_exam] }
+                passRate: { type: number, default: 0.7 }
+                duration: { type: integer, description: 分钟 }
+                startAt: { type: string, format: date-time }
+                endAt: { type: string, format: date-time }
+                allowBacktrack: { type: boolean, default: true }
+      responses:
+        '200': { description: examId / paperId / title / status / startAt / endAt / document }
+        '200i': { description: VALIDATION_ERROR 类型不符或时间区间非法 }
+        '200j': { description: BUSINESS_ERROR 题目已删除，需重新组卷 }
+  /api/v1/publish/exams:
+    get:
+      tags: [文档库]
+      summary: 在架 / 已下架考试列表（含参考人数、平均分）
+      description: 权限点 `exam:manage`。
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - { name: status, in: query, schema: { type: string, enum: [published, archived, draft] } }
+        - { name: kw, in: query, schema: { type: string } }
+      responses:
+        '200': { description: PageResult }
+
+  # ---------------- 出站队列 ----------------
+  /api/v1/admin/outbox:
+    get:
+      tags: [事件与联动]
+      summary: 出站事件队列（含投递状态与失败留痕）
+      description: 权限点 `outbox:manage`（仅 admin）。字段：target / status(pending·delivering·delivered·skipped·failed) / attempts / lastAt / lastError / payloadDigest。
+      security: [{ bearer: [] }]
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200': { description: PageResult }
+        '403': { description: FORBIDDEN 缺少 outbox:manage }
 

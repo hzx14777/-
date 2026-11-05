@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, Typography } from 'antd';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { endpoints } from '../api';
-import { setTokens, setStoredUser } from '../api/request';
+import { setAccess, setStoredUser } from '../api/request';
 import { useSession } from '../contexts/session';
 import { PageLoading } from '../components';
 
@@ -25,7 +25,8 @@ export default function SsoCallback() {
     (async () => {
       try {
         const r = await endpoints.ssoExchange(code, state);
-        setTokens(r.accessToken, r.refreshToken);
+        /* 响应体只有短期访问令牌；刷新令牌已由服务端写入 httpOnly Cookie（§7.2.4） */
+        setAccess(r.accessToken);
         setStoredUser(r.user);
         await reload();
         nav(r.redirect || '/hall', { replace: true });

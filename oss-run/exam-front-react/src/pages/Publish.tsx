@@ -165,7 +165,7 @@ export default function Publish() {
   const docColumns = [
     { title: '考试文档', dataIndex: 'title', ellipsis: true, render: (v: string, d: any) => <a onClick={() => openPreview(d)}>{v}</a> },
     { title: '学科', dataIndex: 'courseName', width: 110, ellipsis: true },
-    { title: '题量 / 总分', width: 104, render: (_: any, d: any) => `${d.questionCount} 题 / ${d.totalScore} 分` },
+    { title: '题量 / 总分', width: 122, render: (_: any, d: any) => <span style={{ whiteSpace: 'nowrap' }}>{d.questionCount} 题 / {d.totalScore} 分</span> },
     { title: '组卷人', dataIndex: 'createdByName', width: 84 },
     { title: '组卷时间', dataIndex: 'createdAt', width: 150, render: (v: string) => <span style={{ fontSize: 12.5 }}>{formatDateTime(v)}</span> },
     {
@@ -220,7 +220,7 @@ export default function Publish() {
       title: '来源文档', dataIndex: 'documentTitle', width: 180, ellipsis: true,
       render: (v: string) => (v ? <a onClick={() => { setTab('review'); setDocKw(v); setDocApplied(v); setDocPage(1); }}>{v}</a> : <Tag>平台预置</Tag>)
     },
-    { title: '题量 / 总分', width: 110, render: (_: any, e: any) => `${e.questionCount} 题 / ${formatScore(e.totalScore)} 分` },
+    { title: '题量 / 总分', width: 128, render: (_: any, e: any) => <span style={{ whiteSpace: 'nowrap' }}>{e.questionCount} 题 / {formatScore(e.totalScore)} 分</span> },
     { title: '时长', dataIndex: 'duration', width: 90, render: (v: number) => formatDuration(v) },
     {
       title: '开放时间', width: 220,

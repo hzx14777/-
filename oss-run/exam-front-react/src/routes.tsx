@@ -33,6 +33,15 @@ import Stats from './pages/Stats';
 import Manage from './pages/Manage';
 import Audit from './pages/Audit';
 
+/** 侧栏分组：把 10 个一级入口按使用场景收敛成三组，减少横向扫描成本 */
+export type MenuGroup = 'learn' | 'compose' | 'manage';
+
+export const MENU_GROUPS: { key: MenuGroup; title: string }[] = [
+  { key: 'learn', title: '学习与考试' },
+  { key: 'compose', title: '命题工具' },
+  { key: 'manage', title: '教学管理' }
+];
+
 export interface AppRouteConfig {
   /** 路由路径，支持 :param */
   path: string;
@@ -40,26 +49,28 @@ export interface AppRouteConfig {
   element: React.ReactNode;
   /** §8.2 页面访问所需权限点，缺省表示登录即可访问 */
   perm?: string;
-  /** 顶部菜单信息，缺省表示不在菜单中展示（详情类页面） */
-  menu?: { label: string; icon: React.ReactNode };
+  /** 侧栏菜单信息，缺省表示不在菜单中展示（详情类页面） */
+  menu?: { label: string; icon: React.ReactNode; group: MenuGroup };
+  /** 详情页归属的一级菜单，用于侧栏高亮（如成绩单高亮「考试大厅」） */
+  parent?: string;
 }
 
 export const ROUTES: AppRouteConfig[] = [
-  { path: '/hall', element: <Hall />, perm: 'exam:read', menu: { label: '考试大厅', icon: <DashboardOutlined /> } },
-  { path: '/wrong', element: <WrongBook />, perm: 'wrongbook:manage', menu: { label: '错题本', icon: <BookOutlined /> } },
-  { path: '/admission', element: <Admission />, perm: 'admission:read', menu: { label: '准入资格', icon: <SafetyCertificateOutlined /> } },
-  { path: '/workbench', element: <Workbench />, perm: 'question:create', menu: { label: 'AI 命题工作台', icon: <RobotOutlined /> } },
-  { path: '/ai-bank', element: <AiBank />, perm: 'question:read', menu: { label: 'AI 题库', icon: <DatabaseOutlined /> } },
-  { path: '/doclib', element: <DocLib />, perm: 'doclib:read', menu: { label: '文档库', icon: <FolderOpenOutlined /> } },
-  { path: '/publish', element: <Publish />, perm: 'exam:manage', menu: { label: '考试发布', icon: <SendOutlined /> } },
-  { path: '/grading', element: <Grading />, perm: 'exam:grade', menu: { label: '阅卷中心', icon: <CheckSquareOutlined /> } },
-  { path: '/manage', element: <Manage />, perm: 'exam:manage', menu: { label: '考试管理', icon: <SettingOutlined /> } },
-  { path: '/audit', element: <Audit />, perm: 'audit:read', menu: { label: '审计与事件', icon: <FileSearchOutlined /> } },
+  { path: '/hall', element: <Hall />, perm: 'exam:read', menu: { label: '考试大厅', icon: <DashboardOutlined />, group: 'learn' } },
+  { path: '/wrong', element: <WrongBook />, perm: 'wrongbook:manage', menu: { label: '错题本', icon: <BookOutlined />, group: 'learn' } },
+  { path: '/admission', element: <Admission />, perm: 'admission:read', menu: { label: '准入资格', icon: <SafetyCertificateOutlined />, group: 'learn' } },
+  { path: '/workbench', element: <Workbench />, perm: 'question:create', menu: { label: 'AI 命题工作台', icon: <RobotOutlined />, group: 'compose' } },
+  { path: '/ai-bank', element: <AiBank />, perm: 'question:read', menu: { label: 'AI 题库', icon: <DatabaseOutlined />, group: 'compose' } },
+  { path: '/doclib', element: <DocLib />, perm: 'doclib:read', menu: { label: '文档库', icon: <FolderOpenOutlined />, group: 'compose' } },
+  { path: '/publish', element: <Publish />, perm: 'exam:manage', menu: { label: '考试发布', icon: <SendOutlined />, group: 'manage' } },
+  { path: '/grading', element: <Grading />, perm: 'exam:grade', menu: { label: '阅卷中心', icon: <CheckSquareOutlined />, group: 'manage' } },
+  { path: '/manage', element: <Manage />, perm: 'exam:manage', menu: { label: '考试管理', icon: <SettingOutlined />, group: 'manage' } },
+  { path: '/audit', element: <Audit />, perm: 'audit:read', menu: { label: '审计与事件', icon: <FileSearchOutlined />, group: 'manage' } },
   /* 详情类页面：不在菜单展示，直接访问仍需权限点（§16.1 改地址无法绕过） */
-  { path: '/exam/:examId', element: <ExamDetail />, perm: 'exam:read' },
-  { path: '/answer/:attemptId', element: <Answer />, perm: 'exam:submit' },
-  { path: '/result/:attemptId', element: <Result />, perm: 'record:read' },
-  { path: '/stats/:examId', element: <Stats />, perm: 'stats:read' }
+  { path: '/exam/:examId', element: <ExamDetail />, perm: 'exam:read', parent: '/hall' },
+  { path: '/answer/:attemptId', element: <Answer />, perm: 'exam:submit', parent: '/hall' },
+  { path: '/result/:attemptId', element: <Result />, perm: 'record:read', parent: '/hall' },
+  { path: '/stats/:examId', element: <Stats />, perm: 'stats:read', parent: '/manage' }
 ];
 
 /** 菜单项（按权限点过滤） */
@@ -67,7 +78,8 @@ export function menuItems(hasPerm: (perm: string) => boolean) {
   return ROUTES.filter((r) => r.menu && (!r.perm || hasPerm(r.perm))).map((r) => ({
     key: r.path,
     icon: r.menu!.icon,
-    label: r.menu!.label
+    label: r.menu!.label,
+    group: r.menu!.group
   }));
 }
 
@@ -77,4 +89,12 @@ export function matchRoute(pathname: string): AppRouteConfig | undefined {
     const pattern = new RegExp(`^${r.path.replace(/:[^/]+/g, '[^/]+')}$`);
     return pattern.test(pathname);
   });
+}
+
+/** 侧栏高亮项：详情页回溯到 parent，菜单页取自身（§16.4 导航与页面对应） */
+export function activeMenuKey(pathname: string): string {
+  const route = matchRoute(pathname);
+  if (route?.menu) return route.path;
+  if (route?.parent) return route.parent;
+  return '/' + (pathname.split('/')[1] || 'hall');
 }

@@ -11942,13 +11942,244 @@
   ],
   "audits": [
     {
+      "id": "au_mw35lgx1ac2a",
+      "at": "2026-11-05T14:17:23+08:00",
+      "actor": "平台管理员",
+      "role": "admin",
+      "actorType": "user",
+      "action": "统一登录",
+      "target": "u_adm",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw35lcwt4892",
+      "at": "2026-11-05T14:17:17+08:00",
+      "actor": "陈立群",
+      "role": "teacher",
+      "actorType": "user",
+      "action": "统一登录",
+      "target": "u_tch",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw35l9mu1bf2",
+      "at": "2026-11-05T14:17:13+08:00",
+      "actor": "张予安",
+      "role": "student",
+      "actorType": "user",
+      "action": "统一登录",
+      "target": "u_stu1",
+      "detail": "经认证中心（mock）建立本地会话"
+    },
+    {
+      "id": "au_mw35jrqvbd28",
+      "at": "2026-11-05T14:16:03+08:00",
+      "actor": "平台管理员",
+      "role": "admin",
+      "actorType": "user",
+      "action": "统一登录",
+      "target": "u_adm",
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-05T14:16:03+08:00",
+      "updatedAt": "2026-11-05T14:16:03+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw35jmjp1539",
+      "at": "2026-11-05T14:15:57+08:00",
+      "actor": "陈立群",
+      "role": "teacher",
+      "actorType": "user",
+      "action": "统一登录",
+      "target": "u_tch",
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-05T14:15:57+08:00",
+      "updatedAt": "2026-11-05T14:15:57+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw35ji4uf39f",
+      "at": "2026-11-05T14:15:51+08:00",
+      "actor": "张予安",
+      "role": "student",
+      "actorType": "user",
+      "action": "统一登录",
+      "target": "u_stu1",
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-05T14:15:51+08:00",
+      "updatedAt": "2026-11-05T14:15:51+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw35epkg0ac8",
+      "at": "2026-11-05T14:12:07+08:00",
+      "actor": "平台管理员",
+      "role": "admin",
+      "actorType": "user",
+      "action": "统一登录",
+      "target": "u_adm",
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-05T14:12:07+08:00",
+      "updatedAt": "2026-11-05T14:12:07+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw35ejes232c",
+      "at": "2026-11-05T14:11:59+08:00",
+      "actor": "陈立群",
+      "role": "teacher",
+      "actorType": "user",
+      "action": "统一登录",
+      "target": "u_tch",
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-05T14:11:59+08:00",
+      "updatedAt": "2026-11-05T14:11:59+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw35ee7me1c6",
+      "at": "2026-11-05T14:11:53+08:00",
+      "actor": "张予安",
+      "role": "student",
+      "actorType": "user",
+      "action": "统一登录",
+      "target": "u_stu1",
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-05T14:11:53+08:00",
+      "updatedAt": "2026-11-05T14:11:53+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw35e5pod8bf",
+      "at": "2026-11-05T14:11:42+08:00",
+      "actor": "张予安",
+      "role": "student",
+      "actorType": "user",
+      "action": "退出登录",
+      "target": "u_stu1",
+      "detail": "本地会话已清理，统一退出见 endSessionUrl",
+      "createdAt": "2026-11-05T14:11:42+08:00",
+      "updatedAt": "2026-11-05T14:11:42+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw35e3hid167",
+      "at": "2026-11-05T14:11:39+08:00",
+      "actor": "张予安",
+      "role": "student",
+      "actorType": "user",
+      "action": "令牌续期",
+      "target": "u_stu1",
+      "detail": "刷新令牌轮换",
+      "createdAt": "2026-11-05T14:11:39+08:00",
+      "updatedAt": "2026-11-05T14:11:39+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw35e2gjdf1b",
+      "at": "2026-11-05T14:11:37+08:00",
+      "actor": "张予安",
+      "role": "student",
+      "actorType": "user",
+      "action": "统一登录",
+      "target": "u_stu1",
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-05T14:11:37+08:00",
+      "updatedAt": "2026-11-05T14:11:37+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw35d1bxe604",
+      "at": "2026-11-05T14:10:49+08:00",
+      "actor": "张予安",
+      "role": "student",
+      "actorType": "user",
+      "action": "令牌续期",
+      "target": "u_stu1",
+      "detail": "刷新令牌轮换",
+      "createdAt": "2026-11-05T14:10:49+08:00",
+      "updatedAt": "2026-11-05T14:10:49+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw35d02nad60",
+      "at": "2026-11-05T14:10:48+08:00",
+      "actor": "张予安",
+      "role": "student",
+      "actorType": "user",
+      "action": "统一登录",
+      "target": "u_stu1",
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-05T14:10:48+08:00",
+      "updatedAt": "2026-11-05T14:10:48+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw35cpayed41",
+      "at": "2026-11-05T14:10:34+08:00",
+      "actor": "张予安",
+      "role": "student",
+      "actorType": "user",
+      "action": "令牌续期",
+      "target": "u_stu1",
+      "detail": "刷新令牌轮换",
+      "createdAt": "2026-11-05T14:10:34+08:00",
+      "updatedAt": "2026-11-05T14:10:34+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw35co9f4293",
+      "at": "2026-11-05T14:10:32+08:00",
+      "actor": "张予安",
+      "role": "student",
+      "actorType": "user",
+      "action": "统一登录",
+      "target": "u_stu1",
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-05T14:10:32+08:00",
+      "updatedAt": "2026-11-05T14:10:32+08:00",
+      "createdBy": "system",
+      "updatedBy": "system"
+    },
+    {
+      "id": "au_mw34mnqx30a3",
+      "at": "2026-11-05T13:50:19+08:00",
+      "actor": "陈立群",
+      "role": "teacher",
+      "action": "统一登录",
+      "target": "u_tch",
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-05T13:50:19+08:00",
+      "updatedAt": "2026-11-05T13:50:19+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
+    },
+    {
       "id": "au_mw2untkhbb4e",
       "at": "2026-11-05T09:11:17+08:00",
       "actor": "陈立群",
       "role": "teacher",
       "action": "统一登录",
       "target": "u_tch",
-      "detail": "经认证中心（mock）建立本地会话"
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-05T09:11:17+08:00",
+      "updatedAt": "2026-11-05T09:11:17+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw2tn697b3fe",
@@ -11957,7 +12188,12 @@
       "role": "teacher",
       "action": "令牌续期",
       "target": "u_tch",
-      "detail": "刷新令牌轮换"
+      "detail": "刷新令牌轮换",
+      "createdAt": "2026-11-05T08:42:47+08:00",
+      "updatedAt": "2026-11-05T08:42:47+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw205j2w1bf9",
@@ -11966,7 +12202,12 @@
       "role": "teacher",
       "action": "统一登录",
       "target": "u_tch",
-      "detail": "经认证中心（mock）建立本地会话"
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T18:57:15+08:00",
+      "updatedAt": "2026-11-04T18:57:15+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw205bb8a880",
@@ -11975,7 +12216,12 @@
       "role": "teacher",
       "action": "令牌续期",
       "target": "u_tch",
-      "detail": "刷新令牌轮换"
+      "detail": "刷新令牌轮换",
+      "createdAt": "2026-11-04T18:57:05+08:00",
+      "updatedAt": "2026-11-04T18:57:05+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1vtg713b06",
@@ -11984,7 +12230,12 @@
       "role": "admin",
       "action": "统一登录",
       "target": "u_adm",
-      "detail": "经认证中心（mock）建立本地会话"
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T16:55:53+08:00",
+      "updatedAt": "2026-11-04T16:55:53+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1vtf6ddb13",
@@ -11993,7 +12244,12 @@
       "role": "teacher",
       "action": "统一登录",
       "target": "u_tch",
-      "detail": "经认证中心（mock）建立本地会话"
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T16:55:51+08:00",
+      "updatedAt": "2026-11-04T16:55:51+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1vt42e83f2",
@@ -12002,7 +12258,12 @@
       "role": "admin",
       "action": "统一登录",
       "target": "u_adm",
-      "detail": "经认证中心（mock）建立本地会话"
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T16:55:37+08:00",
+      "updatedAt": "2026-11-04T16:55:37+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1vss577dc7",
@@ -12011,7 +12272,12 @@
       "role": "admin",
       "action": "统一登录",
       "target": "u_adm",
-      "detail": "经认证中心（mock）建立本地会话"
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T16:55:21+08:00",
+      "updatedAt": "2026-11-04T16:55:21+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1vsh5e6ab6",
@@ -12020,7 +12286,12 @@
       "role": "admin",
       "action": "统一登录",
       "target": "u_adm",
-      "detail": "经认证中心（mock）建立本地会话"
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T16:55:07+08:00",
+      "updatedAt": "2026-11-04T16:55:07+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1voqpfa4c1",
@@ -12029,7 +12300,12 @@
       "role": "admin",
       "action": "统一登录",
       "target": "u_adm",
-      "detail": "经认证中心（mock）建立本地会话"
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T16:52:13+08:00",
+      "updatedAt": "2026-11-04T16:52:13+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1vofj5253f",
@@ -12038,7 +12314,12 @@
       "role": "admin",
       "action": "统一登录",
       "target": "u_adm",
-      "detail": "经认证中心（mock）建立本地会话"
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T16:51:59+08:00",
+      "updatedAt": "2026-11-04T16:51:59+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1vnrdi67a7",
@@ -12047,7 +12328,12 @@
       "role": "admin",
       "action": "统一登录",
       "target": "u_adm",
-      "detail": "经认证中心（mock）建立本地会话"
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T16:51:27+08:00",
+      "updatedAt": "2026-11-04T16:51:27+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1vng3rde61",
@@ -12056,7 +12342,12 @@
       "role": "admin",
       "action": "统一登录",
       "target": "u_adm",
-      "detail": "经认证中心（mock）建立本地会话"
+      "detail": "经认证中心（mock）建立本地会话",
+      "createdAt": "2026-11-04T16:51:13+08:00",
+      "updatedAt": "2026-11-04T16:51:13+08:00",
+      "createdBy": "system",
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1vlkmu8608",
@@ -12069,7 +12360,8 @@
       "createdAt": "2026-11-04T16:49:45+08:00",
       "updatedAt": "2026-11-04T16:49:45+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1vlg0wf532",
@@ -12082,7 +12374,8 @@
       "createdAt": "2026-11-04T16:49:39+08:00",
       "updatedAt": "2026-11-04T16:49:39+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1oj3onbd28",
@@ -12095,7 +12388,8 @@
       "createdAt": "2026-11-04T13:31:53+08:00",
       "updatedAt": "2026-11-04T13:31:53+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1oir0u4be2",
@@ -12108,7 +12402,8 @@
       "createdAt": "2026-11-04T13:31:36+08:00",
       "updatedAt": "2026-11-04T13:31:36+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1obnbd30d7",
@@ -12121,7 +12416,8 @@
       "createdAt": "2026-11-04T13:26:05+08:00",
       "updatedAt": "2026-11-04T13:26:05+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1oao605afd",
@@ -12134,7 +12430,8 @@
       "createdAt": "2026-11-04T13:25:19+08:00",
       "updatedAt": "2026-11-04T13:25:19+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1oac0u305b",
@@ -12147,7 +12444,8 @@
       "createdAt": "2026-11-04T13:25:03+08:00",
       "updatedAt": "2026-11-04T13:25:03+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1oa2oh467a",
@@ -12160,7 +12458,8 @@
       "createdAt": "2026-11-04T13:24:51+08:00",
       "updatedAt": "2026-11-04T13:24:51+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1o9tk9a1ca",
@@ -12173,7 +12472,8 @@
       "createdAt": "2026-11-04T13:24:40+08:00",
       "updatedAt": "2026-11-04T13:24:40+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1o8y6ba18a",
@@ -12186,7 +12486,8 @@
       "createdAt": "2026-11-04T13:23:59+08:00",
       "updatedAt": "2026-11-04T13:23:59+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1o7byw2f91",
@@ -12199,7 +12500,8 @@
       "createdAt": "2026-11-04T13:22:43+08:00",
       "updatedAt": "2026-11-04T13:22:43+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1o6kyt3a7c",
@@ -12212,7 +12514,8 @@
       "createdAt": "2026-11-04T13:22:08+08:00",
       "updatedAt": "2026-11-04T13:22:08+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1o5g01c0f9",
@@ -12225,7 +12528,8 @@
       "createdAt": "2026-11-04T13:21:15+08:00",
       "updatedAt": "2026-11-04T13:21:15+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1nydiafe6d",
@@ -12238,7 +12542,8 @@
       "createdAt": "2026-11-04T13:15:46+08:00",
       "updatedAt": "2026-11-04T13:15:46+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ny2w0601b",
@@ -12251,7 +12556,8 @@
       "createdAt": "2026-11-04T13:15:32+08:00",
       "updatedAt": "2026-11-04T13:15:32+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1nvne334f9",
@@ -12264,7 +12570,8 @@
       "createdAt": "2026-11-04T13:13:38+08:00",
       "updatedAt": "2026-11-04T13:13:38+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1nuyhr75bc",
@@ -12277,7 +12584,8 @@
       "createdAt": "2026-11-04T13:13:06+08:00",
       "updatedAt": "2026-11-04T13:13:06+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ntrkaabb1",
@@ -12290,7 +12598,8 @@
       "createdAt": "2026-11-04T13:12:10+08:00",
       "updatedAt": "2026-11-04T13:12:10+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ntjn6f32a",
@@ -12303,7 +12612,8 @@
       "createdAt": "2026-11-04T13:12:00+08:00",
       "updatedAt": "2026-11-04T13:12:00+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1nt1yjc38c",
@@ -12316,7 +12626,8 @@
       "createdAt": "2026-11-04T13:11:37+08:00",
       "updatedAt": "2026-11-04T13:11:37+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1nsm2w25ab",
@@ -12329,7 +12640,8 @@
       "createdAt": "2026-11-04T13:11:17+08:00",
       "updatedAt": "2026-11-04T13:11:17+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1nslew6310",
@@ -12342,7 +12654,8 @@
       "createdAt": "2026-11-04T13:11:16+08:00",
       "updatedAt": "2026-11-04T13:11:16+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1nsic956dd",
@@ -12355,7 +12668,8 @@
       "createdAt": "2026-11-04T13:11:12+08:00",
       "updatedAt": "2026-11-04T13:11:12+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1nsc3db386",
@@ -12368,7 +12682,8 @@
       "createdAt": "2026-11-04T13:11:04+08:00",
       "updatedAt": "2026-11-04T13:11:04+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ns88oc12e",
@@ -12381,7 +12696,8 @@
       "createdAt": "2026-11-04T13:10:59+08:00",
       "updatedAt": "2026-11-04T13:10:59+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1nfa8vbf31",
@@ -12394,7 +12710,8 @@
       "createdAt": "2026-11-04T13:00:55+08:00",
       "updatedAt": "2026-11-04T13:00:55+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ndvwm8592",
@@ -12407,7 +12724,8 @@
       "createdAt": "2026-11-04T12:59:50+08:00",
       "updatedAt": "2026-11-04T12:59:50+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ndtel825c",
@@ -12420,7 +12738,8 @@
       "createdAt": "2026-11-04T12:59:46+08:00",
       "updatedAt": "2026-11-04T12:59:46+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ic1rja590",
@@ -12433,7 +12752,8 @@
       "createdAt": "2026-11-04T10:38:26+08:00",
       "updatedAt": "2026-11-04T10:38:26+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1iatu2a681",
@@ -12446,7 +12766,8 @@
       "createdAt": "2026-11-04T10:37:29+08:00",
       "updatedAt": "2026-11-04T10:37:29+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1iasemf222",
@@ -12459,7 +12780,8 @@
       "createdAt": "2026-11-04T10:37:27+08:00",
       "updatedAt": "2026-11-04T10:37:27+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i8m51d424",
@@ -12472,7 +12794,8 @@
       "createdAt": "2026-11-04T10:35:46+08:00",
       "updatedAt": "2026-11-04T10:35:46+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i850401ef",
@@ -12485,7 +12808,8 @@
       "createdAt": "2026-11-04T10:35:23+08:00",
       "updatedAt": "2026-11-04T10:35:23+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i705n1dda",
@@ -12498,7 +12822,8 @@
       "createdAt": "2026-11-04T10:34:30+08:00",
       "updatedAt": "2026-11-04T10:34:30+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i6rcrb176",
@@ -12511,7 +12836,8 @@
       "createdAt": "2026-11-04T10:34:19+08:00",
       "updatedAt": "2026-11-04T10:34:19+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i6q18980e",
@@ -12524,7 +12850,8 @@
       "createdAt": "2026-11-04T10:34:17+08:00",
       "updatedAt": "2026-11-04T10:34:17+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i6n02af2a",
@@ -12537,7 +12864,8 @@
       "createdAt": "2026-11-04T10:34:13+08:00",
       "updatedAt": "2026-11-04T10:34:13+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i5wp35963",
@@ -12550,7 +12878,8 @@
       "createdAt": "2026-11-04T10:33:39+08:00",
       "updatedAt": "2026-11-04T10:33:39+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i5vdk7788",
@@ -12563,7 +12892,8 @@
       "createdAt": "2026-11-04T10:33:38+08:00",
       "updatedAt": "2026-11-04T10:33:38+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i5scn8141",
@@ -12576,7 +12906,8 @@
       "createdAt": "2026-11-04T10:33:34+08:00",
       "updatedAt": "2026-11-04T10:33:34+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i4w7lf07d",
@@ -12589,7 +12920,8 @@
       "createdAt": "2026-11-04T10:32:52+08:00",
       "updatedAt": "2026-11-04T10:32:52+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i4ux58563",
@@ -12602,7 +12934,8 @@
       "createdAt": "2026-11-04T10:32:50+08:00",
       "updatedAt": "2026-11-04T10:32:50+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i4rtp5fb2",
@@ -12615,7 +12948,8 @@
       "createdAt": "2026-11-04T10:32:46+08:00",
       "updatedAt": "2026-11-04T10:32:46+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i4cfj0424",
@@ -12628,7 +12962,8 @@
       "createdAt": "2026-11-04T10:32:26+08:00",
       "updatedAt": "2026-11-04T10:32:26+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i427za887",
@@ -12641,7 +12976,8 @@
       "createdAt": "2026-11-04T10:32:13+08:00",
       "updatedAt": "2026-11-04T10:32:13+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i2onw0640",
@@ -12654,7 +12990,8 @@
       "createdAt": "2026-11-04T10:31:09+08:00",
       "updatedAt": "2026-11-04T10:31:09+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i2ndxb791",
@@ -12667,7 +13004,8 @@
       "createdAt": "2026-11-04T10:31:07+08:00",
       "updatedAt": "2026-11-04T10:31:07+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i2guo3031",
@@ -12680,7 +13018,8 @@
       "createdAt": "2026-11-04T10:30:59+08:00",
       "updatedAt": "2026-11-04T10:30:59+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i1kzrb55c",
@@ -12693,7 +13032,8 @@
       "createdAt": "2026-11-04T10:30:17+08:00",
       "updatedAt": "2026-11-04T10:30:17+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i1jqz2ffb",
@@ -12706,7 +13046,8 @@
       "createdAt": "2026-11-04T10:30:16+08:00",
       "updatedAt": "2026-11-04T10:30:16+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i1dfu5997",
@@ -12719,7 +13060,8 @@
       "createdAt": "2026-11-04T10:30:08+08:00",
       "updatedAt": "2026-11-04T10:30:08+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i06gsf6e1",
@@ -12732,7 +13074,8 @@
       "createdAt": "2026-11-04T10:29:12+08:00",
       "updatedAt": "2026-11-04T10:29:12+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1i059373b3",
@@ -12745,7 +13088,8 @@
       "createdAt": "2026-11-04T10:29:10+08:00",
       "updatedAt": "2026-11-04T10:29:10+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hzyva9a39",
@@ -12758,7 +13102,8 @@
       "createdAt": "2026-11-04T10:29:02+08:00",
       "updatedAt": "2026-11-04T10:29:02+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hy3zof4e4",
@@ -12771,7 +13116,8 @@
       "createdAt": "2026-11-04T10:27:35+08:00",
       "updatedAt": "2026-11-04T10:27:35+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hy1dy9a3f",
@@ -12784,7 +13130,8 @@
       "createdAt": "2026-11-04T10:27:32+08:00",
       "updatedAt": "2026-11-04T10:27:32+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hwq0v90ac",
@@ -12797,7 +13144,8 @@
       "createdAt": "2026-11-04T10:26:31+08:00",
       "updatedAt": "2026-11-04T10:26:31+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hword411b",
@@ -12810,7 +13158,8 @@
       "createdAt": "2026-11-04T10:26:29+08:00",
       "updatedAt": "2026-11-04T10:26:29+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hwiaxffd1",
@@ -12823,7 +13172,8 @@
       "createdAt": "2026-11-04T10:26:21+08:00",
       "updatedAt": "2026-11-04T10:26:21+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hvanpe1cd",
@@ -12836,7 +13186,8 @@
       "createdAt": "2026-11-04T10:25:24+08:00",
       "updatedAt": "2026-11-04T10:25:24+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1htl6h9587",
@@ -12849,7 +13200,8 @@
       "createdAt": "2026-11-04T10:24:04+08:00",
       "updatedAt": "2026-11-04T10:24:04+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ht5ur6c74",
@@ -12862,7 +13214,8 @@
       "createdAt": "2026-11-04T10:23:45+08:00",
       "updatedAt": "2026-11-04T10:23:45+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ht5uo6943",
@@ -12875,7 +13228,8 @@
       "createdAt": "2026-11-04T10:23:45+08:00",
       "updatedAt": "2026-11-04T10:23:45+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ht0hw0d55",
@@ -12888,7 +13242,8 @@
       "createdAt": "2026-11-04T10:23:38+08:00",
       "updatedAt": "2026-11-04T10:23:38+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ht0ht0490",
@@ -12901,7 +13256,8 @@
       "createdAt": "2026-11-04T10:23:38+08:00",
       "updatedAt": "2026-11-04T10:23:38+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hsuyj084f",
@@ -12914,7 +13270,8 @@
       "createdAt": "2026-11-04T10:23:31+08:00",
       "updatedAt": "2026-11-04T10:23:31+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hsuyf2e1c",
@@ -12927,7 +13284,8 @@
       "createdAt": "2026-11-04T10:23:30+08:00",
       "updatedAt": "2026-11-04T10:23:30+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hsuyc57b9",
@@ -12940,7 +13298,8 @@
       "createdAt": "2026-11-04T10:23:30+08:00",
       "updatedAt": "2026-11-04T10:23:30+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hsuy2840c",
@@ -12953,7 +13312,8 @@
       "createdAt": "2026-11-04T10:23:30+08:00",
       "updatedAt": "2026-11-04T10:23:30+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1heuheb793",
@@ -12966,7 +13326,8 @@
       "createdAt": "2026-11-04T10:12:37+08:00",
       "updatedAt": "2026-11-04T10:12:37+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1heu5vca0d",
@@ -12979,7 +13340,8 @@
       "createdAt": "2026-11-04T10:12:36+08:00",
       "updatedAt": "2026-11-04T10:12:36+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1he9u51111",
@@ -12992,7 +13354,8 @@
       "createdAt": "2026-11-04T10:12:10+08:00",
       "updatedAt": "2026-11-04T10:12:10+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1he9jn7b55",
@@ -13005,7 +13368,8 @@
       "createdAt": "2026-11-04T10:12:10+08:00",
       "updatedAt": "2026-11-04T10:12:10+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1he9962533",
@@ -13018,7 +13382,8 @@
       "createdAt": "2026-11-04T10:12:09+08:00",
       "updatedAt": "2026-11-04T10:12:09+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1he8ybdb08",
@@ -13031,7 +13396,8 @@
       "createdAt": "2026-11-04T10:12:09+08:00",
       "updatedAt": "2026-11-04T10:12:09+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1he8nw974a",
@@ -13044,7 +13410,8 @@
       "createdAt": "2026-11-04T10:12:08+08:00",
       "updatedAt": "2026-11-04T10:12:08+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1he7srae09",
@@ -13057,7 +13424,8 @@
       "createdAt": "2026-11-04T10:12:07+08:00",
       "updatedAt": "2026-11-04T10:12:07+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1he78rc17a",
@@ -13070,7 +13438,8 @@
       "createdAt": "2026-11-04T10:12:07+08:00",
       "updatedAt": "2026-11-04T10:12:07+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hdw9f7271",
@@ -13083,7 +13452,8 @@
       "createdAt": "2026-11-04T10:11:52+08:00",
       "updatedAt": "2026-11-04T10:11:52+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hdvvx91f0",
@@ -13096,7 +13466,8 @@
       "createdAt": "2026-11-04T10:11:52+08:00",
       "updatedAt": "2026-11-04T10:11:52+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hdvm3e292",
@@ -13109,7 +13480,8 @@
       "createdAt": "2026-11-04T10:11:52+08:00",
       "updatedAt": "2026-11-04T10:11:52+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hdut75594",
@@ -13122,7 +13494,8 @@
       "createdAt": "2026-11-04T10:11:50+08:00",
       "updatedAt": "2026-11-04T10:11:50+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hduk3171b",
@@ -13135,7 +13508,8 @@
       "createdAt": "2026-11-04T10:11:50+08:00",
       "updatedAt": "2026-11-04T10:11:50+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hduab4393",
@@ -13148,7 +13522,8 @@
       "createdAt": "2026-11-04T10:11:50+08:00",
       "updatedAt": "2026-11-04T10:11:50+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hdtyye8d5",
@@ -13161,7 +13536,8 @@
       "createdAt": "2026-11-04T10:11:49+08:00",
       "updatedAt": "2026-11-04T10:11:49+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hdtma62ac",
@@ -13174,7 +13550,8 @@
       "createdAt": "2026-11-04T10:11:49+08:00",
       "updatedAt": "2026-11-04T10:11:49+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hdtbpe547",
@@ -13187,7 +13564,8 @@
       "createdAt": "2026-11-04T10:11:49+08:00",
       "updatedAt": "2026-11-04T10:11:49+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hdt2b1aca",
@@ -13200,7 +13578,8 @@
       "createdAt": "2026-11-04T10:11:48+08:00",
       "updatedAt": "2026-11-04T10:11:48+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hdqmje017",
@@ -13213,7 +13592,8 @@
       "createdAt": "2026-11-04T10:11:45+08:00",
       "updatedAt": "2026-11-04T10:11:45+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hdqardd44",
@@ -13226,7 +13606,8 @@
       "createdAt": "2026-11-04T10:11:45+08:00",
       "updatedAt": "2026-11-04T10:11:45+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hdpxn5e14",
@@ -13239,7 +13620,8 @@
       "createdAt": "2026-11-04T10:11:44+08:00",
       "updatedAt": "2026-11-04T10:11:44+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hdplf1457",
@@ -13252,7 +13634,8 @@
       "createdAt": "2026-11-04T10:11:44+08:00",
       "updatedAt": "2026-11-04T10:11:44+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hd4ys1ec4",
@@ -13265,7 +13648,8 @@
       "createdAt": "2026-11-04T10:11:17+08:00",
       "updatedAt": "2026-11-04T10:11:17+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hd4kb3e41",
@@ -13278,7 +13662,8 @@
       "createdAt": "2026-11-04T10:11:16+08:00",
       "updatedAt": "2026-11-04T10:11:16+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hd42af3f6",
@@ -13291,7 +13676,8 @@
       "createdAt": "2026-11-04T10:11:16+08:00",
       "updatedAt": "2026-11-04T10:11:16+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hd3fu5c9e",
@@ -13304,7 +13690,8 @@
       "createdAt": "2026-11-04T10:11:15+08:00",
       "updatedAt": "2026-11-04T10:11:15+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hcz12859d",
@@ -13317,7 +13704,8 @@
       "createdAt": "2026-11-04T10:11:09+08:00",
       "updatedAt": "2026-11-04T10:11:09+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hcxcc60a7",
@@ -13330,7 +13718,8 @@
       "createdAt": "2026-11-04T10:11:07+08:00",
       "updatedAt": "2026-11-04T10:11:07+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hcrn71dbd",
@@ -13343,7 +13732,8 @@
       "createdAt": "2026-11-04T10:11:00+08:00",
       "updatedAt": "2026-11-04T10:11:00+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hcdv0e857",
@@ -13356,7 +13746,8 @@
       "createdAt": "2026-11-04T10:10:42+08:00",
       "updatedAt": "2026-11-04T10:10:42+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hc95f22a5",
@@ -13369,7 +13760,8 @@
       "createdAt": "2026-11-04T10:10:36+08:00",
       "updatedAt": "2026-11-04T10:10:36+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hbie1cd51",
@@ -13382,7 +13774,8 @@
       "createdAt": "2026-11-04T10:10:01+08:00",
       "updatedAt": "2026-11-04T10:10:01+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hbf432000",
@@ -13395,7 +13788,8 @@
       "createdAt": "2026-11-04T10:09:57+08:00",
       "updatedAt": "2026-11-04T10:09:57+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hayxd3e13",
@@ -13408,7 +13802,8 @@
       "createdAt": "2026-11-04T10:09:36+08:00",
       "updatedAt": "2026-11-04T10:09:36+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1hax7pd926",
@@ -13421,7 +13816,8 @@
       "createdAt": "2026-11-04T10:09:34+08:00",
       "updatedAt": "2026-11-04T10:09:34+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1h8nr087de",
@@ -13434,7 +13830,8 @@
       "createdAt": "2026-11-04T10:07:48+08:00",
       "updatedAt": "2026-11-04T10:07:48+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1h8aqr3b63",
@@ -13447,7 +13844,8 @@
       "createdAt": "2026-11-04T10:07:31+08:00",
       "updatedAt": "2026-11-04T10:07:31+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1h3w5wf07b",
@@ -13460,7 +13858,8 @@
       "createdAt": "2026-11-04T10:04:06+08:00",
       "updatedAt": "2026-11-04T10:04:06+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1h318k6a41",
@@ -13473,7 +13872,8 @@
       "createdAt": "2026-11-04T10:03:26+08:00",
       "updatedAt": "2026-11-04T10:03:26+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1h2yykb465",
@@ -13486,7 +13886,8 @@
       "createdAt": "2026-11-04T10:03:23+08:00",
       "updatedAt": "2026-11-04T10:03:23+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1h07o7da73",
@@ -13499,7 +13900,8 @@
       "createdAt": "2026-11-04T10:01:14+08:00",
       "updatedAt": "2026-11-04T10:01:14+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1h01z4f898",
@@ -13512,7 +13914,8 @@
       "createdAt": "2026-11-04T10:01:07+08:00",
       "updatedAt": "2026-11-04T10:01:07+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gzzms287f",
@@ -13525,7 +13928,8 @@
       "createdAt": "2026-11-04T10:01:04+08:00",
       "updatedAt": "2026-11-04T10:01:04+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gyxk36c07",
@@ -13538,7 +13942,8 @@
       "createdAt": "2026-11-04T10:00:14+08:00",
       "updatedAt": "2026-11-04T10:00:14+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gxvi5c00b",
@@ -13551,7 +13956,8 @@
       "createdAt": "2026-11-04T09:59:25+08:00",
       "updatedAt": "2026-11-04T09:59:25+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gxiga2e05",
@@ -13564,7 +13970,8 @@
       "createdAt": "2026-11-04T09:59:08+08:00",
       "updatedAt": "2026-11-04T09:59:08+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gwyhj02a3",
@@ -13577,7 +13984,8 @@
       "createdAt": "2026-11-04T09:58:42+08:00",
       "updatedAt": "2026-11-04T09:58:42+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gwx702634",
@@ -13590,7 +13998,8 @@
       "createdAt": "2026-11-04T09:58:40+08:00",
       "updatedAt": "2026-11-04T09:58:40+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gwu611a51",
@@ -13603,7 +14012,8 @@
       "createdAt": "2026-11-04T09:58:36+08:00",
       "updatedAt": "2026-11-04T09:58:36+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gwk1x622c",
@@ -13616,7 +14026,8 @@
       "createdAt": "2026-11-04T09:58:23+08:00",
       "updatedAt": "2026-11-04T09:58:23+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gv98w4eea",
@@ -13629,7 +14040,8 @@
       "createdAt": "2026-11-04T09:57:23+08:00",
       "updatedAt": "2026-11-04T09:57:23+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gv7see2e4",
@@ -13642,7 +14054,8 @@
       "createdAt": "2026-11-04T09:57:21+08:00",
       "updatedAt": "2026-11-04T09:57:21+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gv5rb03b2",
@@ -13655,7 +14068,8 @@
       "createdAt": "2026-11-04T09:57:18+08:00",
       "updatedAt": "2026-11-04T09:57:18+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gv2vn2ecb",
@@ -13668,7 +14082,8 @@
       "createdAt": "2026-11-04T09:57:14+08:00",
       "updatedAt": "2026-11-04T09:57:14+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1guef275ea",
@@ -13681,7 +14096,8 @@
       "createdAt": "2026-11-04T09:56:43+08:00",
       "updatedAt": "2026-11-04T09:56:43+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gtn9348bc",
@@ -13694,7 +14110,8 @@
       "createdAt": "2026-11-04T09:56:08+08:00",
       "updatedAt": "2026-11-04T09:56:08+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gtn7j63a2",
@@ -13707,7 +14124,8 @@
       "createdAt": "2026-11-04T09:56:07+08:00",
       "updatedAt": "2026-11-04T09:56:07+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gtccye453",
@@ -13720,7 +14138,8 @@
       "createdAt": "2026-11-04T09:55:53+08:00",
       "updatedAt": "2026-11-04T09:55:53+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gtavgddd6",
@@ -13733,7 +14152,8 @@
       "createdAt": "2026-11-04T09:55:52+08:00",
       "updatedAt": "2026-11-04T09:55:52+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gt8twd08f",
@@ -13746,7 +14166,8 @@
       "createdAt": "2026-11-04T09:55:49+08:00",
       "updatedAt": "2026-11-04T09:55:49+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gt61idb07",
@@ -13759,7 +14180,8 @@
       "createdAt": "2026-11-04T09:55:45+08:00",
       "updatedAt": "2026-11-04T09:55:45+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gsv6q000c",
@@ -13772,7 +14194,8 @@
       "createdAt": "2026-11-04T09:55:31+08:00",
       "updatedAt": "2026-11-04T09:55:31+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gssdgfd42",
@@ -13785,7 +14208,8 @@
       "createdAt": "2026-11-04T09:55:28+08:00",
       "updatedAt": "2026-11-04T09:55:28+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gsegx691a",
@@ -13798,7 +14222,8 @@
       "createdAt": "2026-11-04T09:55:10+08:00",
       "updatedAt": "2026-11-04T09:55:10+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gsams3244",
@@ -13811,7 +14236,8 @@
       "createdAt": "2026-11-04T09:55:05+08:00",
       "updatedAt": "2026-11-04T09:55:05+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gsakr3249",
@@ -13824,7 +14250,8 @@
       "createdAt": "2026-11-04T09:55:04+08:00",
       "updatedAt": "2026-11-04T09:55:04+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gsajle7ba",
@@ -13837,7 +14264,8 @@
       "createdAt": "2026-11-04T09:55:04+08:00",
       "updatedAt": "2026-11-04T09:55:04+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gsaexee97",
@@ -13850,7 +14278,8 @@
       "createdAt": "2026-11-04T09:55:04+08:00",
       "updatedAt": "2026-11-04T09:55:04+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gsacbe8ae",
@@ -13863,7 +14292,8 @@
       "createdAt": "2026-11-04T09:55:04+08:00",
       "updatedAt": "2026-11-04T09:55:04+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gsa9pb7b4",
@@ -13876,7 +14306,8 @@
       "createdAt": "2026-11-04T09:55:04+08:00",
       "updatedAt": "2026-11-04T09:55:04+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gsa71b56c",
@@ -13889,7 +14320,8 @@
       "createdAt": "2026-11-04T09:55:04+08:00",
       "updatedAt": "2026-11-04T09:55:04+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gsa55eb21",
@@ -13902,7 +14334,8 @@
       "createdAt": "2026-11-04T09:55:04+08:00",
       "updatedAt": "2026-11-04T09:55:04+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gsa0e77b0",
@@ -13915,7 +14348,8 @@
       "createdAt": "2026-11-04T09:55:04+08:00",
       "updatedAt": "2026-11-04T09:55:04+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gs25ffcde",
@@ -13928,7 +14362,8 @@
       "createdAt": "2026-11-04T09:54:54+08:00",
       "updatedAt": "2026-11-04T09:54:54+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gs1wg8d82",
@@ -13941,7 +14376,8 @@
       "createdAt": "2026-11-04T09:54:53+08:00",
       "updatedAt": "2026-11-04T09:54:53+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gs1so1185",
@@ -13954,7 +14390,8 @@
       "createdAt": "2026-11-04T09:54:53+08:00",
       "updatedAt": "2026-11-04T09:54:53+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1grvu66295",
@@ -13967,7 +14404,8 @@
       "createdAt": "2026-11-04T09:54:45+08:00",
       "updatedAt": "2026-11-04T09:54:45+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1grvqi3d5e",
@@ -13980,7 +14418,8 @@
       "createdAt": "2026-11-04T09:54:45+08:00",
       "updatedAt": "2026-11-04T09:54:45+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gchuq46c3",
@@ -13993,7 +14432,8 @@
       "createdAt": "2026-11-04T09:42:47+08:00",
       "updatedAt": "2026-11-04T09:42:47+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gch4ad302",
@@ -14006,7 +14446,8 @@
       "createdAt": "2026-11-04T09:42:46+08:00",
       "updatedAt": "2026-11-04T09:42:46+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gcgab28af",
@@ -14019,7 +14460,8 @@
       "createdAt": "2026-11-04T09:42:45+08:00",
       "updatedAt": "2026-11-04T09:42:45+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gbjca8ba7",
@@ -14032,7 +14474,8 @@
       "createdAt": "2026-11-04T09:42:03+08:00",
       "updatedAt": "2026-11-04T09:42:03+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gbioy4972",
@@ -14045,7 +14488,8 @@
       "createdAt": "2026-11-04T09:42:02+08:00",
       "updatedAt": "2026-11-04T09:42:02+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gbh4qc226",
@@ -14058,7 +14502,8 @@
       "createdAt": "2026-11-04T09:42:00+08:00",
       "updatedAt": "2026-11-04T09:42:00+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gazkzed16",
@@ -14071,7 +14516,8 @@
       "createdAt": "2026-11-04T09:41:37+08:00",
       "updatedAt": "2026-11-04T09:41:37+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gavy1e4c5",
@@ -14084,7 +14530,8 @@
       "createdAt": "2026-11-04T09:41:32+08:00",
       "updatedAt": "2026-11-04T09:41:32+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gatya1b3f",
@@ -14097,7 +14544,8 @@
       "createdAt": "2026-11-04T09:41:30+08:00",
       "updatedAt": "2026-11-04T09:41:30+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gaf6c5068",
@@ -14110,7 +14558,8 @@
       "createdAt": "2026-11-04T09:41:11+08:00",
       "updatedAt": "2026-11-04T09:41:11+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1gadxxe1b7",
@@ -14123,7 +14572,8 @@
       "createdAt": "2026-11-04T09:41:09+08:00",
       "updatedAt": "2026-11-04T09:41:09+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ga4sccf89",
@@ -14136,7 +14586,8 @@
       "createdAt": "2026-11-04T09:40:57+08:00",
       "updatedAt": "2026-11-04T09:40:57+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ga3jf6c55",
@@ -14149,7 +14600,8 @@
       "createdAt": "2026-11-04T09:40:56+08:00",
       "updatedAt": "2026-11-04T09:40:56+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g97s152db",
@@ -14162,7 +14614,8 @@
       "createdAt": "2026-11-04T09:40:14+08:00",
       "updatedAt": "2026-11-04T09:40:14+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g8ghm6d96",
@@ -14175,7 +14628,8 @@
       "createdAt": "2026-11-04T09:39:39+08:00",
       "updatedAt": "2026-11-04T09:39:39+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g8a0ga4b8",
@@ -14188,7 +14642,8 @@
       "createdAt": "2026-11-04T09:39:31+08:00",
       "updatedAt": "2026-11-04T09:39:31+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g88iz7b38",
@@ -14201,7 +14656,8 @@
       "createdAt": "2026-11-04T09:39:29+08:00",
       "updatedAt": "2026-11-04T09:39:29+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g7rita152",
@@ -14214,7 +14670,8 @@
       "createdAt": "2026-11-04T09:39:07+08:00",
       "updatedAt": "2026-11-04T09:39:07+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g6aejbfef",
@@ -14227,7 +14684,8 @@
       "createdAt": "2026-11-04T09:37:58+08:00",
       "updatedAt": "2026-11-04T09:37:58+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g67c22c85",
@@ -14240,7 +14698,8 @@
       "createdAt": "2026-11-04T09:37:54+08:00",
       "updatedAt": "2026-11-04T09:37:54+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g66sr1875",
@@ -14253,7 +14712,8 @@
       "createdAt": "2026-11-04T09:37:53+08:00",
       "updatedAt": "2026-11-04T09:37:53+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g65tvc6a2",
@@ -14266,7 +14726,8 @@
       "createdAt": "2026-11-04T09:37:52+08:00",
       "updatedAt": "2026-11-04T09:37:52+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g652zd5b3",
@@ -14279,7 +14740,8 @@
       "createdAt": "2026-11-04T09:37:51+08:00",
       "updatedAt": "2026-11-04T09:37:51+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g62gj88c9",
@@ -14292,7 +14754,8 @@
       "createdAt": "2026-11-04T09:37:48+08:00",
       "updatedAt": "2026-11-04T09:37:48+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g5zrmee29",
@@ -14305,7 +14768,8 @@
       "createdAt": "2026-11-04T09:37:44+08:00",
       "updatedAt": "2026-11-04T09:37:44+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g5xg2804f",
@@ -14318,7 +14782,8 @@
       "createdAt": "2026-11-04T09:37:41+08:00",
       "updatedAt": "2026-11-04T09:37:41+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g5u4ja994",
@@ -14331,7 +14796,8 @@
       "createdAt": "2026-11-04T09:37:37+08:00",
       "updatedAt": "2026-11-04T09:37:37+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g34tz8fd9",
@@ -14344,7 +14810,8 @@
       "createdAt": "2026-11-04T09:35:31+08:00",
       "updatedAt": "2026-11-04T09:35:31+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g341r7a6d",
@@ -14357,7 +14824,8 @@
       "createdAt": "2026-11-04T09:35:30+08:00",
       "updatedAt": "2026-11-04T09:35:30+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g30pje652",
@@ -14370,7 +14838,8 @@
       "createdAt": "2026-11-04T09:35:25+08:00",
       "updatedAt": "2026-11-04T09:35:25+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g24ry421e",
@@ -14383,7 +14852,8 @@
       "createdAt": "2026-11-04T09:34:44+08:00",
       "updatedAt": "2026-11-04T09:34:44+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g21f400e2",
@@ -14396,7 +14866,8 @@
       "createdAt": "2026-11-04T09:34:40+08:00",
       "updatedAt": "2026-11-04T09:34:40+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g1z2q5164",
@@ -14409,7 +14880,8 @@
       "createdAt": "2026-11-04T09:34:37+08:00",
       "updatedAt": "2026-11-04T09:34:37+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g12ida3a7",
@@ -14422,7 +14894,8 @@
       "createdAt": "2026-11-04T09:33:54+08:00",
       "updatedAt": "2026-11-04T09:33:54+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g11hw4a49",
@@ -14435,7 +14908,8 @@
       "createdAt": "2026-11-04T09:33:53+08:00",
       "updatedAt": "2026-11-04T09:33:53+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g0xhl4fdc",
@@ -14448,7 +14922,8 @@
       "createdAt": "2026-11-04T09:33:48+08:00",
       "updatedAt": "2026-11-04T09:33:48+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g0hfibd2d",
@@ -14461,7 +14936,8 @@
       "createdAt": "2026-11-04T09:33:27+08:00",
       "updatedAt": "2026-11-04T09:33:27+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g0hdd2254",
@@ -14474,7 +14950,8 @@
       "createdAt": "2026-11-04T09:33:27+08:00",
       "updatedAt": "2026-11-04T09:33:27+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g0hb3e5ad",
@@ -14487,7 +14964,8 @@
       "createdAt": "2026-11-04T09:33:27+08:00",
       "updatedAt": "2026-11-04T09:33:27+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1g0h801156",
@@ -14500,7 +14978,8 @@
       "createdAt": "2026-11-04T09:33:27+08:00",
       "updatedAt": "2026-11-04T09:33:27+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fzwro6e39",
@@ -14513,7 +14992,8 @@
       "createdAt": "2026-11-04T09:33:00+08:00",
       "updatedAt": "2026-11-04T09:33:00+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fzttc83d5",
@@ -14526,7 +15006,8 @@
       "createdAt": "2026-11-04T09:32:56+08:00",
       "updatedAt": "2026-11-04T09:32:56+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fztsx16d5",
@@ -14539,7 +15020,8 @@
       "createdAt": "2026-11-04T09:32:56+08:00",
       "updatedAt": "2026-11-04T09:32:56+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fzquhaf65",
@@ -14552,7 +15034,8 @@
       "createdAt": "2026-11-04T09:32:53+08:00",
       "updatedAt": "2026-11-04T09:32:53+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fzqu3b9e5",
@@ -14565,7 +15048,8 @@
       "createdAt": "2026-11-04T09:32:53+08:00",
       "updatedAt": "2026-11-04T09:32:53+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fznvmf9b4",
@@ -14578,7 +15062,8 @@
       "createdAt": "2026-11-04T09:32:49+08:00",
       "updatedAt": "2026-11-04T09:32:49+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1frv9y33cf",
@@ -14591,7 +15076,8 @@
       "createdAt": "2026-11-04T09:26:45+08:00",
       "updatedAt": "2026-11-04T09:26:45+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1frq7o6e03",
@@ -14604,7 +15090,8 @@
       "createdAt": "2026-11-04T09:26:38+08:00",
       "updatedAt": "2026-11-04T09:26:38+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fq59y2179",
@@ -14617,7 +15104,8 @@
       "createdAt": "2026-11-04T09:25:25+08:00",
       "updatedAt": "2026-11-04T09:25:25+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fpy7se085",
@@ -14630,7 +15118,8 @@
       "createdAt": "2026-11-04T09:25:16+08:00",
       "updatedAt": "2026-11-04T09:25:16+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fpqtd5e92",
@@ -14643,7 +15132,8 @@
       "createdAt": "2026-11-04T09:25:06+08:00",
       "updatedAt": "2026-11-04T09:25:06+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fpnefafed",
@@ -14656,7 +15146,8 @@
       "createdAt": "2026-11-04T09:25:02+08:00",
       "updatedAt": "2026-11-04T09:25:02+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fou6u20fc",
@@ -14669,7 +15160,8 @@
       "createdAt": "2026-11-04T09:24:24+08:00",
       "updatedAt": "2026-11-04T09:24:24+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fjcwga840",
@@ -14682,7 +15174,8 @@
       "createdAt": "2026-11-04T09:20:08+08:00",
       "updatedAt": "2026-11-04T09:20:08+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fjb3h667d",
@@ -14695,7 +15188,8 @@
       "createdAt": "2026-11-04T09:20:06+08:00",
       "updatedAt": "2026-11-04T09:20:06+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fhufbe0b2",
@@ -14708,7 +15202,8 @@
       "createdAt": "2026-11-04T09:18:57+08:00",
       "updatedAt": "2026-11-04T09:18:57+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fhsska6fd",
@@ -14721,7 +15216,8 @@
       "createdAt": "2026-11-04T09:18:55+08:00",
       "updatedAt": "2026-11-04T09:18:55+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fh2g36407",
@@ -14734,7 +15230,8 @@
       "createdAt": "2026-11-04T09:18:21+08:00",
       "updatedAt": "2026-11-04T09:18:21+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fgx8a4a7c",
@@ -14747,7 +15244,8 @@
       "createdAt": "2026-11-04T09:18:14+08:00",
       "updatedAt": "2026-11-04T09:18:14+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fgniv7207",
@@ -14760,7 +15258,8 @@
       "createdAt": "2026-11-04T09:18:02+08:00",
       "updatedAt": "2026-11-04T09:18:02+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1fczmn3066",
@@ -14773,7 +15272,8 @@
       "createdAt": "2026-11-04T09:15:11+08:00",
       "updatedAt": "2026-11-04T09:15:11+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1f88iee12f",
@@ -14786,7 +15286,8 @@
       "createdAt": "2026-11-04T09:11:29+08:00",
       "updatedAt": "2026-11-04T09:11:29+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1f8014a8dc",
@@ -14799,7 +15300,8 @@
       "createdAt": "2026-11-04T09:11:18+08:00",
       "updatedAt": "2026-11-04T09:11:18+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1f5f1h9cf2",
@@ -14812,7 +15314,8 @@
       "createdAt": "2026-11-04T09:09:18+08:00",
       "updatedAt": "2026-11-04T09:09:18+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1f575h7530",
@@ -14825,7 +15328,8 @@
       "createdAt": "2026-11-04T09:09:07+08:00",
       "updatedAt": "2026-11-04T09:09:07+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1f531h586c",
@@ -14838,7 +15342,8 @@
       "createdAt": "2026-11-04T09:09:02+08:00",
       "updatedAt": "2026-11-04T09:09:02+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1f1o2q5eb5",
@@ -14851,7 +15356,8 @@
       "createdAt": "2026-11-04T09:06:23+08:00",
       "updatedAt": "2026-11-04T09:06:23+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1f15re5507",
@@ -14864,7 +15370,8 @@
       "createdAt": "2026-11-04T09:05:59+08:00",
       "updatedAt": "2026-11-04T09:05:59+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1f0jzxa34b",
@@ -14877,7 +15384,8 @@
       "createdAt": "2026-11-04T09:05:31+08:00",
       "updatedAt": "2026-11-04T09:05:31+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1f0bi42af5",
@@ -14890,7 +15398,8 @@
       "createdAt": "2026-11-04T09:05:20+08:00",
       "updatedAt": "2026-11-04T09:05:20+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1f05fh4ec5",
@@ -14903,7 +15412,8 @@
       "createdAt": "2026-11-04T09:05:12+08:00",
       "updatedAt": "2026-11-04T09:05:12+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ezw2h313a",
@@ -14916,7 +15426,8 @@
       "createdAt": "2026-11-04T09:05:00+08:00",
       "updatedAt": "2026-11-04T09:05:00+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ezld57173",
@@ -14929,7 +15440,8 @@
       "createdAt": "2026-11-04T09:04:46+08:00",
       "updatedAt": "2026-11-04T09:04:46+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ezeiy7a1e",
@@ -14942,7 +15454,8 @@
       "createdAt": "2026-11-04T09:04:37+08:00",
       "updatedAt": "2026-11-04T09:04:37+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ezb8k4775",
@@ -14955,7 +15468,8 @@
       "createdAt": "2026-11-04T09:04:33+08:00",
       "updatedAt": "2026-11-04T09:04:33+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1eyvb201a1",
@@ -14968,7 +15482,8 @@
       "createdAt": "2026-11-04T09:04:12+08:00",
       "updatedAt": "2026-11-04T09:04:12+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1eyq0r2ac2",
@@ -14981,7 +15496,8 @@
       "createdAt": "2026-11-04T09:04:05+08:00",
       "updatedAt": "2026-11-04T09:04:05+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1eyf9g14cc",
@@ -14994,7 +15510,8 @@
       "createdAt": "2026-11-04T09:03:51+08:00",
       "updatedAt": "2026-11-04T09:03:51+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1ey6tzbfa0",
@@ -15007,7 +15524,8 @@
       "createdAt": "2026-11-04T09:03:40+08:00",
       "updatedAt": "2026-11-04T09:03:40+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1exg6kfb53",
@@ -15020,7 +15538,8 @@
       "createdAt": "2026-11-04T09:03:06+08:00",
       "updatedAt": "2026-11-04T09:03:06+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1exaxrf089",
@@ -15033,7 +15552,8 @@
       "createdAt": "2026-11-04T09:02:59+08:00",
       "updatedAt": "2026-11-04T09:02:59+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1epqijccdd",
@@ -15046,7 +15566,8 @@
       "createdAt": "2026-11-04T08:57:06+08:00",
       "updatedAt": "2026-11-04T08:57:06+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1chd6k557b",
@@ -15059,7 +15580,8 @@
       "createdAt": "2026-11-04T07:54:36+08:00",
       "updatedAt": "2026-11-04T07:54:36+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1cgzhrb8fc",
@@ -15072,7 +15594,8 @@
       "createdAt": "2026-11-04T07:54:18+08:00",
       "updatedAt": "2026-11-04T07:54:18+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1cgr5338bf",
@@ -15085,7 +15608,8 @@
       "createdAt": "2026-11-04T07:54:08+08:00",
       "updatedAt": "2026-11-04T07:54:08+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1cgoi778cc",
@@ -15098,7 +15622,8 @@
       "createdAt": "2026-11-04T07:54:04+08:00",
       "updatedAt": "2026-11-04T07:54:04+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1cgh4x3b21",
@@ -15111,7 +15636,8 @@
       "createdAt": "2026-11-04T07:53:55+08:00",
       "updatedAt": "2026-11-04T07:53:55+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1cfijj5617",
@@ -15124,7 +15650,8 @@
       "createdAt": "2026-11-04T07:53:10+08:00",
       "updatedAt": "2026-11-04T07:53:10+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1cfh4wb613",
@@ -15137,7 +15664,8 @@
       "createdAt": "2026-11-04T07:53:08+08:00",
       "updatedAt": "2026-11-04T07:53:08+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1cf1q36c39",
@@ -15150,7 +15678,8 @@
       "createdAt": "2026-11-04T07:52:48+08:00",
       "updatedAt": "2026-11-04T07:52:48+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1bxvtdc1db",
@@ -15163,7 +15692,8 @@
       "createdAt": "2026-11-04T07:39:27+08:00",
       "updatedAt": "2026-11-04T07:39:27+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1bxvq95e67",
@@ -15176,7 +15706,8 @@
       "createdAt": "2026-11-04T07:39:27+08:00",
       "updatedAt": "2026-11-04T07:39:27+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1bxvnbbc9e",
@@ -15189,7 +15720,8 @@
       "createdAt": "2026-11-04T07:39:27+08:00",
       "updatedAt": "2026-11-04T07:39:27+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1bx8hi2a8a",
@@ -15202,7 +15734,8 @@
       "createdAt": "2026-11-04T07:38:57+08:00",
       "updatedAt": "2026-11-04T07:38:57+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1bx7qebc5d",
@@ -15215,20 +15748,22 @@
       "createdAt": "2026-11-04T07:38:56+08:00",
       "updatedAt": "2026-11-04T07:38:56+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_mw1btmm8622e",
       "at": "2026-11-04T07:36:09+08:00",
       "actor": "系统",
-      "role": "system",
+      "role": "",
       "action": "同步自学完成",
       "target": "ch_ns_2",
       "detail": "用户 u_stu1 完成章节（事件 evt_course_001），考试解锁已更新",
       "createdAt": "2026-11-04T07:36:09+08:00",
       "updatedAt": "2026-11-04T07:36:09+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "system"
     },
     {
       "id": "au_1",
@@ -15241,7 +15776,8 @@
       "createdAt": "2026-10-26T16:41:20+08:00",
       "updatedAt": "2026-10-26T16:41:20+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_2",
@@ -15254,7 +15790,8 @@
       "createdAt": "2026-10-20T09:02:10+08:00",
       "updatedAt": "2026-10-20T09:02:10+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_3",
@@ -15267,7 +15804,8 @@
       "createdAt": "2026-10-19T20:12:00+08:00",
       "updatedAt": "2026-10-19T20:12:00+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     },
     {
       "id": "au_4",
@@ -15280,7 +15818,8 @@
       "createdAt": "2026-10-28T11:02:33+08:00",
       "updatedAt": "2026-10-28T11:02:33+08:00",
       "createdBy": "system",
-      "updatedBy": "system"
+      "updatedBy": "system",
+      "actorType": "user"
     }
   ],
   "jobs": [
@@ -22336,66 +22875,6 @@
         "dualPass": false,
         "admissionId": null
       }
-    },
-    {
-      "eventId": "ev_mw1bxvtd67f0",
-      "eventType": "exam.submitted",
-      "occurredAt": "2026-11-04T07:39:27+08:00",
-      "sourcePlatform": "exam",
-      "operatorId": "",
-      "data": {
-        "attemptId": "att_mw1bxvq99d2b",
-        "examId": "e_py_ch1",
-        "userId": "u_stu2"
-      }
-    },
-    {
-      "eventId": "ev_mw1cgr534b01",
-      "eventType": "exam.submitted",
-      "occurredAt": "2026-11-04T07:54:08+08:00",
-      "sourcePlatform": "exam",
-      "operatorId": "",
-      "data": {
-        "attemptId": "att_mw1cfijjcfcb",
-        "examId": "e_ns_skill",
-        "userId": "u_stu1"
-      }
-    },
-    {
-      "eventId": "ev_mw1exg6kf8de",
-      "eventType": "exam.submitted",
-      "occurredAt": "2026-11-04T09:03:06+08:00",
-      "sourcePlatform": "exam",
-      "operatorId": "",
-      "data": {
-        "attemptId": "att_mw1exaxrb559",
-        "examId": "e_py_skill",
-        "userId": "u_tch"
-      }
-    },
-    {
-      "eventId": "ev_mw1nuyhr4906",
-      "eventType": "exam.submitted",
-      "occurredAt": "2026-11-04T13:13:06+08:00",
-      "sourcePlatform": "exam",
-      "operatorId": "",
-      "data": {
-        "attemptId": "att_mw1ntrka2c90",
-        "examId": "e_mw1ic1rgae9c",
-        "userId": "u_tch"
-      }
-    },
-    {
-      "eventId": "ev_mw1oj3om7d93",
-      "eventType": "exam.submitted",
-      "occurredAt": "2026-11-04T13:31:53+08:00",
-      "sourcePlatform": "exam",
-      "operatorId": "",
-      "data": {
-        "attemptId": "att_mw1ny2w05d81",
-        "examId": "e_mw1ic1rgae9c",
-        "userId": "u_tch"
-      }
     }
   ],
   "inbox": [
@@ -23128,6 +23607,118 @@
       "exp": 1794445877104,
       "revoked": false,
       "createdAt": "2026-11-05T09:11:17+08:00"
+    },
+    {
+      "token": "lj_rt_eca7b987dd0543d9bd4e17a2ee2b4f56",
+      "userId": "u_tch",
+      "exp": 1794462619065,
+      "revoked": false,
+      "createdAt": "2026-11-05T13:50:19+08:00"
+    },
+    {
+      "token": "lj_rt_b0ce143faef3d8cf10a8692977d4dd5a",
+      "userId": "u_stu1",
+      "exp": 1794463832786,
+      "revoked": true,
+      "createdAt": "2026-11-05T14:10:32+08:00"
+    },
+    {
+      "token": "lj_rt_95588a2638e082c3b36de1d1838bcd81",
+      "userId": "u_stu1",
+      "exp": 1794463834138,
+      "revoked": false,
+      "createdAt": "2026-11-05T14:10:34+08:00"
+    },
+    {
+      "token": "lj_rt_159c3170a1d9a124e252d3ef35a8848d",
+      "userId": "u_stu1",
+      "exp": 1794463848095,
+      "revoked": true,
+      "createdAt": "2026-11-05T14:10:48+08:00"
+    },
+    {
+      "token": "lj_rt_4480fdd497f3c58ea281c3a966527ec0",
+      "userId": "u_stu1",
+      "exp": 1794463849725,
+      "revoked": false,
+      "createdAt": "2026-11-05T14:10:49+08:00"
+    },
+    {
+      "token": "lj_rt_b93d2cef62f192d76bc9406542093e53",
+      "userId": "u_stu1",
+      "exp": 1794463897843,
+      "revoked": true,
+      "createdAt": "2026-11-05T14:11:37+08:00"
+    },
+    {
+      "token": "lj_rt_905d05ea78e559bbe6b37cb68f448a74",
+      "userId": "u_stu1",
+      "exp": 1794463899174,
+      "revoked": true,
+      "createdAt": "2026-11-05T14:11:39+08:00"
+    },
+    {
+      "token": "lj_rt_bebcd27af07e54403f5a80b6481fc342",
+      "userId": "u_stu1",
+      "exp": 1794463913074,
+      "revoked": false,
+      "createdAt": "2026-11-05T14:11:53+08:00"
+    },
+    {
+      "token": "lj_rt_2879a287877636c926c3a1a015beecde",
+      "userId": "u_tch",
+      "exp": 1794463919812,
+      "revoked": false,
+      "createdAt": "2026-11-05T14:11:59+08:00"
+    },
+    {
+      "token": "lj_rt_7fe53e5c2f29970c2ca18f3c57cc2f21",
+      "userId": "u_adm",
+      "exp": 1794463927792,
+      "revoked": false,
+      "createdAt": "2026-11-05T14:12:07+08:00"
+    },
+    {
+      "token": "lj_rt_aa56ee1758e564050f9bcf560bca216e",
+      "userId": "u_stu1",
+      "exp": 1794464151438,
+      "revoked": false,
+      "createdAt": "2026-11-05T14:15:51+08:00"
+    },
+    {
+      "token": "lj_rt_3a5bc08643bb826eaf267b7efaeec568",
+      "userId": "u_tch",
+      "exp": 1794464157157,
+      "revoked": false,
+      "createdAt": "2026-11-05T14:15:57+08:00"
+    },
+    {
+      "token": "lj_rt_f7be70a6cb387b3c9506c0418d8bfb9b",
+      "userId": "u_adm",
+      "exp": 1794464163895,
+      "revoked": false,
+      "createdAt": "2026-11-05T14:16:03+08:00"
+    },
+    {
+      "token": "lj_rt_3952da90935d6cd756e0816064ee693a",
+      "userId": "u_stu1",
+      "exp": 1794464233734,
+      "revoked": false,
+      "createdAt": "2026-11-05T14:17:13+08:00"
+    },
+    {
+      "token": "lj_rt_d21266acc13f55238d1ad841544a8eeb",
+      "userId": "u_tch",
+      "exp": 1794464237981,
+      "revoked": false,
+      "createdAt": "2026-11-05T14:17:17+08:00"
+    },
+    {
+      "token": "lj_rt_8b13bfc304c55cefa965e38c811e8e7c",
+      "userId": "u_adm",
+      "exp": 1794464243173,
+      "revoked": false,
+      "createdAt": "2026-11-05T14:17:23+08:00"
     }
   ],
   "progress": {

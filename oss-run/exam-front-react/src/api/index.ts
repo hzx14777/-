@@ -8,7 +8,7 @@ export const endpoints = {
 
   ssoUrl: (redirect: string) => api(`/api/v1/sso/url?redirect=${encodeURIComponent(redirect)}`),
   ssoExchange: (code: string, state: string) => api('/api/v1/sso/exchange', { method: 'POST', body: { code, state } }),
-  logout: (refreshToken: string) => api('/api/v1/auth/logout', { method: 'POST', body: { refreshToken } }),
+  logout: () => api('/api/v1/auth/logout', { method: 'POST', body: {} }),
 
   hall: () => api('/api/v1/hall'),
   exam: (id: string) => api(`/api/v1/exams/${id}`),

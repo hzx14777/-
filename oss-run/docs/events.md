@@ -62,7 +62,10 @@
 { "userId": "u1001", "courseId": "c4001" }
 ```
 
-处理逻辑：标记该学生该课程学习进度达标（写入 `db.learning`），为「准入资格」中的学习达标维度提供依据。
+处理逻辑：标记该学生该章节学习完成（写入 `db.users[].completed`），为「准入资格」中的学习达标维度提供依据。
+
+> 交卷动作只落审计日志（`audit`），不产生事件：§11.3 统一事件清单里没有 `exam.submitted`，
+> 对外只发 `exam.passed` / `exam.failed`（成绩生效时发出）。
 
 消费保障：
 - **幂等**：eventId 已存在时返回 `duplicate:true`，不重复处理（inbox 留痕）。
@@ -70,7 +73,7 @@
 
 ## 11.4 投递机制（Outbox 模式）
 
-- 出站事件先落库 `outbox`（状态 `pending`），再由 `dispatchOutbox()` 异步投递到事件总线 `YJ_EVENT_BASE_URL + YJ_EVENT_INGEST_PATH`。
+- 出站事件先落库 `outbox`（状态 `pending`），再由 `dispatchOutbox()` 异步投递到事件总线 `YJ_EVENT_BASE_URL + YJ_EVENT_INGEST_PATH`（投递中为 `delivering`，成功为 `delivered`，失败为 `failed`）。
 - 每条 outbox 记录含 `attempts / lastAt / lastError / payloadDigest`，投递失败不丢失业务结果。
 - 未配置事件总线时状态记为 `skipped`，载荷完整留痕，可随时补投。
 - 管理端重试接口：`POST /api/v1/admin/outbox/retry`（权限点 `outbox:manage`，仅 admin）。

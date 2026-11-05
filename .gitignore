@@ -35,6 +35,8 @@ oss-run/exam-platform-gitee.zip
 # ===== 工具内部数据 =====
 .workbuddy/
 output/*.png
+# UI 改造效果图（由 output/ui-redesign/src/render.js 可再生，仅保留源文件与方案说明）
+output/ui-redesign/**/*.png
 
 # ===== 敏感凭据（双保险，仓库中不应出现）=====
 .env
@@ -46,6 +48,8 @@ output/*.png
 *.pfx
 *.keystore
 id_rsa*
+# 会话签名密钥（运行时生成，§14 不得入库）
+oss-run/yj-bff/data/.session-secret
 
 # ===== 系统文件 =====
 .DS_Store

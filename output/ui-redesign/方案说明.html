@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>警院智慧考试平台 · 界面改造方案（参考稿）</title>
+<style>
+:root{
+  --navy:#0A1729;--pri:#1657D6;--gold:#C89B3C;--ok:#0F9D76;--warn:#C2761B;--bad:#D4380D;
+  --text:#16202E;--muted:#6B7A90;--sub:#8A97A8;--line:#E7ECF5;--bg:#F4F6FA;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#EEF1F7;color:var(--text);font:14px/1.75 "Microsoft YaHei UI","Microsoft YaHei","PingFang SC",-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+.page{max-width:1180px;margin:0 auto;background:#fff;box-shadow:0 1px 3px rgba(16,32,64,.06)}
+.cover{background:linear-gradient(150deg,#0C2340,#0A1729 58%,#07121E);color:#fff;padding:56px 64px 44px;position:relative;overflow:hidden}
+.cover .grid{position:absolute;inset:0;opacity:.5;background-image:linear-gradient(rgba(120,160,220,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(120,160,220,.07) 1px,transparent 1px);background-size:52px 52px;mask-image:radial-gradient(120% 90% at 20% 20%,#000 20%,transparent 78%)}
+.cover .halo{position:absolute;width:620px;height:620px;right:-180px;top:-220px;border-radius:50%;background:radial-gradient(circle,rgba(60,124,246,.28),transparent 68%)}
+.cover .tag{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#BBD0EC;background:rgba(76,134,245,.14);border:1px solid rgba(120,165,245,.28);border-radius:20px;padding:5px 12px;position:relative}
+.cover h1{font-size:36px;font-weight:700;letter-spacing:1px;margin-top:18px;line-height:1.3;position:relative}
+.cover h1 span{color:#8FB6FF}
+.cover p{font-size:13px;color:#9EB2CC;margin-top:14px;max-width:720px;line-height:1.9;position:relative}
+.cover .meta{display:flex;gap:34px;margin-top:30px;position:relative;flex-wrap:wrap}
+.cover .meta div{font-size:11.5px;color:#7E93B0}
+.cover .meta b{display:block;font-size:13.5px;color:#E4EDF9;font-weight:600;margin-top:4px}
+
+.wrap{padding:8px 64px 64px}
+h2{font-size:20px;font-weight:700;letter-spacing:-.2px;margin:44px 0 6px;padding-top:18px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px}
+h2 .n{width:26px;height:26px;border-radius:7px;background:var(--navy);color:#fff;font-size:12.5px;display:grid;place-items:center;font-weight:600}
+h3{font-size:15px;font-weight:600;margin:26px 0 10px;display:flex;align-items:center;gap:8px}
+h3 .dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.lead{font-size:13px;color:var(--muted);margin:8px 0 16px;line-height:1.9}
+p{font-size:13px;color:#33455C;line-height:1.95}
+.small{font-size:11.5px;color:var(--sub);line-height:1.8}
+
+table{width:100%;border-collapse:collapse;margin:12px 0 6px;font-size:12.2px}
+th{background:#FAFBFD;color:var(--muted);font-weight:600;text-align:left;padding:9px 11px;border-bottom:1px solid #E9EEF6;font-size:11.5px;white-space:nowrap}
+td{padding:10px 11px;border-bottom:1px solid #F3F6FA;color:#2A3A4F;vertical-align:top;line-height:1.75}
+td.k{color:var(--sub);font-size:11.5px;white-space:nowrap}
+tr:hover td{background:#FCFDFF}
+.badge{display:inline-block;font-size:10.5px;line-height:17px;padding:0 7px;border-radius:5px;background:#F1F4F9;color:#5A6B80;white-space:nowrap}
+.badge.p{background:#EDF3FE;color:#1657D6}
+.badge.g{background:#FBF3E2;color:#94690F}
+.badge.o{background:#E8F6F0;color:#0B7A5C}
+.badge.w{background:#FDF1E2;color:#A25C0D}
+.num{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:50%;background:var(--gold);color:#fff;font-size:11px;font-weight:700;margin-right:7px;vertical-align:1px}
+
+figure{margin:14px 0 4px}
+figure img{width:100%;display:block;border:1px solid var(--line);border-radius:10px}
+figcaption{font-size:11.5px;color:var(--sub);margin-top:8px;display:flex;gap:8px;align-items:center}
+figcaption b{color:#41506A;font-weight:600}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.ba figure{margin:0}
+.ba .cap{font-size:11px;color:var(--sub);margin-bottom:6px}
+.ba .cap b{color:#41506A}
+
+.callout{border:1px solid #E4EAF4;background:#FAFBFD;border-radius:10px;padding:14px 16px;margin:16px 0;font-size:12.5px;color:#3A4A61;line-height:1.9}
+.callout b{color:#1657D6}
+.callout.warn{background:#FDFAF2;border-color:#F2E4C4}
+.callout.warn b{color:#8A6415}
+
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.mini{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.mini .t{font-size:11px;color:var(--sub);letter-spacing:.5px}
+.mini .v{font-size:20px;font-weight:700;letter-spacing:-.5px;margin-top:4px}
+.mini .d{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.7}
+
+.sw-row{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:12px 0}
+.sw{border-radius:8px;height:52px;position:relative;border:1px solid rgba(16,32,64,.06)}
+.sw b{position:absolute;left:8px;bottom:5px;font-size:9.5px;font-weight:600}
+.sw i{position:absolute;left:8px;top:5px;font-size:9px;font-style:normal;opacity:.75}
+
+.footer{padding:22px 64px;background:#0A1729;color:#7E93B0;font-size:11.5px;display:flex;justify-content:space-between}
+ul{margin:8px 0 8px 18px}
+li{font-size:12.5px;color:#33455C;line-height:1.95}
+li b{color:#16202E}
+@media print{body{background:#fff}.page{box-shadow:none}h2{break-before:page}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="cover">
+  <div class="grid"></div><div class="halo"></div>
+  <div class="tag">设计参考稿 · 未改动任何代码</div>
+  <h1>警院智慧考试平台<br><span>界面改造方案</span>与借鉴来源</h1>
+  <p>同类型在线考试产品共性很强：考生端拼的是「极短时间内不出错」，教师端拼的是「批量处理的吞吐」，管理端拼的是「信息密度与判断成本」。本方案先拆解 5 个参照对象的界面做法，再逐页给出改造效果图，每处改动都标了编号与来源。</p>
+  <div class="meta">
+    <div>文档版本<b>V1.0</b></div>
+    <div>编制日期<b>2026-11-05</b></div>
+    <div>对照基线<b>exam-front-react（React 18 + AntD 5）</b></div>
+    <div>交付物<b>8 张效果图 + 本说明</b></div>
+    <div>覆盖页面<b>登录 / 大厅 / 答题 / 成绩 / 阅卷 / 分析 / 组卷</b></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<h2><span class="n">1</span>调研：同类产品在界面上做对了什么</h2>
+<p class="lead">调研口径与功能选型不同：这里不看功能多少，只看「同样的任务，它们让用户少看几眼、少点几次」。下表每一行都能对应到后面的具体改动编号。</p>
+
+<table>
+  <tr><th style="width:14%">参照对象</th><th style="width:20%">定位</th><th style="width:36%">界面亮点（可观察到的具体做法）</th><th>本方案借鉴点</th></tr>
+  <tr>
+    <td><b>学之思 xzs</b><br><span class="small">AGPL-3.0 · Java + Vue</span></td>
+    <td>高校/机构在线考试，学生端 + 管理端 + 小程序</td>
+    <td>答题页采用<b>导航—题目—状态三栏</b>：左栏题号列表区分「已答/未答/当前」，右侧状态区常驻剩余时间与已答数量；题干卡片化，选项间距刻意放大，减少误选。</td>
+    <td>题号导航与状态图例的分层（⑨）；右侧答题卡的常驻信息（⑪）；试卷卡片的状态标签（⑦）</td>
+  </tr>
+  <tr>
+    <td><b>SurveyKing 卷王</b><br><span class="small">开源 · Spring Boot + React</span></td>
+    <td>问卷 / 考试 / 题库刷题，编辑器是核心</td>
+    <td>编辑态是<b>三栏结构</b>：左侧题型与题库，中间画布，右侧设置面板；工具栏密度高但分组清楚，主色单一（蓝），强调色只用于状态。</td>
+    <td>组卷页的三栏（㉔㉕㉖）；右栏「抽题规则 + 实时校验」的位置；标签与状态色克制的用法</td>
+  </tr>
+  <tr>
+    <td><b>Moodle Quiz</b><br><span class="small">GPL · 国际主流 LMS</span></td>
+    <td>课程内测验，文档最完整</td>
+    <td>题号导航块用<b>色块语义</b>表达结果：正确绿、部分正确橙、错误红、待人工判灰；<b>标记（flag）</b>在题号右上角显示红角；交卷前有 Summary of attempt 汇总未答与标记；支持自动保存并给出提示；剩余时间临近时提醒。</td>
+    <td>题号状态色与标记角（⑨）；交卷前的未答提示（③⑪）；自动保存状态显性化（⑪）；逐题回顾的对错色（⑮）</td>
+  </tr>
+  <tr>
+    <td><b>Frappe Learning</b><br><span class="small">100% 开源 · Frappe 框架</span></td>
+    <td>课程 + 测评 + 认证的轻量 LMS</td>
+    <td>界面极简：<b>左侧分组导航 + 面包屑 + 大留白</b>，没有多余的装饰与阴影，层级完全靠字号与间距表达；导航分组标题用极小号大写字母，弱化但可扫读。</td>
+    <td>左侧分组导航的信息架构（④）；面包屑与页头的克制排布（⑤）；整站的留白与描边语言</td>
+  </tr>
+  <tr>
+    <td><b>本项目现有实现</b><br><span class="small">exam-front-react v1.1</span></td>
+    <td>警院智慧考试平台（改造前）</td>
+    <td>顶部横向菜单 + 深藏青头栏，卡片白底细描边，色彩克制；但信息层级扁平、状态表达弱、批量作业效率不足。</td>
+    <td>保留其配色基调与 AntD 组件体系，只重排结构与状态（不推翻设计语言）</td>
+  </tr>
+</table>
+
+<div class="callout">
+  <b>证据说明：</b>SurveyKing 与 Frappe Learning 的界面结论来自本次对官网/文档页的实际截图；Moodle 的交互细节来自其官方使用文档（题号导航色义、flag 红角、Summary of attempt、自动保存与计时器均有明确描述）；学之思官方图床在当前网络环境下无法直连，其结论依据官方 README 与公开使用文档，未做像素级复刻。<b>本方案不复用任何项目的代码与素材</b>，只借鉴信息组织方式。
+</div>
+
+<h2><span class="n">2</span>现状诊断：三个真正影响使用的界面问题</h2>
+<p class="lead">现有界面并不难看，问题在于「结构不承载信息」：同样的空间里，考生要花更多注意力去找状态，教师要多点几次才能处理完一份卷子。</p>
+
+<div class="ba">
+  <figure><div class="cap"><b>改造前</b> · 考试大厅</div><img src="before/02-hall.png" alt="改造前考试大厅"></figure>
+  <figure><div class="cap"><b>改造前</b> · 答题页</div><img src="before/03-answer.png" alt="改造前答题页"></figure>
+</div>
+
+<h3><span class="dot"></span>问题 1 · 导航把 8 个一级入口塞进一条横栏</h3>
+<p>学生的「考试大厅 / 错题本 / 准入资格」与教员的「题库 / 阅卷 / 看板 / 审计」在同一行竞争位置，角色切换时菜单长度剧变，且无法分组。横栏也不承接「当前在哪一层」的信息，深层页面（如成绩详情）失去定位。</p>
+
+<h3><span class="dot"></span>问题 2 · 状态靠文字，不靠形色</h3>
+<p>「待完成 / 已完成 / 未解锁 / 未达标」目前多是纯文字标签，考生需要逐个读；答题卡只有一个孤零零的「0/3」，没有「哪几题没答、哪题标记过」的空间表达；成绩页只给总分，看不到「双达标」里到底哪一项没过。</p>
+
+<h3><span class="dot"></span>问题 3 · 批量作业缺少工作台式布局</h3>
+<p>阅卷是「列表—答卷—评分」的往返动作，现有实现把三者拆在不同页面；组卷是「选题—规则—校验」的并行决策，也需要同屏对照。缺少这类布局，教师每处理一份卷子就要多两次页面跳转。</p>
+
+<h2><span class="n">3</span>逐页改造方案</h2>
+<p class="lead">下面 8 张图为 1440×900 的等比效果图，图上的金色编号对应表格中的改动点。所有数值都取自项目现有演示数据（张子安 78.5 未通过双达标、热点研判 66% 等），便于直接比对。</p>
+
+<h3><span class="dot"></span>3.1 登录页 <span class="badge p">图 01</span></h3>
+<figure><img src="01-login.png" alt="登录页改造效果图"></figure>
+<table>
+  <tr><th style="width:5%">№</th><th style="width:24%">改动点</th><th style="width:44%">之前 → 之后</th><th>借鉴来源</th></tr>
+  <tr><td><span class="num">1</span></td><td>左栏改为「品牌叙事区」</td><td>左侧只有一段介绍文字和三条项目符号，视觉重心与右侧登录卡争抢 → 建立「平台标识 → 一句话定位 → 三条能力 → 五平台归属」的四段结构，底部固定版权与合规说明。</td><td>Frappe Learning 的分组导航与大留白节奏；能力条目沿用项目真实的三条机制（双达标 / 人机共判 / 状态外放）</td></tr>
+  <tr><td><span class="num">2</span></td><td>主次操作分层</td><td>只有一个「前往统一认证中心登录」按钮 + 一行小字 → 主按钮（统一认证）+ 次按钮（企业微信扫码）+ 一行「密码不经过本平台」的安全说明。</td><td>SurveyKing：单主行动 + 极简主色的做法</td></tr>
+  <tr><td><span class="num">3</span></td><td>环境状态显性化</td><td>橙色小字混在正文里，容易被当成报错 → 独立成一块带图标的说明卡，写明 Mock 模式、appCode、sourcePlatform。</td><td>本项目原有信息，仅做结构化（无外部来源）</td></tr>
+</table>
+
+<h3><span class="dot"></span>3.2 考试大厅（学生） <span class="badge p">图 02</span></h3>
+<figure><img src="02-hall.png" alt="考试大厅改造效果图"></figure>
+<table>
+  <tr><th style="width:5%">№</th><th style="width:24%">改动点</th><th style="width:44%">之前 → 之后</th><th>借鉴来源</th></tr>
+  <tr><td><span class="num">4</span></td><td>顶部横栏 → 左侧分组导航</td><td>8 个菜单平铺一行，角色不同长度剧变 → 深色侧栏，按「学习与考试 / 智能工具 / 教学管理」分组，当前项左侧 3px 主色条 + 浅底，数字角标承载待办量。</td><td>Frappe Learning 的分组导航；Moodle 的 navigation drawer 层级做法</td></tr>
+  <tr><td><span class="num">5</span></td><td>页头增加状态筛选</td><td>只有标题和一句统计 → 标题下方给「共 5 场 / 2 场待完成 / 双达标通过 3 场」，右侧用 chips 做「全部 5 · 待完成 2 · 已完成 3 · 未解锁 1」的即时筛选。</td><td>学之思试卷中心的状态筛选；通用列表模式</td></tr>
+  <tr><td><span class="num">6</span></td><td>新增「下一场考试」主视觉卡</td><td>所有考试卡平铺，最紧要的那场并不突出 → 深色渐变主卡，承载试卷名、题量/时长/及格线/已考次数、以及<b>未达标原因</b>（总分 78.5 已过、知识点 2/4 未达标）与倒计时，右侧直接给「再考一次」。</td><td>控制台类产品的「待办主卡」模式；数据与文案来自本项目双达标规则</td></tr>
+  <tr><td><span class="num">7</span></td><td>考试卡信息重构</td><td>「课程：…」「时长…」全靠文字堆叠，状态只在角落一个小标签 → 顶部 3px 状态色条（待考蓝 / 已完成绿 / 未解锁灰）；元信息改为「图标 + 短语」三行；右下角分数环；底部按钮按状态分级（查看成绩 / 再考提分 / 未解锁禁用）。</td><td>学之思的试卷卡片状态标签；本项目原有卡片的重排</td></tr>
+</table>
+
+<h3><span class="dot"></span>3.3 答题页 <span class="badge p">图 03</span></h3>
+<figure><img src="03-answer.png" alt="答题页改造效果图"></figure>
+<table>
+  <tr><th style="width:5%">№</th><th style="width:24%">改动点</th><th style="width:44%">之前 → 之后</th><th>借鉴来源</th></tr>
+  <tr><td><span class="num">8</span></td><td>考试态独立外壳</td><td>沿用主站顶栏，考生仍可点进其他模块 → 进入考试后隐藏侧栏，换成深色考试条：试卷名、居中进度条（第 3/20 题）、计时胶囊、「暂存退出」「交卷」分离排布。</td><td>Moodle 计时器与导航块并列的做法；考试态「减少出口」的通用防作弊设计</td></tr>
+  <tr><td><span class="num">9</span></td><td>三栏答题布局 + 题号状态色</td><td>只有一块答题卡数字，未答/已答/标记全靠记忆 → 左侧常驻题号导航，按题型分组，四态配色（当前实心蓝 / 已答浅蓝 / 未答灰 / 标记金点），底部固定图例。</td><td>Moodle Quiz navigation（正确绿/部分橙/错误红/待判灰、flag 红角）；学之思三栏答题</td></tr>
+  <tr><td><span class="num">10</span></td><td>选项整行可点 + 选中态</td><td>单选框小圆点，点击热区只有 16px → 整行 46px 高可点，选中时左侧 3px 主色条 + 浅蓝底 + 右侧对勾，键盘可达。</td><td>学之思选项卡片化；移动端「label 包裹扩大点击区」的通用实践</td></tr>
+  <tr><td><span class="num">11</span></td><td>答题卡 + 自动保存 + 草稿纸</td><td>右侧只有题号与一句提示 → 答题卡给圆形进度（15%）、已答/未答/标记三项计数、已用时间与单题均速、常驻「答案已保存至服务端」；下方为草稿纸（仅本地、交卷清空）。</td><td>Moodle 的 autosave 提示与 Summary of attempt；草稿纸来自防作弊研究中的「减少切屏」建议</td></tr>
+</table>
+<div class="callout warn"><b>说明：</b>草稿纸是本方案新增的<b>可选</b>能力，如果本阶段不做，可用「本题知识点 + 全站正确率」的说明区替代，不影响三栏结构（对应图中题干下方那一行元信息）。</div>
+
+<h3><span class="dot"></span>3.4 成绩详情（双达标） <span class="badge p">图 04</span></h3>
+<figure><img src="04-result.png" alt="成绩详情改造效果图"></figure>
+<table>
+  <tr><th style="width:5%">№</th><th style="width:24%">改动点</th><th style="width:44%">之前 → 之后</th><th>借鉴来源</th></tr>
+  <tr><td><span class="num">12</span></td><td>结论先行</td><td>只显示「78.5 分 / 未通过」，看不出为什么 → 左侧分数环 + 一句话结论「距准入还差 1 个知识点组」，中间四个对照指标（较上次 +8.5、全站 63%、错题 2/14、用时），下方两枚判定 pill。</td><td>Moodle Summary of attempt 的「结论 + 明细」结构；双达标规则为本项目原创</td></tr>
+  <tr><td><span class="num">13</span></td><td>行动区右移竖排</td><td>按钮散落在标题栏 → 右侧竖排「查看逐题解析 / 去补强热点研判」，并写明剩余作答机会。</td><td>Moodle review 页「Re-attempt quiz」的位置策略</td></tr>
+  <tr><td><span class="num">14</span></td><td>知识点达标条</td><td>统计页里是横向堆叠条，考生看不出达标线 → 每组一行，条上叠一条 60% 虚线达标线，未达标的条自动转琥珀色，右侧给「达标 / 未达标」标签。</td><td>Moodle 按知识点/题目维度的统计思路；本项目统计页的升级</td></tr>
+  <tr><td><span class="num">15</span></td><td>逐题回顾区分人机</td><td>只有对错与得分 → 每题显示 AI 初评分 + 置信度 + 教师确认分与确认人，错题给出「我的答案 / 正确答案」对照与采分点说明。</td><td>Moodle review（绿勾/红叉 + 正确答案）；本项目 AI 初评能力</td></tr>
+</table>
+
+<h3><span class="dot"></span>3.5 阅卷中心 <span class="badge p">图 05</span></h3>
+<figure><img src="05-grading.png" alt="阅卷中心改造效果图"></figure>
+<table>
+  <tr><th style="width:5%">№</th><th style="width:24%">改动点</th><th style="width:44%">之前 → 之后</th><th>借鉴来源</th></tr>
+  <tr><td><span class="num">16</span></td><td>三栏工作台</td><td>列表与评分在两个页面之间往返 → 同屏三栏：待阅列表 / 答卷原文 / 评分面板；页头显示待阅 12、已确认 28、低置信度 7 份。</td><td>Moodle Attempts 列表 → Review attempt 的批改路径；通用工作台模式</td></tr>
+  <tr><td><span class="num">17</span></td><td>考生列表带状态语义</td><td>只有姓名和分数 → 头像 + 姓名 + 学号/题号，右侧状态点区分「AI 已初评（金）/ 已确认（绿）/ 待阅（灰）」，底部固定图例，选中行左侧主色条。</td><td>Moodle attempts 列表；通用列表状态点</td></tr>
+  <tr><td><span class="num">18</span></td><td>AI 建议条</td><td>AI 分数与人工分数混在一处 → 答卷下方独立一条金色提示：AI 初评 8/10、置信度 72%、命中哪几个采分点、建议复核什么。</td><td>本项目 AI 判分流程；视觉沿用「金 = 待人工确认」的语义</td></tr>
+  <tr><td><span class="num">19</span></td><td>评分面板</td><td>只有一个总分输入框 → 总分大字输入 + 分项采分点步进器 + 快捷给分 + 评语与常用标签 + 「确认并进入下一份」，并给出 Enter/↑↓ 快捷键提示。</td><td>Moodle 单题评分与评语；批量作业的键盘优先原则</td></tr>
+</table>
+
+<h3><span class="dot"></span>3.6 分析看板 <span class="badge p">图 06</span></h3>
+<figure><img src="06-analytics.png" alt="分析看板改造效果图"></figure>
+<table>
+  <tr><th style="width:5%">№</th><th style="width:24%">改动点</th><th style="width:44%">之前 → 之后</th><th>借鉴来源</th></tr>
+  <tr><td><span class="num">20</span></td><td>KPI 六卡</td><td>六块「标签 + 数字」的方框，没有判断依据 → 每卡补一行「与谁比、差多少」（参考率、+4.2、最高/最低、年级 21% 等），数值与单位分层。</td><td>控制台概览页的 KPI 写法；数据来自现有统计接口</td></tr>
+  <tr><td><span class="num">21</span></td><td>成绩分布加及格线</td><td>横向条形按分数段排列，但看不出「及格线在哪、几个人卡在线下」 → 纵向柱图 + 60–100 的分段色 + 70 分处虚线阈值 + 柱顶人数。</td><td>Moodle quiz 成绩统计的分数段呈现</td></tr>
+  <tr><td><span class="num">22</span></td><td>知识点达标 + 教学建议</td><td>表格列「平均得分率 / 达标线 / 达标人数」 → 条形 + 达标线 + 「x/3」计数，并在下方给一条可执行的教学建议。</td><td>学之思按题型/知识点分析得分率；本项目统计页</td></tr>
+</table>
+
+<h3><span class="dot"></span>3.7 题库与组卷 <span class="badge p">图 07</span></h3>
+<figure><img src="07-paper.png" alt="题库与组卷改造效果图"></figure>
+<table>
+  <tr><th style="width:5%">№</th><th style="width:24%">改动点</th><th style="width:44%">之前 → 之后</th><th>借鉴来源</th></tr>
+  <tr><td><span class="num">23</span></td><td>四步流程条</td><td>组卷是一张长表单，用户不知道还差什么 → 顶部 stepper：试卷信息 → 选题与抽题规则 → 题型与排版 → 发布设置，当前步高亮，已完成打勾。</td><td>AntD Steps 的常规用法；学之思试卷创编的分步流程</td></tr>
+  <tr><td><span class="num">24</span></td><td>左栏知识点树 + 难度分布</td><td>知识点只是一个筛选条件 → 树形结构带题目计数，底部给难度配比条（易 40 / 中 40 / 难 20），选题时实时对照。</td><td>SurveyKing 三栏编辑器左栏（题型/题库树）</td></tr>
+  <tr><td><span class="num">25</span></td><td>题目列表信息密度</td><td>题目只能一条条点开看 → 行内直接给：勾选框、题型标签、题干、难度点（●●○）、历史正确率；已选行浅蓝底，底部固定「已选 14 题 + 分页」。</td><td>SurveyKing 题目管理列表；Moodle 题库的难度/正确率列</td></tr>
+  <tr><td><span class="num">26</span></td><td>右栏规则 + 实时校验</td><td>总分要到保存时才报错 → 右栏常驻题型/题量/分值步进器、知识点组权重（决定双达标）、题库不足预警、总分校验条（100/100 通过）。</td><td>SurveyKing 右栏设置面板；权重与校验规则来自本项目双达标判定</td></tr>
+</table>
+
+<h2><span class="n">4</span>设计令牌：只改一处，全站生效</h2>
+<p class="lead">现有项目已经把主题收敛在 <code>constants/theme.ts</code>，改造沿用这套做法：页面只组合组件，不覆盖公共样式。下图是本次使用的完整令牌与组件状态。</p>
+<figure><img src="08-tokens.png" alt="设计令牌与组件规范"></figure>
+
+<div class="sw-row">
+  <div class="sw" style="background:#1657D6;color:#fff"><i>主色</i><b>#1657D6</b></div>
+  <div class="sw" style="background:#0A1729;color:#fff"><i>导航</i><b>#0A1729</b></div>
+  <div class="sw" style="background:#0C1D33;color:#fff"><i>考试态</i><b>#0C1D33</b></div>
+  <div class="sw" style="background:#C89B3C;color:#fff"><i>准入</i><b>#C89B3C</b></div>
+  <div class="sw" style="background:#0F9D76;color:#fff"><i>通过</i><b>#0F9D76</b></div>
+  <div class="sw" style="background:#C2761B;color:#fff"><i>警示</i><b>#C2761B</b></div>
+  <div class="sw" style="background:#D4380D;color:#fff"><i>危险</i><b>#D4380D</b></div>
+  <div class="sw" style="background:#F4F6FA;color:#41506A"><i>背景</i><b>#F4F6FA</b></div>
+</div>
+
+<p><b>与现状的差异只有三处：</b>主色由 <code>#1e5eff</code> 调整为 <code>#1657D6</code>（更沉，长时间阅读不刺眼）；新增准入金 <code>#C89B3C</code>（只用于双达标与准入资格）；卡片阴影统一为 <code>0 1px 2px rgba(16,32,64,.04)</code>，不再使用大投影。其余语义色（成功 / 警示 / 错误）沿用现有值，改造成本很低。</p>
+
+<h2><span class="n">5</span>实施建议（确认后才动手）</h2>
+
+<div class="grid3">
+  <div class="mini"><div class="t">STEP 1 · 令牌与外壳</div><div class="v">0.5 天</div><div class="d">theme.ts 调色板与圆角；新增 AppShell 侧栏 + 面包屑。影响全部页面的外框，先做完再逐页替换。</div></div>
+  <div class="mini"><div class="t">STEP 2 · 考生主链路</div><div class="v">1.5 天</div><div class="d">大厅、答题、成绩三页。答题页涉及计时/自动保存的既有逻辑，只改视图不动交互时序。</div></div>
+  <div class="mini"><div class="t">STEP 3 · 教师/管理端</div><div class="v">2 天</div><div class="d">阅卷三栏、分析看板、组卷三栏。阅卷页需新增「确认并下一份」的连续批改状态。</div></div>
+</div>
+
+<h3><span class="dot"></span>影响面（预计改动文件）</h3>
+<table>
+  <tr><th style="width:34%">文件</th><th style="width:16%">类型</th><th>改动内容</th></tr>
+  <tr><td><code>src/constants/theme.ts</code></td><td class="k">修改</td><td>颜色令牌、圆角、Table/Card/Button/Menu 组件级默认值</td></tr>
+  <tr><td><code>src/layouts/AppShell.tsx</code></td><td class="k">重写</td><td>横栏 → 侧栏 + 面包屑 + 全局搜索；保持权限守卫与 403 逻辑不动</td></tr>
+  <tr><td><code>src/routes.tsx</code></td><td class="k">修改</td><td>菜单项补分组字段（group），权限点映射不变</td></tr>
+  <tr><td><code>src/components/*</code></td><td class="k">新增</td><td>StatCard / ExamCard / ProgressRing / QuestionNav / CriterionBar 等 6–8 个展示组件</td></tr>
+  <tr><td><code>src/pages/{Hall,Answer,Result,Grading,Stats,Publish,Login}.tsx</code></td><td class="k">改造</td><td>按图重排结构与状态，接口调用与业务规则不变</td></tr>
+  <tr><td><code>src/styles.css</code></td><td class="k">增量</td><td>仅补充页面级布局类，不覆盖 AntD 内部样式</td></tr>
+</table>
+
+<div class="callout">
+  <b>不做什么：</b>不动 SSO 与网关接入、不动判分与双达标算法、不改接口字段、不引入新的 UI 库（继续用 AntD 5 + 现有 GSAP 动效），不新增图表库（分布图与对比图用内联 SVG 即可，避免为一个页面引入 ECharts）。
+</div>
+
+<h2><span class="n">6</span>需要你确认的四件事</h2>
+<ul>
+  <li><b>导航形态：</b>是否接受「左侧分组侧栏」替换现有顶部横栏？如果比赛答辩更希望保留横向顶栏的品牌观感，可以只换成分组下拉，改动量减半。</li>
+  <li><b>主色调整：</b>#1e5eff → #1657D6 是否可接受？如果已有材料（PPT、海报）统一用了旧蓝，也可以不换，其余方案不受影响。</li>
+  <li><b>答题页草稿纸：</b>是否纳入本期？纳入需要新增一个本地暂存的前端逻辑，不涉及后端。</li>
+  <li><b>阅卷连续批改：</b>「确认并进入下一份」会改变现有逐份进入的操作习惯，是否需要保留原来的逐份进入入口作为备选。</li>
+</ul>
+
+<p class="small" style="margin-top:22px">附：本目录下 <code>01–08*.png</code> 为效果图，<code>before/</code> 为改造前截图，<code>src/</code> 为效果图的 HTML 源稿（1440×900，可直接改字改色后重新截图），未改动 <code>exam-front-react</code> 任何代码。</p>
+
+</div>
+
+<div class="footer">
+  <span>警院智慧考试平台 · 界面改造方案 V1.0（参考稿）</span>
+  <span>2026-11-05 · 仅设计参考，未改动生产代码</span>
+</div>
+
+</div>
+</body>
+</html>

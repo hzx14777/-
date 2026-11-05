@@ -101,20 +101,21 @@ export const JOB_STATUS: Record<string, DictEntry> = {
   failed: { label: '已失败', color: 'error' }
 };
 
-/** 跨平台业务事件（§11.3 统一事件名称） */
+/** 跨平台业务事件（§11.3 统一事件名称：只登记清单内的事件，新增须先过架构评审） */
 export const EVENT_TYPE: Record<string, DictEntry> = {
   'exam.passed': { label: 'exam.passed', color: 'success' },
   'exam.failed': { label: 'exam.failed', color: 'error' },
-  'exam.submitted': { label: 'exam.submitted', color: 'processing' },
   'course.completed': { label: 'course.completed', color: 'warning' }
 };
 
-/** 角色（§8.1 展示名称） */
-export const ROLE: Record<RoleCode | 'system', DictEntry> = {
+/**
+ * 角色（§8.1 展示名称，仅三个可登录角色）
+ * 审计里的「系统」不是角色，走 actorType 标记，不在此登记（见 Audit 页）。
+ */
+export const ROLE: Record<RoleCode, DictEntry> = {
   student: { label: '学生', color: 'blue' },
   teacher: { label: '教师', color: 'geekblue' },
-  admin: { label: '管理员', color: 'purple' },
-  system: { label: '系统', color: 'default' }
+  admin: { label: '管理员', color: 'purple' }
 };
 
 const DICTS: Record<DictKind, Record<string, DictEntry>> = {

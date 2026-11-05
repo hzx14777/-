@@ -7,7 +7,7 @@
  */
 import { useEffect, useMemo, useState } from 'react';
 import {
-  App as AntApp, Button, Checkbox, Divider, Drawer, Dropdown, Input, InputNumber, Modal,
+  App as AntApp, Button, Checkbox, Drawer, Dropdown, Input, InputNumber, Modal,
   Radio, Select, Space, Tabs, Tag, Tree, Typography
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, FileTextOutlined, PrinterOutlined, DownloadOutlined } from '@ant-design/icons';
@@ -16,7 +16,7 @@ import { useSession } from '../contexts/session';
 import { endpoints } from '../api';
 import { paperBody, PAPER_CSS, fullPaperHtml, downloadFile, printPaper } from '../utils/paper';
 import { formatDateTime, formatDuration, formatScore } from '../utils/format';
-import { dictOptions } from '../constants/dictionary';
+import { dict, dictOptions } from '../constants/dictionary';
 import { PageContainer, DataTable, StatusTag, StatCard } from '../components';
 
 const EMPTY_OPTIONS = [
@@ -328,167 +328,242 @@ export default function DocLib() {
   );
 
   const composePane = (
-    <div style={{ display: 'grid', gridTemplateColumns: '260px minmax(0, 1fr)', gap: 14, alignItems: 'start' }}>
-      <div className="yj-section" style={{ marginBottom: 0, maxHeight: 'calc(100vh - 210px)', overflow: 'auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <h4 style={{ margin: 0 }}>分类浏览</h4>
+    <div className="yj-doclib">
+      {/* 左：分类树（只读引用） */}
+      <div className="yj-panel yj-doclib-side">
+        <div className="yj-panel-head">
+          <b>分类浏览</b>
+          <span className="yj-sub">只读引用</span>
         </div>
-        <Tree
-          treeData={treeData}
-          expandedKeys={expandedKeys}
-          onExpand={(keys) => setExpandedKeys(keys as string[])}
-          selectedKeys={node.kpId ? [`kp:${node.kpId}`] : node.chapterId ? [`ch:${node.chapterId}`] : node.courseId ? [`c:${node.courseId}`] : []}
-          onSelect={onPickNode}
-          titleRender={treeNodeTitle}
-          blockNode
-          style={{ fontSize: 13 }}
-        />
-        <Divider style={{ margin: '10px 0' }} />
-        <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginBottom: 0 }}>
-          点击分类快速筛选；数量为该分类下的题库题目数。
-        </Typography.Paragraph>
+        <div style={{ padding: '6px 6px 4px' }}>
+          <Tree
+            treeData={treeData}
+            expandedKeys={expandedKeys}
+            onExpand={(keys) => setExpandedKeys(keys as string[])}
+            selectedKeys={node.kpId ? [`kp:${node.kpId}`] : node.chapterId ? [`ch:${node.chapterId}`] : node.courseId ? [`c:${node.courseId}`] : []}
+            onSelect={onPickNode}
+            titleRender={treeNodeTitle}
+            blockNode
+            style={{ fontSize: 12.5 }}
+          />
+        </div>
+        <div style={{ padding: '0 13px 12px' }}>
+          <div className="yj-hint">数量为该分类下的题库题目数；点击分类即筛选右侧列表。</div>
+        </div>
       </div>
 
-      <div className="yj-section" style={{ marginBottom: 0 }}>
-        <Space wrap style={{ marginBottom: 10 }}>
-          <Select allowClear placeholder="题型" style={{ width: 110 }} value={qType} onChange={(v) => { setQType(v); setPage(1); }}
+      {/* 中：题目列表 */}
+      <div className="yj-panel" style={{ minWidth: 0 }}>
+        <div className="yj-panel-head">
+          <b>题目列表</b>
+          <span className="yj-sub">共 {total} 题</span>
+          <span className="right">
+            {canBank && <Button size="small" type="dashed" icon={<PlusOutlined />} onClick={openCreateQ}>新增题目</Button>}
+          </span>
+        </div>
+        <div className="yj-toolbar" style={{ padding: '10px 13px', marginBottom: 0, borderBottom: '1px solid var(--yj-line)' }}>
+          <Select allowClear placeholder="题型" style={{ width: 92 }} value={qType} onChange={(v) => { setQType(v); setPage(1); }}
             options={dictOptions('questionType')} />
-          <Select allowClear placeholder="难度" style={{ width: 100 }} value={qDiff} onChange={(v) => { setQDiff(v); setPage(1); }}
+          <Select allowClear placeholder="难度" style={{ width: 88 }} value={qDiff} onChange={(v) => { setQDiff(v); setPage(1); }}
             options={dictOptions('difficulty')} />
-          <Select style={{ width: 120 }} value={qStatus} onChange={(v) => { setQStatus(v); setPage(1); }}
+          <Select style={{ width: 106 }} value={qStatus} onChange={(v) => { setQStatus(v); setPage(1); }}
             options={[...dictOptions('questionStatus'), { value: '', label: '全部状态' }]} />
-          <Input.Search placeholder="题干 / 解析关键词" allowClear style={{ width: 210 }} value={qKw}
+          <Input.Search placeholder="题干 / 解析关键词" allowClear style={{ width: 152 }} value={qKw}
             onChange={(e) => setQKw(e.target.value)} onSearch={() => setPage(1)} />
           <Button onClick={resetFilters}>重置</Button>
-          {canBank && <Button type="dashed" icon={<PlusOutlined />} onClick={openCreateQ}>新增题目</Button>}
-        </Space>
+        </div>
 
-        <DataTable
-          loading={loading}
-          page={page}
-          pageSize={pageSize}
-          total={total}
-          onPageChange={(p, ps) => { setPage(p); setPageSize(ps); }}
-          emptyText="当前分类下没有题目，去 AI 题库入库或调整筛选条件"
-          dataSource={rows}
-          rowSelection={{
-            selectedRowKeys: selKeys,
-            preserveSelectedRowKeys: true,
-            onSelect: (record, selected) => setSel((prev) => {
-              const n = { ...prev };
-              if (selected) n[record.id] = record; else delete n[record.id];
-              return n;
-            }),
-            onSelectAll: (selected, _rows, changeRows) => setSel((prev) => {
-              const n = { ...prev };
-              changeRows.forEach((r) => { if (selected) n[r.id] = r; else delete n[r.id]; });
-              return n;
-            }),
-            getCheckboxProps: (r) => ({ disabled: r.status !== 'published' })
-          }}
-          columns={[
-            { title: '题干', dataIndex: 'stem', ellipsis: true, render: (v: string) => <span title={v}>{v}</span> },
-            { title: '题型', dataIndex: 'type', width: 96, render: (v: string) => <StatusTag kind="questionType" value={v} /> },
-            { title: '难度', dataIndex: 'difficulty', width: 84, render: (v: string) => <StatusTag kind="difficulty" value={v} /> },
-            { title: '章节', dataIndex: 'chapterName', width: 150, ellipsis: true },
-            {
-              title: '知识点', width: 160, render: (_: any, r: any) => (r.kpNames || []).map((n: string) => <Tag key={n} style={{ marginBottom: 2 }}>{n}</Tag>)
-            },
-            { title: '分值', dataIndex: 'score', width: 62, render: (v: number) => formatScore(v) },
-            { title: '状态', dataIndex: 'status', width: 96, render: (v: string) => <StatusTag kind="questionStatus" value={v} /> },
-            ...(canBank ? [{
-              title: '操作', width: 110, fixed: 'right' as const,
-              render: (_: any, r: any) => (
-                <Space size={0}>
-                  <Button size="small" type="link" icon={<EditOutlined />} onClick={() => openEditQ(r)} />
-                  <Button size="small" type="link" danger icon={<DeleteOutlined />} onClick={() => removeQ(r)} />
-                </Space>
-              )
-            }] : [])
-          ]}
-        />
-
-        <div style={{
-          marginTop: 12, padding: '10px 14px', background: '#f5f8ff', border: '1px solid #dbe5ff',
-          borderRadius: 10, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap'
-        }}>
-          <b>已选 {selKeys.length} 题</b>
-          <span style={{ color: '#6b7a90', fontSize: 12.5 }}>
-            生成时可自定义总分与每题分值，题目将按题型自动排序
-          </span>
-          <span style={{ flex: 1 }} />
-          <Button onClick={() => setSel({})} disabled={!selKeys.length}>清空</Button>
-          <Button type="primary" disabled={!selKeys.length} onClick={() => openCompose('paper')}>生成试卷</Button>
-          <Button disabled={!selKeys.length} onClick={() => openCompose('practice')}>生成练习</Button>
+        <div style={{ padding: '10px 13px 6px' }}>
+          <DataTable
+            loading={loading}
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            onPageChange={(p, ps) => { setPage(p); setPageSize(ps); }}
+            emptyText="当前分类下没有题目，去 AI 题库入库或调整筛选条件"
+            dataSource={rows}
+            rowSelection={{
+              selectedRowKeys: selKeys,
+              preserveSelectedRowKeys: true,
+              onSelect: (record, selected) => setSel((prev) => {
+                const n = { ...prev };
+                if (selected) n[record.id] = record; else delete n[record.id];
+                return n;
+              }),
+              onSelectAll: (selected, _rows, changeRows) => setSel((prev) => {
+                const n = { ...prev };
+                changeRows.forEach((r) => { if (selected) n[r.id] = r; else delete n[r.id]; });
+                return n;
+              }),
+              getCheckboxProps: (r) => ({ disabled: r.status !== 'published' })
+            }}
+            columns={[
+              {
+                title: '题干',
+                dataIndex: 'stem',
+                ellipsis: true,
+                render: (v: string, r: any) => (
+                  <div style={{ minWidth: 0 }}>
+                    <div className="yj-cell-t" title={v}>{v}</div>
+                    <div className="yj-cell-s">
+                      <span>{dict('questionType', r.type).label}</span>
+                      <span>·</span>
+                      <span>{dict('difficulty', r.difficulty).label}</span>
+                      {r.chapterName && <><span>·</span><span>{r.chapterName}</span></>}
+                      {(r.kpNames || []).length > 0 && <><span>·</span><span>{(r.kpNames || []).slice(0, 2).join('、')}</span></>}
+                    </div>
+                  </div>
+                )
+              },
+              { title: '分值', dataIndex: 'score', width: 60, render: (v: number) => <span className="num">{formatScore(v)}</span> },
+              { title: '状态', dataIndex: 'status', width: 88, render: (v: string) => <StatusTag kind="questionStatus" value={v} /> },
+              ...(canBank ? [{
+                title: '', width: 76,
+                render: (_: any, r: any) => (
+                  <Space size={0} style={{ whiteSpace: 'nowrap' }}>
+                    <Button size="small" type="text" icon={<EditOutlined />} onClick={() => openEditQ(r)} />
+                    <Button size="small" type="text" danger icon={<DeleteOutlined />} onClick={() => removeQ(r)} />
+                  </Space>
+                )
+              }] : [])
+            ]}
+          />
         </div>
       </div>
+
+      {/* 右：组卷篮 */}
+      <aside className="yj-panel yj-basket">
+        <div className="yj-panel-head">
+          <b>组卷篮</b>
+          <span className="yj-sub">已选 {selKeys.length} 题</span>
+          <span className="right">
+            <Button size="small" type="text" disabled={!selKeys.length} onClick={() => setSel({})}>清空</Button>
+          </span>
+        </div>
+
+        {selKeys.length === 0 ? (
+          <div className="yj-basket-empty">
+            还没有选中的题目
+            <br />
+            在中间列表勾选后自动进入组卷篮
+          </div>
+        ) : (
+          <div className="yj-basket-body">
+            {selKeys.map((k) => {
+              const r = sel[k];
+              return (
+                <div className="yj-basket-item" key={k}>
+                  <span className="yj-badge pri">{dict('questionType', r?.type).label}</span>
+                  <span className="t" title={r?.stem}>{r?.stem}</span>
+                  <span
+                    className="x"
+                    title="移出组卷篮"
+                    onClick={() => setSel((prev) => { const n = { ...prev }; delete n[k]; return n; })}
+                  >
+                    ×
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="yj-basket-sum">
+          <div>已选<b>{selKeys.length} 题</b></div>
+          <div>预计总分<b>{selKeys.length * 5} 分</b></div>
+        </div>
+
+        <div className="yj-basket-foot">
+          <Button type="primary" block disabled={!selKeys.length} onClick={() => openCompose('paper')}>生成试卷</Button>
+          <Button block disabled={!selKeys.length} onClick={() => openCompose('practice')}>生成练习</Button>
+          <div className="yj-hint">试卷默认每题 5 分 / 90 分钟，练习每题 2 分；生成前可在弹窗中调整。</div>
+        </div>
+      </aside>
     </div>
   );
 
   const docsPane = (
     <>
-      <div className="yj-stat-row" style={{ gridTemplateColumns: 'repeat(3, minmax(160px, 220px))' }}>
-        <StatCard label="文档总数" value={docStats.total || 0} suffix="份" />
-        <StatCard label="试卷" value={docStats.papers || 0} suffix="份" color="#1e5eff" />
-        <StatCard label="练习" value={docStats.practices || 0} suffix="份" />
+      <div className="yj-kpi-row" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+        <StatCard label="文档总数" value={docStats.total || 0} suffix="份" note="试卷与练习合并统计" />
+        <StatCard label="试卷" value={docStats.papers || 0} suffix="份" color="#1657D6" note="可审核后发布为在线考试" />
+        <StatCard label="练习" value={docStats.practices || 0} suffix="份" color="#7A5AF8" note="仅用于导出与线下练习" />
       </div>
-      <div className="yj-section">
-        <Space wrap style={{ marginBottom: 10 }}>
-          <Select allowClear placeholder="类型" style={{ width: 120 }} value={docType} onChange={(v) => { setDocType(v); setDocPage(1); }}
+      <div className="yj-panel">
+        <div className="yj-panel-head">
+          <b>试卷 / 练习库</b>
+          <span className="yj-sub">共 {docTotal} 份</span>
+        </div>
+        <div className="yj-toolbar" style={{ padding: '10px 13px', marginBottom: 0, borderBottom: '1px solid var(--yj-line)' }}>
+          <Select allowClear placeholder="类型" style={{ width: 110 }} value={docType} onChange={(v) => { setDocType(v); setDocPage(1); }}
             options={[{ value: 'paper', label: '试卷' }, { value: 'practice', label: '练习' }]} />
-          <Input.Search placeholder="名称关键词" allowClear style={{ width: 220 }} value={docKw}
+          <Input.Search placeholder="名称关键词" allowClear style={{ width: 210 }} value={docKw}
             onChange={(e) => setDocKw(e.target.value)} onSearch={() => setDocPage(1)} />
           <Button onClick={() => { setDocType(undefined); setDocKw(''); setDocPage(1); }}>重置</Button>
+          <span className="sp" />
           {canPublish && <Button type="primary" ghost onClick={() => nav('/publish')}>考试发布 →</Button>}
-        </Space>
-        <DataTable
-          loading={docLoading}
-          dataSource={docs}
-          scroll={{ x: 1200 }}
-          page={docPage}
-          pageSize={docPageSize}
-          total={docTotal}
-          onPageChange={(p, ps) => { setDocPage(p); setDocPageSize(ps); }}
-          emptyText="还没有生成任何试卷或练习，去「选题组卷」试试"
-          columns={[
-            { title: '名称', dataIndex: 'title', ellipsis: true, render: (v: string, d: any) => <a onClick={() => openDoc(d)}>{v}</a> },
-            { title: '类型', dataIndex: 'type', width: 80, render: (v: string) => (v === 'paper' ? <Tag color="blue">试卷</Tag> : <Tag color="purple">练习</Tag>) },
-            { title: '学科', dataIndex: 'courseName', width: 160, ellipsis: true },
-            { title: '题量', dataIndex: 'questionCount', width: 70 },
-            { title: '总分', dataIndex: 'totalScore', width: 70, render: (v: number) => formatScore(v) },
-            { title: '时长', dataIndex: 'duration', width: 90, render: (v: number) => (v ? formatDuration(v) : '不限') },
-            { title: '创建人', dataIndex: 'createdByName', width: 90 },
-            {
-              title: '审核', dataIndex: 'reviewStatus', width: 96,
-              render: (s: string, d: any) => (d.type !== 'paper' ? <Tag>无需审核</Tag> : <StatusTag kind="reviewStatus" value={s} />)
-            },
-            {
-              title: '发布', width: 100,
-              render: (_: any, d: any) => {
-                if (d.type !== 'paper') return <span style={{ color: '#9aa7bb' }}>—</span>;
-                if (d.examStatus === 'published') return <Tag color="success">已发布</Tag>;
-                if (d.examStatus === 'archived') return <Tag>已下架</Tag>;
-                return <span style={{ color: '#9aa7bb' }}>未发布</span>;
+        </div>
+        <div style={{ padding: '10px 13px 6px' }}>
+          <DataTable
+            loading={docLoading}
+            dataSource={docs}
+            page={docPage}
+            pageSize={docPageSize}
+            total={docTotal}
+            onPageChange={(p, ps) => { setDocPage(p); setDocPageSize(ps); }}
+            emptyText="还没有生成任何试卷或练习，去「选题组卷」试试"
+            columns={[
+              {
+                title: '名称', dataIndex: 'title', ellipsis: true,
+                render: (v: string, d: any) => (
+                  <div style={{ minWidth: 0 }}>
+                    <div className="yj-cell-t" style={{ color: 'var(--yj-pri)', cursor: 'pointer' }} title={v} onClick={() => openDoc(d)}>{v}</div>
+                    <div className="yj-cell-s">
+                      <span>{d.courseName || '-'}</span>
+                      <span>·</span>
+                      <span>{d.createdByName || '-'}</span>
+                    </div>
+                  </div>
+                )
+              },
+              { title: '类型', dataIndex: 'type', width: 76, render: (v: string) => (v === 'paper' ? <Tag color="blue">试卷</Tag> : <Tag color="purple">练习</Tag>) },
+              {
+                title: '题量 / 总分', width: 100,
+                render: (_: any, d: any) => <span className="num" style={{ fontSize: 12, whiteSpace: 'nowrap' }}>{d.questionCount} 题 / {formatScore(d.totalScore)}</span>
+              },
+              { title: '时长', dataIndex: 'duration', width: 82, render: (v: number) => (v ? formatDuration(v) : '不限') },
+              {
+                title: '审核', dataIndex: 'reviewStatus', width: 92,
+                render: (s: string, d: any) => (d.type !== 'paper' ? <Tag>无需审核</Tag> : <StatusTag kind="reviewStatus" value={s} />)
+              },
+              {
+                title: '发布', width: 92,
+                render: (_: any, d: any) => {
+                  if (d.type !== 'paper') return <span style={{ color: '#9aa7bb' }}>—</span>;
+                  if (d.examStatus === 'published') return <Tag color="success">已发布</Tag>;
+                  if (d.examStatus === 'archived') return <Tag>已下架</Tag>;
+                  return <span style={{ color: '#9aa7bb' }}>未发布</span>;
+                }
+              },
+              { title: '生成时间', dataIndex: 'createdAt', width: 140, render: (v: string) => <span style={{ fontSize: 12 }}>{formatDateTime(v)}</span> },
+              {
+                title: '操作', width: 224, fixed: 'right' as const,
+                render: (_: any, d: any) => (
+                  <Space size={4}>
+                    <Button size="small" onClick={() => openDoc(d)}>预览</Button>
+                    <Dropdown menu={{ items: [{ key: 'html', label: '导出 HTML' }, { key: 'word', label: '导出 Word' }], onClick: async ({ key }) => { const full: any = await endpoints.document(d.id); if (key === 'html') expHtml(full, !!full.includeAnswer); else expWord(full, !!full.includeAnswer); } }}>
+                      <Button size="small" icon={<DownloadOutlined />}>导出</Button>
+                    </Dropdown>
+                    {d.type === 'paper' && d.examStatus !== 'published' && (
+                      <Button size="small" type="link" onClick={() => nav('/publish')}>去发布</Button>
+                    )}
+                    <Button size="small" danger type="link" onClick={() => removeDoc(d)}>删除</Button>
+                  </Space>
+                )
               }
-            },
-            { title: '生成时间', dataIndex: 'createdAt', width: 150, render: (v: string) => <span style={{ fontSize: 12.5 }}>{formatDateTime(v)}</span> },
-            {
-              title: '操作', width: 278, fixed: 'right' as const,
-              render: (_: any, d: any) => (
-                <Space size={4}>
-                  <Button size="small" onClick={() => openDoc(d)}>预览</Button>
-                  <Dropdown menu={{ items: [{ key: 'html', label: '导出 HTML' }, { key: 'word', label: '导出 Word' }], onClick: async ({ key }) => { const full: any = await endpoints.document(d.id); if (key === 'html') expHtml(full, !!full.includeAnswer); else expWord(full, !!full.includeAnswer); } }}>
-                    <Button size="small" icon={<DownloadOutlined />}>导出</Button>
-                  </Dropdown>
-                  {d.type === 'paper' && (
-                    <Button size="small" type="link" onClick={() => nav('/publish')}>去发布</Button>
-                  )}
-                  <Button size="small" danger type="link" onClick={() => removeDoc(d)}>删除</Button>
-                </Space>
-              )
-            }
-          ]}
-        />
+            ]}
+          />
+        </div>
       </div>
     </>
   );

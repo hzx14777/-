@@ -38,6 +38,5 @@ export const config: EnvConfig = {
 
 /** 开发期自检：必需变量缺失时明确报错，避免带病上线（§14 禁止写死地址） */
 if (!config.apiBaseUrl) {
-  // eslint-disable-next-line no-console
   console.error('[env] 缺少 VITE_API_BASE_URL，请检查对应 .env.' + rawEnv + ' 配置');
 }
